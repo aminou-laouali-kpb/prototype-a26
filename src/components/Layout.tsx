@@ -5,6 +5,7 @@ import {
   ScrollText, Menu, X, Wallet, ClipboardList,
 } from 'lucide-react';
 import { useSession, ROLE_LABELS } from '../lib/session';
+import { PAGE_ROLES } from '../lib/access';
 import { ROLE_COLORS, Role } from '../lib/types';
 import { supabase } from '../lib/supabase';
 
@@ -12,19 +13,19 @@ interface NavItem {
   to: string;
   label: string;
   icon: React.ReactNode;
-  roles?: Role[];
+  roles?: readonly Role[];
 }
 
 const NAV: NavItem[] = [
   { to: '/', label: 'Tableau de bord', icon: <LayoutDashboard className="w-4 h-4" /> },
-  { to: '/salaries', label: 'Salariés', icon: <Users className="w-4 h-4" />, roles: ['admin_rh', 'manager', 'preparateur', 'approveur_paie', 'auditeur'] },
+  { to: '/salaries', label: 'Salariés', icon: <Users className="w-4 h-4" />, roles: PAGE_ROLES.salaries },
   { to: '/temps', label: 'Temps de travail', icon: <Clock className="w-4 h-4" /> },
   { to: '/conges', label: 'Congés', icon: <CalendarCheck className="w-4 h-4" /> },
-  { to: '/feuilles', label: 'Feuilles de temps', icon: <ClipboardList className="w-4 h-4" />, roles: ['admin_rh', 'manager', 'employee', 'auditeur'] },
-  { to: '/paie', label: 'Pré-paie', icon: <Wallet className="w-4 h-4" />, roles: ['admin_rh', 'preparateur', 'approveur_paie', 'auditeur'] },
-  { to: '/bulletins', label: 'Mes bulletins', icon: <Fingerprint className="w-4 h-4" />, roles: ['employee', 'manager', 'admin_rh'] },
-  { to: '/parametres', label: 'Paramètres', icon: <Settings className="w-4 h-4" />, roles: ['admin_rh', 'preparateur'] },
-  { to: '/audit', label: 'Journal d’audit', icon: <ScrollText className="w-4 h-4" />, roles: ['admin_rh', 'auditeur'] },
+  { to: '/feuilles', label: 'Feuilles de temps', icon: <ClipboardList className="w-4 h-4" />, roles: PAGE_ROLES.feuilles },
+  { to: '/paie', label: 'Pré-paie', icon: <Wallet className="w-4 h-4" />, roles: PAGE_ROLES.paie },
+  { to: '/bulletins', label: 'Mes bulletins', icon: <Fingerprint className="w-4 h-4" />, roles: PAGE_ROLES.bulletins },
+  { to: '/parametres', label: 'Paramètres', icon: <Settings className="w-4 h-4" />, roles: PAGE_ROLES.parametres },
+  { to: '/audit', label: 'Journal d’audit', icon: <ScrollText className="w-4 h-4" />, roles: PAGE_ROLES.audit },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

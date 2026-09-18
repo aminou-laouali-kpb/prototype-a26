@@ -3,7 +3,9 @@ import { SessionProvider, useSession } from './lib/session';
 import { Layout } from './components/Layout';
 import AuthScreen from './components/AuthScreen';
 import { OrgGate } from './components/OrgGate';
+import { RoleRoute } from './components/RoleRoute';
 import { WorkSessionProvider } from './lib/workSessionContext';
+import { PAGE_ROLES } from './lib/access';
 import { Dashboard } from './pages/Dashboard';
 import { EmployeeHome } from './pages/EmployeeHome';
 import { EmployeesPage } from './pages/Employees';
@@ -37,14 +39,14 @@ function Shell() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/salaries" element={<EmployeesPage />} />
+          <Route path="/salaries" element={<RoleRoute roles={PAGE_ROLES.salaries}><EmployeesPage /></RoleRoute>} />
           <Route path="/temps" element={<TimePage />} />
           <Route path="/conges" element={<LeavePage />} />
-          <Route path="/feuilles" element={<TimesheetsPage />} />
-          <Route path="/paie" element={<PayrollPage />} />
-          <Route path="/bulletins" element={<PayslipsPage />} />
-          <Route path="/parametres" element={<SettingsPage />} />
-          <Route path="/audit" element={<AuditPage />} />
+          <Route path="/feuilles" element={<RoleRoute roles={PAGE_ROLES.feuilles}><TimesheetsPage /></RoleRoute>} />
+          <Route path="/paie" element={<RoleRoute roles={PAGE_ROLES.paie}><PayrollPage /></RoleRoute>} />
+          <Route path="/bulletins" element={<RoleRoute roles={PAGE_ROLES.bulletins}><PayslipsPage /></RoleRoute>} />
+          <Route path="/parametres" element={<RoleRoute roles={PAGE_ROLES.parametres}><SettingsPage /></RoleRoute>} />
+          <Route path="/audit" element={<RoleRoute roles={PAGE_ROLES.audit}><AuditPage /></RoleRoute>} />
           <Route path="/profil" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

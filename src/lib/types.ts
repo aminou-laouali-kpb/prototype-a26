@@ -1,6 +1,3 @@
-import { createContext, useContext } from 'react';
-import type { Session } from '@supabase/supabase-js';
-
 export type Role =
   | 'admin_rh'
   | 'manager'
@@ -268,25 +265,6 @@ export interface OrgInvite {
   role: Role;
   active: boolean;
   created_at: string;
-}
-
-export interface SessionContextValue {
-  session: Session | null;
-  loading: boolean;
-  memberships: Membership[];
-  activeOrg: Org | null;
-  activeRole: Role | null;
-  setActiveOrgId: (id: string) => void;
-  refresh: () => Promise<void>;
-  myEmployee: Employee | null;
-}
-
-export const SessionContext = createContext<SessionContextValue | null>(null);
-
-export function useSessionContext(): SessionContextValue {
-  const ctx = useContext(SessionContext);
-  if (!ctx) throw new Error('SessionContext manquant');
-  return ctx;
 }
 
 export function formatXof(amount: number | null | undefined): string {

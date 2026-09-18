@@ -1,16 +1,9 @@
 import { useEffect, useState, ReactNode, createContext, useContext } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from './supabase';
-import { Membership, Employee, Org, Role, OrgSettings, DEFAULT_ORG_SETTINGS } from './types';
+import { Membership, Employee, Org, Role, OrgSettings, DEFAULT_ORG_SETTINGS, ROLE_LABELS } from './types';
 
-export const ROLE_LABELS: Record<Role, string> = {
-  admin_rh: 'Administrateur RH',
-  manager: 'Responsable d’équipe',
-  preparateur: 'Préparateur de paie',
-  approveur_paie: 'Approbateur paie',
-  employee: 'Salarié',
-  auditeur: 'Auditeur (lecture seule)',
-};
+export { ROLE_LABELS };
 
 interface SessionContextValue {
   session: Session | null;

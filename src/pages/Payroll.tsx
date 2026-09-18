@@ -2,16 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSession } from '../lib/session';
 import {
-  Employee, Contract, PayrollPeriod, PayrollLine, PayrollRule, PayrollDetail, PayrollVariable, Org, ClockEntry,
+  Employee, PayrollPeriod, PayrollLine, PayrollDetail, PayrollVariable, Org,
   formatXof, monthLabel, statusLabel,
 } from '../lib/types';
-import {
-  computePayslip,
-  getPayrollPeriodDates,
-  prorateLeaveDays,
-  selectApplicableRules,
-  sha256Hex,
-} from '../lib/payroll';
 import { downloadCsv } from '../lib/csv';
 import { openPrintDocument, annualRecapHtml, AnnualRow } from '../lib/documents';
 import {
@@ -24,7 +17,7 @@ import {
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 export function PayrollPage() {
-  const { activeOrg, activeRole, session, orgSettings } = useSession();
+  const { activeOrg, activeRole, session } = useSession();
   const [periods, setPeriods] = useState<PayrollPeriod[]>([]);
   const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null);
   const [lines, setLines] = useState<PayrollLine[]>([]);
@@ -98,230 +91,10 @@ export function PayrollPage() {
     setWorking(true);
     setActionError(null);
     try {
-      const dates = getPayrollPeriodDates(period.period_year, period.period_month);
-      const [empRes, ctrRes, ruleRes, clockRes] = await Promise.all([
-        supabase.from('employees').select('*').eq('org_id', activeOrg.id).eq('status', 'active'),
-        supabase.from('contracts').select('*').eq('org_id', activeOrg.id),
-        supabase.from('payroll_rules').select('*').eq('org_id', activeOrg.id),
-        supabase.from('clock_entries').select('*').eq('org_id', activeOrg.id)
-          .gte('work_date', dates.start).lte('work_date', dates.end),
-      ]);
-      if (empRes.error) throw new Error(empRes.error.message);
-      if (ctrRes.error) throw new Error(ctrRes.error.message);
-      if (ruleRes.error) throw new Error(ruleRes.error.message);
-      if (clockRes.error) throw new Error(clockRes.error.message);
-      const emps = (empRes.data ?? []) as Employee[];
-      const ctrs = (ctrRes.data ?? []) as Contract[];
-      const allRules = (ruleRes.data ?? []) as PayrollRule[];
-      const clockHoursByEmployee = new Map<string, number>();
-      for (const entry of (clockRes.data ?? []) as ClockEntry[]) {
-        let seconds = 0;
-        if (orgSettings?.payroll_time_basis === 'active') {
-          seconds = Math.max(0, Number(entry.active_seconds) || 0);
-        } else if (entry.clock_out) {
-          const start = new Date(entry.clock_in).getTime();
-          const end = new Date(entry.clock_out).getTime();
-          if (Number.isFinite(start) && Number.isFinite(end) && end > start) seconds = (end - start) / 1000;
-        }
-        clockHoursByEmployee.set(
-          entry.employee_id,
-          (clockHoursByEmployee.get(entry.employee_id) ?? 0) + seconds / 3600,
-        );
-      }
-      const applicableRules = selectApplicableRules(allRules, dates.end);
-      const ruleByCode = new Map(applicableRules.map((rule) => [rule.code, rule]));
-
-      const contractFor = (employeeId: string): Contract | null => {
-        const candidates = ctrs
-          .filter((contract) => (
-            contract.employee_id === employeeId
-            && contract.start_date <= dates.end
-            && (contract.end_date === null || contract.end_date >= dates.start)
-          ))
-          .sort((a, b) => (
-            b.start_date.localeCompare(a.start_date)
-            || Number(b.is_current) - Number(a.is_current)
-          ));
-        return candidates[0] ?? null;
-      };
-
-      const missingContracts = emps
-        .filter((employee) => !contractFor(employee.id))
-        .map((employee) => `${employee.last_name} ${employee.first_name} (${employee.employee_number})`);
-      if (missingContracts.length > 0) {
-        throw new Error(`Contrat applicable manquant pour : ${missingContracts.join(', ')}.`);
-      }
-
-      // Variables saisies pour ce cycle
-      const { data: varData, error: varErr } = await supabase
-        .from('payroll_variables')
-        .select('*')
-        .eq('period_id', period.id);
-      if (varErr) throw new Error(varErr.message);
-      const varByEmp = new Map<string, PayrollVariable>();
-      for (const v of (varData ?? []) as PayrollVariable[]) varByEmp.set(v.employee_id, v);
-
-      const { data: solData, error: solErr } = await supabase
-        .from('leave_requests')
-        .select('employee_id, days, start_date, end_date, leave_type:leave_types(code, paid)')
-        .eq('org_id', activeOrg.id)
-        .eq('status', 'approved')
-        .lte('start_date', dates.end)
-        .gte('end_date', dates.start);
-      if (solErr) throw new Error(solErr.message);
-      const leaveUnpaid = new Map<string, number>();
-      for (const lv of (solData ?? []) as Array<{
-        employee_id: string;
-        days: number;
-        start_date: string;
-        end_date: string;
-        leave_type: { code: string; paid: boolean } | { code: string; paid: boolean }[] | null;
-      }>) {
-        const leaveType = Array.isArray(lv.leave_type) ? lv.leave_type[0] : lv.leave_type;
-        if (leaveType?.paid === false || leaveType?.code === 'SOL') {
-          const daysInPeriod = prorateLeaveDays(Number(lv.days), lv.start_date, lv.end_date, dates.start, dates.end);
-          leaveUnpaid.set(lv.employee_id, (leaveUnpaid.get(lv.employee_id) ?? 0) + daysInPeriod);
-        }
-      }
-
-      const preparedLines = [] as Array<{
-        employee: Employee;
-        contract: Contract;
-        workedHours: number;
-        overtimeHours: number;
-        bonuses: number;
-        unpaidAbsenceDays: number;
-        result: ReturnType<typeof computePayslip>;
-        fingerprint: string;
-      }>;
-
-      for (const emp of emps) {
-        const contract = contractFor(emp.id);
-        if (!contract) throw new Error(`Contrat applicable manquant pour ${emp.employee_number}.`);
-        const monthlyHours = Number(contract?.monthly_hours ?? 173.33);
-        const workedHours = clockHoursByEmployee.has(emp.id)
-          ? Math.max(0, Math.round((clockHoursByEmployee.get(emp.id) ?? 0) * 100) / 100)
-          : monthlyHours;
-        const v = varByEmp.get(emp.id);
-        const overtimeHours = Number(v?.overtime_hours ?? 0);
-        const bonuses = Number(v?.bonuses ?? 0);
-        const unpaidAbsenceDays = Math.round(((leaveUnpaid.get(emp.id) ?? 0) + Number(v?.unpaid_absence_days ?? 0)) * 10) / 10;
-
-        const result = computePayslip(
-          {
-            baseSalary: Number(contract?.base_salary ?? 0),
-            monthlyHours,
-            workedHours,
-            overtimeHours,
-            unpaidAbsenceDays,
-            monthlyCalendarDays: dates.calendarDays,
-            bonuses,
-            effectiveDate: dates.end,
-          },
-          applicableRules,
-          (code) => ruleByCode.get(code)?.version ?? null,
-          (code) => ruleByCode.get(code)?.source ?? null,
-        );
-
-        const fingerprint = await sha256Hex(JSON.stringify({
-          employee_id: emp.id,
-          period_id: period.id,
-          contract: {
-            id: contract.id,
-            contract_type: contract.contract_type,
-            start_date: contract.start_date,
-            end_date: contract.end_date,
-            base_salary: contract.base_salary,
-            monthly_hours: contract.monthly_hours,
-          },
-            input: {
-              baseSalary: Number(contract.base_salary),
-              monthlyHours,
-              workedHours,
-              timeBasis: orgSettings?.payroll_time_basis ?? 'gross',
-            overtimeHours,
-            unpaidAbsenceDays,
-            monthlyCalendarDays: dates.calendarDays,
-            bonuses,
-            effectiveDate: dates.end,
-          },
-          rules: applicableRules
-            .map((rule) => ({
-              code: rule.code,
-              value: rule.value,
-              bracket_from: rule.bracket_from,
-              bracket_to: rule.bracket_to,
-              effective_from: rule.effective_from,
-              version: rule.version,
-              source: rule.source,
-            }))
-            .sort((a, b) => a.code.localeCompare(b.code)),
-          result,
-        }));
-
-        preparedLines.push({
-          employee: emp,
-          contract,
-          workedHours,
-          overtimeHours,
-          bonuses,
-          unpaidAbsenceDays,
-          result,
-          fingerprint,
-        });
-      }
-
-      const { error: deleteError } = await supabase.from('payroll_lines').delete().eq('period_id', period.id);
-      if (deleteError) throw new Error(deleteError.message);
-
-      for (const prepared of preparedLines) {
-        const { data: lineRow, error: lineErr } = await supabase
-          .from('payroll_lines')
-          .insert({
-            org_id: activeOrg.id,
-            period_id: period.id,
-            employee_id: prepared.employee.id,
-            base_salary: Number(prepared.contract.base_salary),
-            worked_hours: prepared.workedHours,
-            overtime_hours: prepared.overtimeHours,
-            unpaid_absence_days: prepared.unpaidAbsenceDays,
-            bonuses: prepared.bonuses,
-            gross: prepared.result.gross,
-            cnps_employee: prepared.result.cnpsEmployee,
-            cmu_employee: prepared.result.cmuEmployee,
-            its: prepared.result.its,
-            net: prepared.result.net,
-            employer_cnps: prepared.result.employerCnps,
-            employer_cmu: prepared.result.employerCmu,
-            employer_fdfp: prepared.result.employerFdfp,
-            employer_total: prepared.result.employerTotal,
-            status: 'calculated',
-            fingerprint: prepared.fingerprint,
-          })
-          .select()
-          .single();
-        if (lineErr) throw new Error(lineErr.message);
-
-        const { error: detailError } = await supabase.from('payroll_details').insert(
-          prepared.result.details.map((d) => ({ ...d, org_id: activeOrg.id, line_id: lineRow.id })),
-        );
-        if (detailError) throw new Error(detailError.message);
-      }
-
-      const { error: upErr } = await supabase
-        .from('payroll_periods')
-        .update({ status: 'prepared', prepared_by: session?.user.id ?? null, prepared_at: new Date().toISOString() })
-        .eq('id', period.id);
-      if (upErr) throw new Error(upErr.message);
-
-      await supabase.from('audit_log').insert({
-        org_id: activeOrg.id,
-        actor: session?.user.id ?? null,
-        action: 'compute_payroll',
-        entity: 'payroll_periods',
-        entity_id: period.id,
-        details: { periode: monthLabel(period.period_year, period.period_month), bulletins: emps.length },
+      const { error } = await supabase.rpc('prepare_payroll_period', {
+        p_period_id: period.id,
       });
+      if (error) throw new Error(error.message);
       await load();
     } catch (e) {
       setActionError(e instanceof Error ? e.message : 'Erreur de calcul');
