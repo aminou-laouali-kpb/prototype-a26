@@ -37,6 +37,7 @@ Les comptes de démonstration doivent utiliser des adresses dédiées à la rece
 ```bash
 npm run typecheck
 npm run lint
+npm test
 npm run build
 deno check supabase/functions/send-payslips/index.ts
 npm audit --audit-level=high
