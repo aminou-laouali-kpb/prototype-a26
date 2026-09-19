@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "url": "https://kong-production-47da.up.railway.app/mcp"
+    }
+  }
+}
