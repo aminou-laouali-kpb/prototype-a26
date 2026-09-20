@@ -1,0 +1,650 @@
+<template>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #000000;
+    }
+
+    #root > .clip {
+      position: absolute;
+      inset: 0;
+    }
+
+    [id="08-prepaie-bg"] {
+      background: #f8fafc;
+    }
+
+    [id="08-prepaie-stage"] {
+      overflow: hidden;
+    }
+
+    [id="08-prepaie-payroll-screen"] {
+      position: absolute;
+      left: 960px;
+      top: 486px;
+      width: 1920px;
+      height: 1080px;
+      margin-left: -960px;
+      margin-top: -540px;
+      transform-origin: 50% 50%;
+      opacity: 1;
+      will-change: transform;
+    }
+
+    [id="08-prepaie-zoom-inner"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      will-change: transform;
+    }
+
+    [id="08-prepaie-shot"] {
+      display: block;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+    }
+
+    [id="08-prepaie-dim"] {
+      position: absolute;
+      inset: 0;
+      background: #000000;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    [id="08-prepaie-net-target"] {
+      position: absolute;
+      left: 935px;
+      top: 245px;
+      width: 309px;
+      height: 80px;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    [id="08-prepaie-overlays"] {
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    [id="08-prepaie-hud"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 900px;
+      overflow: hidden;
+    }
+
+    [id="08-prepaie-words"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8cqw;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity, filter;
+    }
+
+    [id="08-prepaie-word-septembre"],
+    [id="08-prepaie-word-calculee"] {
+      display: block;
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 4.2cqw;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #000000;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity, filter;
+    }
+
+    [id="08-prepaie-brut-card"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      width: 46cqw;
+      margin: -8cqw auto 0;
+      padding: 2.2cqw 2.6cqw 2cqw;
+      background: linear-gradient(rgba(2, 132, 199, 0.04), rgba(2, 132, 199, 0.04)), #f8fafc;
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 14px;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity, filter;
+    }
+
+    [id="08-prepaie-brut-label"] {
+      margin: 0 0 1cqw;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 1.4cqw;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0284c7;
+    }
+
+    [id="08-prepaie-brut-row"] {
+      display: flex;
+      align-items: center;
+      gap: 1.6cqw;
+    }
+
+    [id="08-prepaie-brut-wrap"] {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-start;
+      width: 22cqw;
+      flex: 0 0 22cqw;
+    }
+
+    [id="08-prepaie-brut-num"],
+    [id="08-prepaie-net-num"] {
+      display: inline-block;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      color: #0284c7;
+      transform-origin: center center;
+      will-change: transform;
+    }
+
+    [id="08-prepaie-brut-num"] {
+      font-size: 3cqw;
+    }
+
+    [id="08-prepaie-brut-track"] {
+      flex: 1 1 auto;
+      height: 28px;
+      background: rgba(2, 132, 199, 0.08);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    [id="08-prepaie-brut-fill"] {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #0284c7;
+      border-radius: 6px;
+      transform-origin: left center;
+      will-change: transform;
+    }
+
+    [id="08-prepaie-chips"] {
+      display: flex;
+      gap: 0.8cqw;
+      margin-top: 1.5cqw;
+    }
+
+    [id="08-prepaie-chip-cotis"],
+    [id="08-prepaie-chip-its"] {
+      display: block;
+      padding: 0.55cqw 1.4cqw;
+      background: rgba(2, 132, 199, 0.08);
+      color: #0284c7;
+      border-radius: 100px;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 500;
+      font-size: 1.4cqw;
+      line-height: 1.2;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+
+    [id="08-prepaie-net-hero"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      width: 48cqw;
+      margin: -9cqw auto 0;
+      padding: 2.6cqw 2.8cqw 2.4cqw;
+      background: linear-gradient(rgba(2, 132, 199, 0.04), rgba(2, 132, 199, 0.04)), #f8fafc;
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 14px;
+      text-align: center;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity, filter;
+    }
+
+    [id="08-prepaie-net-glow"] {
+      position: absolute;
+      z-index: 1;
+      left: -12cqw;
+      right: -12cqw;
+      top: -10cqw;
+      bottom: -10cqw;
+      background: radial-gradient(ellipse at 50% 50%, rgba(2, 132, 199, 0.7) 0%, rgba(2, 132, 199, 0) 70%);
+      pointer-events: none;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+
+    [id="08-prepaie-net-inner"] {
+      position: relative;
+      z-index: 2;
+    }
+
+    [id="08-prepaie-net-label"] {
+      margin: 0 0 1cqw;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 1.4cqw;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0284c7;
+    }
+
+    [id="08-prepaie-net-wrap"] {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      width: 100%;
+    }
+
+    [id="08-prepaie-net-num"] {
+      font-size: 4.2cqw;
+    }
+
+    [id="08-prepaie-sim"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 820px;
+      width: max-content;
+      margin: 0 auto;
+      padding: 0.7cqw 1.8cqw;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 100px;
+      color: #0284c7;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 1.45cqw;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.2;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="08-prepaie"
+    data-width="1920"
+    data-height="1080"
+    data-duration="20.852"
+  >
+    <div
+      class="clip"
+      id="08-prepaie-bg"
+      data-start="0"
+      data-duration="20.852"
+      data-track-index="0"
+    ></div>
+
+    <div
+      class="clip"
+      id="08-prepaie-stage"
+      data-start="0"
+      data-duration="20.852"
+      data-track-index="1"
+      data-layout-allow-overflow
+      data-layout-allow-caption-zone
+    >
+      <div id="08-prepaie-payroll-screen">
+        <div id="08-prepaie-zoom-inner">
+          <img
+            id="08-prepaie-shot"
+            src="assets/07-prepaie.png"
+            alt=""
+            width="1920"
+            height="1080"
+            draggable="false"
+          />
+          <div id="08-prepaie-dim"></div>
+          <div id="08-prepaie-net-target"></div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="clip"
+      id="08-prepaie-overlays"
+      data-start="0"
+      data-duration="20.852"
+      data-track-index="2"
+    >
+      <div id="08-prepaie-hud">
+        <div id="08-prepaie-words">
+          <span id="08-prepaie-word-septembre">Septembre</span>
+          <span id="08-prepaie-word-calculee">Calculée</span>
+        </div>
+
+      <div id="08-prepaie-brut-card">
+        <div id="08-prepaie-brut-label">Brut</div>
+        <div id="08-prepaie-brut-row">
+          <div id="08-prepaie-brut-wrap">
+            <span id="08-prepaie-brut-num">0</span>
+          </div>
+          <div id="08-prepaie-brut-track">
+            <div id="08-prepaie-brut-fill"></div>
+          </div>
+        </div>
+        <div id="08-prepaie-chips">
+          <div id="08-prepaie-chip-cotis">Cotisations</div>
+          <div id="08-prepaie-chip-its">I.T.S.</div>
+        </div>
+      </div>
+
+      <div id="08-prepaie-net-hero">
+        <div id="08-prepaie-net-glow"></div>
+        <div id="08-prepaie-net-inner">
+          <div id="08-prepaie-net-label">Net à payer</div>
+          <div id="08-prepaie-net-wrap">
+            <span id="08-prepaie-net-num">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="08-prepaie-sim">En simulation</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const DURATION = 20.852;
+      const byId = (id) => document.getElementById(id);
+
+      const screen = byId("08-prepaie-payroll-screen");
+      const inner = byId("08-prepaie-zoom-inner");
+      const dim = byId("08-prepaie-dim");
+      const words = byId("08-prepaie-words");
+      const wordSep = byId("08-prepaie-word-septembre");
+      const wordCalc = byId("08-prepaie-word-calculee");
+      const brutCard = byId("08-prepaie-brut-card");
+      const brutNum = byId("08-prepaie-brut-num");
+      const brutFill = byId("08-prepaie-brut-fill");
+      const brutLabel = byId("08-prepaie-brut-label");
+      const chipCotis = byId("08-prepaie-chip-cotis");
+      const chipIts = byId("08-prepaie-chip-its");
+      const netHero = byId("08-prepaie-net-hero");
+      const netGlow = byId("08-prepaie-net-glow");
+      const netNum = byId("08-prepaie-net-num");
+      const netLabel = byId("08-prepaie-net-label");
+      const sim = byId("08-prepaie-sim");
+
+      const frNum = (n) =>
+        Math.round(n)
+          .toLocaleString("fr-FR")
+          .replace(/\u202f/g, " ")
+          .replace(/\u00a0/g, " ");
+
+      gsap.set(screen, { x: 0, y: 54, scale: 1, opacity: 1, transformOrigin: "50% 50%" });
+      gsap.set(inner, { x: 0, y: 0 });
+      gsap.set(dim, { opacity: 0.15 });
+      gsap.set([wordSep, wordCalc], { opacity: 0 });
+      gsap.set(words, { opacity: 1, scale: 1, filter: "blur(0px)" });
+      gsap.set(brutCard, { opacity: 0, scale: 1, filter: "blur(0px)" });
+      gsap.set(brutFill, { scaleX: 0 });
+      gsap.set(brutLabel, { opacity: 0, y: 12 });
+      gsap.set([chipCotis, chipIts], { opacity: 0, scale: 0, y: 10 });
+      gsap.set(netHero, { opacity: 0, scale: 1, filter: "blur(0px)" });
+      gsap.set(netGlow, { opacity: 0, scale: 0.84 });
+      gsap.set(netLabel, { opacity: 0, y: 12 });
+      gsap.set(sim, { opacity: 0, scale: 0, y: 10 });
+
+      const ZOOM_SCALE = 1.62;
+      const innerX = -(1089.5 - 960);
+      const innerY = -(285 - 540);
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(
+        screen,
+        { x: 0, y: 54, scale: 1, opacity: 1 },
+        { x: 0, y: 54, scale: 1.05, opacity: 1, duration: 6.14, ease: "none" },
+        0,
+      );
+
+      tl.fromTo(
+        screen,
+        { scale: 1.05, x: 0, y: 54, opacity: 1 },
+        {
+          scale: ZOOM_SCALE,
+          x: 0,
+          y: 54,
+          opacity: 1,
+          duration: 1.85,
+          ease: "power3.inOut",
+          immediateRender: false,
+        },
+        6.14,
+      );
+      tl.fromTo(
+        inner,
+        { x: 0, y: 0 },
+        { x: innerX, y: innerY, duration: 1.85, ease: "power3.inOut", immediateRender: false },
+        6.14,
+      );
+
+      tl.fromTo(
+        screen,
+        { scale: ZOOM_SCALE, x: 0, y: 54, opacity: 1 },
+        {
+          scale: 0.88,
+          x: 0,
+          y: 0,
+          opacity: 1,
+          duration: 2.35,
+          ease: "power2.inOut",
+          immediateRender: false,
+        },
+        9.85,
+      );
+      tl.fromTo(
+        inner,
+        { x: innerX, y: innerY },
+        { x: 0, y: 0, duration: 2.35, ease: "power2.inOut", immediateRender: false },
+        9.85,
+      );
+
+      tl.fromTo(
+        wordSep,
+        { scale: 1.5, filter: "blur(10px)", opacity: 0 },
+        {
+          scale: 1,
+          filter: "blur(0px)",
+          opacity: 1,
+          duration: 0.5,
+          ease: "power4.out",
+          immediateRender: false,
+        },
+        0.4,
+      );
+      tl.fromTo(
+        wordCalc,
+        { y: 72, rotation: 5, opacity: 0 },
+        { y: 0, rotation: 0, opacity: 1, duration: 0.55, ease: "circ.out", immediateRender: false },
+        1.7,
+      );
+
+      tl.to(words, { scale: 1.2, filter: "blur(10px)", duration: 0.2, ease: "power3.in" }, 2.43);
+      tl.to(words, { opacity: 0.15, duration: 0.2, ease: "none" }, 2.43);
+      tl.set(words, { opacity: 0 }, 2.63);
+
+      tl.fromTo(
+        brutCard,
+        { opacity: 0.15, scale: 0.75, filter: "blur(10px)" },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: 0.5,
+          ease: "expo.out",
+          immediateRender: false,
+        },
+        2.53,
+      );
+
+      const brut = { value: 0 };
+      tl.to(
+        brut,
+        {
+          value: 1598214,
+          duration: 2.4,
+          ease: "power3.out",
+          onUpdate: function () {
+            brutNum.textContent = frNum(brut.value);
+          },
+        },
+        2.55,
+      );
+      tl.fromTo(
+        brutNum,
+        { scale: 0.5 },
+        { scale: 1, duration: 2.4, ease: "power3.out", immediateRender: false },
+        2.55,
+      );
+      tl.fromTo(
+        brutFill,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 2.4, ease: "power3.out", immediateRender: false },
+        2.55,
+      );
+      tl.fromTo(
+        brutLabel,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: false },
+        2.62,
+      );
+
+      tl.fromTo(
+        chipCotis,
+        { scale: 0, opacity: 0, y: 10 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out", immediateRender: false },
+        5.2,
+      );
+      tl.fromTo(
+        chipIts,
+        { scale: 0, opacity: 0, y: 10 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out", immediateRender: false },
+        6.12,
+      );
+
+      tl.to(brutCard, { scale: 0.8, filter: "blur(10px)", duration: 0.2, ease: "power3.in" }, 6.55);
+      tl.to(brutCard, { opacity: 0.15, duration: 0.2, ease: "none" }, 6.55);
+      tl.set(brutCard, { opacity: 0 }, 6.75);
+
+      tl.fromTo(
+        netHero,
+        { opacity: 0.15, scale: 1.25, filter: "blur(10px)" },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: 0.5,
+          ease: "expo.out",
+          immediateRender: false,
+        },
+        6.75,
+      );
+
+      const GLOW_PEAK = 0.28;
+      tl.fromTo(
+        netGlow,
+        { opacity: 0, scale: 0.84 },
+        { opacity: GLOW_PEAK, scale: 1, duration: 1.2, ease: "power2.out", immediateRender: false },
+        7.48,
+      );
+
+      const net = { value: 0 };
+      tl.to(
+        net,
+        {
+          value: 1409258,
+          duration: 1.55,
+          ease: "power3.out",
+          onUpdate: function () {
+            netNum.textContent = frNum(net.value);
+          },
+        },
+        7.48,
+      );
+      tl.fromTo(
+        netNum,
+        { scale: 0.5 },
+        { scale: 1, duration: 1.55, ease: "power3.out", immediateRender: false },
+        7.48,
+      );
+      tl.fromTo(
+        netLabel,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: false },
+        6.82,
+      );
+
+      const bloomEnd = 8.68;
+      const breatheDur = DURATION - bloomEnd;
+      const glowPhase = { p: 0 };
+      tl.to(
+        glowPhase,
+        {
+          p: Math.PI * 2 * (breatheDur / 3.2),
+          duration: breatheDur,
+          ease: "none",
+          onUpdate: function () {
+            const s = Math.sin(glowPhase.p);
+            netGlow.style.opacity = String(GLOW_PEAK + s * 0.04);
+            netGlow.style.transform = "scale(" + (1 + s * 0.02) + ")";
+          },
+        },
+        bloomEnd,
+      );
+
+      tl.fromTo(
+        sim,
+        { opacity: 0, scale: 0, y: 10 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.55,
+          ease: "power3.out",
+          immediateRender: false,
+        },
+        11.8,
+      );
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["08-prepaie"] = tl;
+    })();
+  </script>
+</template>
