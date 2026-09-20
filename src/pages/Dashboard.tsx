@@ -45,7 +45,7 @@ export function Dashboard() {
     const [empRes, depRes, leaveRes, periodRes, clockRes] = await Promise.all([
       supabase.from('employees').select('*').eq('org_id', orgId),
       supabase.from('departments').select('*').eq('org_id', orgId).order('name'),
-      supabase.from('leave_requests').select('*, employee:employees(*), leave_type:leave_types(*)')
+      supabase.from('leave_requests').select('*, employee:employees!employee_id(*), leave_type:leave_types!leave_type_id(*)')
         .eq('org_id', orgId).eq('status', 'pending')
         .order('created_at', { ascending: false }).limit(5),
       supabase.from('payroll_periods').select('*')
@@ -72,7 +72,7 @@ export function Dashboard() {
     if (p) {
       const { data: lineData, error: lineError } = await supabase
         .from('payroll_lines')
-        .select('*, employee:employees(*)')
+        .select('*, employee:employees!employee_id(*)')
         .eq('period_id', p.id);
       if (lineError) {
         setError(lineError.message);

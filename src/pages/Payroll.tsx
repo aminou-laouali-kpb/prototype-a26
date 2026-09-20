@@ -51,7 +51,7 @@ export function PayrollPage() {
     if (current) {
       if (selectedPeriodId !== current.id) setSelectedPeriodId(current.id);
       const lineRes = await supabase
-        .from('payroll_lines').select('*, employee:employees(*)').eq('period_id', current.id);
+        .from('payroll_lines').select('*, employee:employees!employee_id(*)').eq('period_id', current.id);
       setLines((lineRes.data ?? []) as PayrollLine[]);
     } else {
       if (selectedPeriodId !== null) setSelectedPeriodId(null);
@@ -684,7 +684,7 @@ function AnnualRecapModal({ orgId, org, onClose }: { orgId: string; org: Org; on
     const ids = (periodData ?? []).map((p: { id: string }) => p.id);
     if (ids.length === 0) { setRows([]); setLoading(false); return; }
     const { data: lineData } = await supabase
-      .from('payroll_lines').select('*, employee:employees(*)').in('period_id', ids);
+      .from('payroll_lines').select('*, employee:employees!employee_id(*)').in('period_id', ids);
     const byEmp = new Map<string, AnnualRow>();
     for (const l of (lineData ?? []) as PayrollLine[]) {
       const emp = l.employee;

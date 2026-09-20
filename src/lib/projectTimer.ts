@@ -36,7 +36,7 @@ export function formatHoursDecimal(hours: number): string {
 export async function fetchActiveTimer(employeeId: string, orgId?: string): Promise<ProjectTimer | null> {
   let query = supabase
     .from('project_timers')
-    .select('*, project:projects(*)')
+    .select('*, project:projects!project_id(*)')
     .eq('employee_id', employeeId);
   if (orgId) query = query.eq('org_id', orgId);
   const { data } = await query.maybeSingle();
@@ -46,7 +46,7 @@ export async function fetchActiveTimer(employeeId: string, orgId?: string): Prom
 export async function fetchTodayEntries(employeeId: string, orgId?: string): Promise<TimesheetEntry[]> {
   let query = supabase
     .from('timesheet_entries')
-    .select('*, project:projects(*)')
+    .select('*, project:projects!project_id(*)')
     .eq('employee_id', employeeId)
     .eq('work_date', todayStr())
     .order('created_at', { ascending: true });
@@ -80,7 +80,7 @@ export async function startTimer(
   const { data, error } = await supabase
     .from('project_timers')
     .insert({ org_id: orgId, employee_id: employeeId, project_id: projectId })
-    .select('*, project:projects(*)')
+    .select('*, project:projects!project_id(*)')
     .single();
   if (error) throw new Error(error.message);
   return (data ?? null) as ProjectTimer | null;
