@@ -1,0 +1,618 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Space Grotesk", sans-serif;
+    }
+    #root,
+    #root * {
+      box-sizing: border-box;
+    }
+
+    #root .clip {
+      position: absolute;
+      inset: 0;
+    }
+
+    #root [id="03-espace-demo-ground"] {
+      background: #f8fafc;
+    }
+
+    #root [id="03-espace-demo-scene"] {
+      overflow: hidden;
+    }
+
+    #root [id="03-espace-demo-zoom-outer"] {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    #root [id="03-espace-demo-zoom-inner"] {
+      position: absolute;
+      inset: 0;
+      perspective: 1600px;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    #root [id="03-espace-demo-plate"] {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    #root [id="03-espace-demo-shot"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #root [id="03-espace-demo-dim"] {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.22);
+    }
+
+    #root [id="03-espace-demo-overlays"] {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #root [id="03-espace-demo-title"] {
+      position: absolute;
+      left: 16cqw;
+      top: 6.4cqh;
+      max-width: 62cqw;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.1cqw;
+      transform-origin: 50% 50%;
+    }
+
+    #root [id="03-espace-demo-accent"] {
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #0284c7;
+      transform-origin: left center;
+    }
+
+    #root [id="03-espace-demo-words"] {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 1.2cqw;
+    }
+
+    #root [id="03-espace-demo-words"] span {
+      display: inline-block;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 4.2cqw;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #000000;
+      transform-origin: 50% 50%;
+    }
+
+    #root [id="03-espace-demo-stat-10"] {
+      position: absolute;
+      left: 10cqw;
+      top: 22cqh;
+      width: 28cqw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    #root [id="03-espace-demo-ring-wrap"] {
+      position: relative;
+      width: 20cqw;
+      height: 20cqw;
+    }
+
+    #root [id="03-espace-demo-ring-wrap"] svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    #root [id="03-espace-demo-count-10-slot"] {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #root [id="03-espace-demo-count-10"] {
+      display: inline-block;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 7.6cqw;
+      font-weight: 700;
+      line-height: 1;
+      color: #0284c7;
+      font-variant-numeric: tabular-nums;
+      transform-origin: center center;
+      width: 12cqw;
+      text-align: center;
+    }
+
+    #root [id="03-espace-demo-label-10"],
+    #root [id="03-espace-demo-label-masse"] {
+      margin-top: 1.1cqw;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.5cqw;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0284c7;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    #root [id="03-espace-demo-stat-masse"] {
+      position: absolute;
+      left: 26cqw;
+      top: 24cqh;
+      width: 48cqw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    #root [id="03-espace-demo-glow"] {
+      position: absolute;
+      left: -12cqw;
+      right: -12cqw;
+      top: -8cqh;
+      bottom: -6cqh;
+      z-index: 1;
+      background: radial-gradient(ellipse at 50% 42%, rgba(2, 132, 199, 0.55) 0%, rgba(2, 132, 199, 0) 68%);
+      transform-origin: 50% 50%;
+    }
+
+    #root [id="03-espace-demo-masse-inner"] {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    #root [id="03-espace-demo-count-masse-wrap"] {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      width: 48cqw;
+    }
+
+    #root [id="03-espace-demo-count-masse"] {
+      display: inline-block;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 5.2cqw;
+      font-weight: 700;
+      line-height: 1;
+      color: #0284c7;
+      font-variant-numeric: tabular-nums;
+      transform-origin: center center;
+      white-space: nowrap;
+      text-align: center;
+      width: 48cqw;
+    }
+
+    #root [id="03-espace-demo-demo-pill"] {
+      position: absolute;
+      top: 4.2cqw;
+      right: 5cqw;
+      z-index: 4;
+      padding: 0.72cqw 1.7cqw;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 100px;
+      color: #0284c7;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.45cqw;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+  </style>
+
+  <div id="root" data-composition-id="03-espace-demo" data-width="1920" data-height="1080" data-duration="18.233">
+    <div
+      id="03-espace-demo-ground"
+      class="clip"
+      data-start="0"
+      data-duration="18.233"
+      data-track-index="0"
+    ></div>
+
+    <div
+      id="03-espace-demo-scene"
+      class="clip"
+      data-start="0"
+      data-duration="18.233"
+      data-track-index="1"
+    >
+      <div id="03-espace-demo-zoom-outer">
+        <div id="03-espace-demo-zoom-inner">
+          <div id="03-espace-demo-plate">
+            <img
+              id="03-espace-demo-shot"
+              src="assets/02-tableau-de-bord.png"
+              alt=""
+              draggable="false"
+            />
+            <div id="03-espace-demo-dim"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="03-espace-demo-overlays">
+        <div id="03-espace-demo-title">
+          <div id="03-espace-demo-accent"></div>
+          <div id="03-espace-demo-words">
+            <span id="03-espace-demo-word-1">Distribution</span>
+            <span id="03-espace-demo-word-2">Ivoire</span>
+          </div>
+        </div>
+
+        <div id="03-espace-demo-stat-10">
+          <div id="03-espace-demo-ring-wrap">
+            <svg viewBox="0 0 200 200" aria-hidden="true">
+              <circle
+                id="03-espace-demo-ring-track"
+                cx="100"
+                cy="100"
+                r="88"
+                fill="none"
+                stroke="rgba(2, 132, 199, 0.15)"
+                stroke-width="8"
+              />
+              <circle
+                id="03-espace-demo-ring-fill"
+                cx="100"
+                cy="100"
+                r="88"
+                fill="none"
+                stroke="#0284C7"
+                stroke-width="8"
+                stroke-linecap="round"
+              />
+            </svg>
+            <div id="03-espace-demo-count-10-slot">
+              <span id="03-espace-demo-count-10">0</span>
+            </div>
+          </div>
+          <div id="03-espace-demo-label-10">Effectif</div>
+        </div>
+
+        <div id="03-espace-demo-stat-masse">
+          <div id="03-espace-demo-glow"></div>
+          <div id="03-espace-demo-masse-inner">
+            <div id="03-espace-demo-count-masse-wrap">
+              <span id="03-espace-demo-count-masse">0</span>
+            </div>
+            <div id="03-espace-demo-label-masse">Masse nette F CFA</div>
+          </div>
+        </div>
+
+        <div id="03-espace-demo-demo-pill">DÉMO</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const DUR = 18.233;
+      const byId = (id) => document.getElementById(id);
+
+      const outer = byId("03-espace-demo-zoom-outer");
+      const inner = byId("03-espace-demo-zoom-inner");
+      const plate = byId("03-espace-demo-plate");
+      const shot = byId("03-espace-demo-shot");
+      const dim = byId("03-espace-demo-dim");
+      const title = byId("03-espace-demo-title");
+      const accent = byId("03-espace-demo-accent");
+      const word1 = byId("03-espace-demo-word-1");
+      const word2 = byId("03-espace-demo-word-2");
+      const stat10 = byId("03-espace-demo-stat-10");
+      const ringFill = byId("03-espace-demo-ring-fill");
+      const count10 = byId("03-espace-demo-count-10");
+      const label10 = byId("03-espace-demo-label-10");
+      const statMasse = byId("03-espace-demo-stat-masse");
+      const glow = byId("03-espace-demo-glow");
+      const countMasse = byId("03-espace-demo-count-masse");
+      const labelMasse = byId("03-espace-demo-label-masse");
+      const pill = byId("03-espace-demo-demo-pill");
+
+      gsap.set(plate, {
+        rotationX: 6,
+        rotationY: -8,
+        scale: 1.1,
+        transformOrigin: "50% 50%",
+      });
+
+      const ringLen = ringFill.getTotalLength() || 2 * Math.PI * 88;
+      ringFill.style.strokeDasharray = String(ringLen);
+      ringFill.style.strokeDashoffset = String(ringLen);
+      ringFill.style.transformBox = "fill-box";
+      gsap.set(ringFill, {
+        rotation: -90,
+        transformOrigin: "50% 50%",
+      });
+
+      gsap.set(accent, { scaleX: 0 });
+      gsap.set([word1, word2], { opacity: 0 });
+      gsap.set(stat10, { opacity: 0, scale: 1, filter: "blur(0px)" });
+      gsap.set(label10, { opacity: 0, y: 12 });
+      gsap.set(statMasse, { opacity: 0, scale: 1, filter: "blur(0px)" });
+      gsap.set(labelMasse, { opacity: 0, y: 12 });
+      gsap.set(glow, { opacity: 0, scale: 0.84 });
+      gsap.set(pill, { opacity: 0, scale: 0, y: 10 });
+
+      const MASSE_TX = -(1413.5 - 960);
+      const MASSE_TY = -(225.5 - 540);
+
+      const cam = { scale: 1.02, x: 18, y: 12, p: 0 };
+      const applyCamera = () => {
+        const dx = Math.sin(cam.p) * 5;
+        const dy = Math.sin(cam.p * 1.32) * 2.4;
+        outer.style.transform = "scale(" + cam.scale + ")";
+        inner.style.transform = "translate(" + (cam.x + dx) + "px, " + (cam.y + dy) + "px)";
+      };
+      applyCamera();
+
+      const frNum = (n) =>
+        Math.round(n)
+          .toLocaleString("fr-FR")
+          .replace(/\u202f/g, " ")
+          .replace(/\u00a0/g, " ");
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.to(
+        cam,
+        {
+          p: Math.PI * 2 * 2,
+          duration: DUR,
+          ease: "none",
+          onUpdate: applyCamera,
+        },
+        0,
+      );
+
+      tl.to(
+        cam,
+        { scale: 1.1, x: 56, y: 34, duration: 2.25, ease: "power2.out", onUpdate: applyCamera },
+        0,
+      );
+      tl.to(
+        cam,
+        { scale: 1.18, x: 52, y: 30, duration: 2.66, ease: "power1.inOut", onUpdate: applyCamera },
+        2.25,
+      );
+      tl.to(
+        cam,
+        {
+          scale: 1.72,
+          x: MASSE_TX,
+          y: MASSE_TY,
+          duration: 2.55,
+          ease: "power3.inOut",
+          onUpdate: applyCamera,
+        },
+        4.91,
+      );
+      tl.to(
+        cam,
+        { scale: 1.12, x: -120, y: 72, duration: 2.5, ease: "power2.inOut", onUpdate: applyCamera },
+        8.57,
+      );
+
+      tl.fromTo(
+        shot,
+        { opacity: 0.78 },
+        { opacity: 1, duration: 0.45, ease: "power1.out" },
+        0,
+      );
+      tl.fromTo(dim, { opacity: 1 }, { opacity: 0.45, duration: 2.2, ease: "power1.out" }, 0);
+      tl.to(dim, { opacity: 0.28, duration: 2.4, ease: "power1.inOut" }, 4.91);
+      tl.to(dim, { opacity: 0.18, duration: 2.2, ease: "power1.out" }, 8.57);
+
+      tl.fromTo(
+        accent,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.42, ease: "power2.out", immediateRender: false },
+        1.28,
+      );
+      tl.fromTo(
+        word1,
+        { opacity: 0, scale: 1.38, filter: "blur(10px)" },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: 0.5,
+          ease: "power4.out",
+          immediateRender: false,
+        },
+        1.48,
+      );
+      tl.fromTo(
+        word2,
+        { opacity: 0, y: 56 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "circ.out", immediateRender: false },
+        2.05,
+      );
+
+      tl.to(title, { scale: 1.2, filter: "blur(10px)", duration: 0.2, ease: "power3.in" }, 2.72);
+      tl.to(title, { opacity: 0.15, duration: 0.2, ease: "none" }, 2.72);
+      tl.set(title, { opacity: 0 }, 2.92);
+
+      tl.fromTo(
+        stat10,
+        { opacity: 0.15, scale: 0.75, filter: "blur(10px)" },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: 0.5,
+          ease: "expo.out",
+          immediateRender: false,
+        },
+        2.92,
+      );
+
+      const ten = { value: 0 };
+      tl.to(
+        ten,
+        {
+          value: 10,
+          duration: 1.28,
+          ease: "power3.out",
+          onUpdate: () => {
+            count10.textContent = String(Math.round(ten.value));
+          },
+        },
+        2.98,
+      );
+      tl.fromTo(
+        count10,
+        { scale: 0.5 },
+        { scale: 1, duration: 1.28, ease: "power3.out", immediateRender: false },
+        2.98,
+      );
+      tl.fromTo(
+        ringFill,
+        { strokeDashoffset: ringLen },
+        { strokeDashoffset: 0, duration: 1.28, ease: "power3.out", immediateRender: false },
+        2.98,
+      );
+      tl.fromTo(
+        label10,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.48, ease: "power2.out", immediateRender: false },
+        3.05,
+      );
+
+      tl.to(stat10, { scale: 1.2, filter: "blur(10px)", duration: 0.2, ease: "power3.in" }, 4.85);
+      tl.to(stat10, { opacity: 0.15, duration: 0.2, ease: "none" }, 4.85);
+      tl.set(stat10, { opacity: 0 }, 5.05);
+
+      tl.fromTo(
+        statMasse,
+        { opacity: 0.15, scale: 0.75, filter: "blur(10px)" },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: 0.5,
+          ease: "expo.out",
+          immediateRender: false,
+        },
+        5.05,
+      );
+
+      const GLOW_PEAK = 0.28;
+      tl.fromTo(
+        glow,
+        { opacity: 0, scale: 0.84 },
+        { opacity: GLOW_PEAK, scale: 1, duration: 1.15, ease: "power2.out", immediateRender: false },
+        6.4,
+      );
+      const glowPhase = { p: 0 };
+      tl.to(
+        glowPhase,
+        {
+          p: Math.PI * 2 * 3,
+          duration: 10.4,
+          ease: "none",
+          onUpdate: () => {
+            const s = Math.sin(glowPhase.p);
+            glow.style.opacity = String(GLOW_PEAK + s * 0.04);
+            glow.style.transform = "scale(" + (1 + s * 0.02) + ")";
+          },
+        },
+        7.55,
+      );
+
+      const masse = { value: 0 };
+      tl.to(
+        masse,
+        {
+          value: 1409258,
+          duration: 2.05,
+          ease: "power3.out",
+          onUpdate: () => {
+            countMasse.textContent = frNum(masse.value);
+          },
+        },
+        5.5,
+      );
+      tl.fromTo(
+        countMasse,
+        { scale: 0.55 },
+        { scale: 1, duration: 2.05, ease: "power3.out", immediateRender: false },
+        5.5,
+      );
+      tl.fromTo(
+        labelMasse,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.55, ease: "power2.out", immediateRender: false },
+        5.62,
+      );
+
+      tl.fromTo(
+        pill,
+        { opacity: 0, scale: 0, y: 10 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.55,
+          ease: "power3.out",
+          immediateRender: false,
+        },
+        8.57,
+      );
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["03-espace-demo"] = tl;
+    })();
+  </script>
+</template>
