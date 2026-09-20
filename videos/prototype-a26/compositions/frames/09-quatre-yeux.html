@@ -1,0 +1,297 @@
+<template>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+    }
+
+    #root *,
+    #root *::before,
+    #root *::after {
+      box-sizing: border-box;
+    }
+
+    #root > .clip {
+      position: absolute;
+      inset: 0;
+    }
+
+    #f-09-quatre-yeux-bg {
+      background: #F8FAFC;
+    }
+
+    #f-09-quatre-yeux-payroll-screen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    #f-09-quatre-yeux-payroll-screen img {
+      display: block;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+    }
+
+    #f-09-quatre-yeux-veil {
+      position: absolute;
+      inset: 0;
+      background: #F8FAFC;
+      opacity: 0.6;
+      pointer-events: none;
+      clip-path: polygon(-40% 140%, -10% 170%, -20% 180%, -50% 150%);
+    }
+
+    #f-09-quatre-yeux-sweep {
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    #f-09-quatre-yeux-pill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: block;
+      width: 38cqw;
+      height: 7.2cqw;
+      border-radius: 100px;
+      background: #0284C7;
+    }
+
+    #f-09-quatre-yeux-lockup {
+      pointer-events: none;
+    }
+
+    #f-09-quatre-yeux-card-idle {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      width: 52cqw;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: -8.4cqw;
+    }
+
+    #f-09-quatre-yeux-card {
+      display: block;
+      width: 100%;
+      padding: 3.4cqw 4cqw 3.6cqw;
+      background: linear-gradient(rgba(2, 132, 199, 0.04), rgba(2, 132, 199, 0.04)), #F8FAFC;
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    #f-09-quatre-yeux-rule {
+      width: 60px;
+      height: 4px;
+      margin: 0 auto 1.5cqw;
+      border-radius: 2px;
+      background: #0284C7;
+    }
+
+    #f-09-quatre-yeux-headline {
+      margin: 0 0 1.2cqw;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 4.2cqw;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #000000;
+    }
+
+    #f-09-quatre-yeux-lines {
+      position: relative;
+      width: 100%;
+      height: 2.6cqw;
+    }
+
+    #f-09-quatre-yeux-line-a,
+    #f-09-quatre-yeux-line-b {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      margin: 0;
+      font-family: Inter, sans-serif;
+      font-weight: 400;
+      font-size: 1.5cqw;
+      line-height: 1.6;
+      color: #38BDF8;
+      white-space: nowrap;
+    }
+
+    #f-09-quatre-yeux-line-b {
+      opacity: 0;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="09-quatre-yeux"
+    data-width="1920"
+    data-height="1080"
+    data-duration="14.736"
+  >
+    <div
+      class="clip"
+      id="f-09-quatre-yeux-bg"
+      data-start="0"
+      data-duration="14.736"
+      data-track-index="0"
+    ></div>
+
+    <div
+      class="clip"
+      id="f-09-quatre-yeux-plate"
+      data-start="0"
+      data-duration="14.736"
+      data-track-index="1"
+      data-layout-allow-caption-zone="true"
+    >
+      <div id="f-09-quatre-yeux-payroll-screen">
+        <img src="assets/07-prepaie.png" alt="" width="1920" height="1080" />
+        <div id="f-09-quatre-yeux-veil"></div>
+      </div>
+    </div>
+
+    <div
+      class="clip"
+      id="f-09-quatre-yeux-sweep"
+      data-start="1.14"
+      data-duration="1.22"
+      data-track-index="2"
+      data-layout-allow-overflow="true"
+    >
+      <div id="f-09-quatre-yeux-pill"></div>
+    </div>
+
+    <div
+      class="clip"
+      id="f-09-quatre-yeux-lockup"
+      data-start="1.14"
+      data-duration="13.596"
+      data-track-index="3"
+    >
+      <div id="f-09-quatre-yeux-card-idle">
+        <div id="f-09-quatre-yeux-card">
+          <div id="f-09-quatre-yeux-rule"></div>
+          <p id="f-09-quatre-yeux-headline">Quatre yeux</p>
+          <div id="f-09-quatre-yeux-lines">
+            <p id="f-09-quatre-yeux-line-a">Le préparateur ne valide pas</p>
+            <p id="f-09-quatre-yeux-line-b">Un second regard, puis le verrouillage</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const DURATION = 14.236;
+      const CLIP_HIDDEN = "polygon(-40% 140%, -10% 170%, -20% 180%, -50% 150%)";
+      const CLIP_SHOWN = "polygon(-40% 140%, 140% -40%, 170% -10%, -10% 170%)";
+      const root = document.querySelector('[data-composition-id="09-quatre-yeux"]');
+      const el = (id) => root.querySelector('[id="' + id + '"]');
+
+      const screen = el("f-09-quatre-yeux-payroll-screen");
+      const veil = el("f-09-quatre-yeux-veil");
+      const pill = el("f-09-quatre-yeux-pill");
+      const card = el("f-09-quatre-yeux-card");
+      const idle = el("f-09-quatre-yeux-card-idle");
+      const lineA = el("f-09-quatre-yeux-line-a");
+      const lineB = el("f-09-quatre-yeux-line-b");
+
+      gsap.set(screen, {
+        x: 960,
+        y: 486,
+        xPercent: -50,
+        yPercent: -50,
+        scale: 0.88,
+        opacity: 1,
+        transformOrigin: "50% 50%",
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(
+        veil,
+        { clipPath: CLIP_HIDDEN },
+        { clipPath: CLIP_SHOWN, duration: 1.14, ease: "power2.inOut" },
+        1.14
+      );
+
+      tl.fromTo(
+        pill,
+        { x: -420, y: 920, rotation: -36 },
+        { x: 1960, y: -220, rotation: -36, duration: 1.14, ease: "power2.inOut" },
+        1.14
+      );
+
+      tl.fromTo(
+        card,
+        { opacity: 0, y: 28, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.72, ease: "power2.out" },
+        1.38
+      );
+
+      tl.fromTo(
+        lineA,
+        { opacity: 1, y: 0 },
+        { opacity: 0, y: -22, duration: 0.62, ease: "power2.inOut" },
+        3.1
+      );
+
+      tl.fromTo(
+        lineB,
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.62, ease: "power2.inOut" },
+        3.1
+      );
+
+      const clock = { t: 0 };
+      const idleStart = 3.88;
+      const idleDur = DURATION - idleStart;
+      const period = 3.6;
+      tl.to(
+        clock,
+        {
+          t: DURATION,
+          duration: DURATION,
+          ease: "none",
+          onUpdate: function () {
+            const t = clock.t;
+            if (t <= idleStart) {
+              gsap.set(idle, { y: 0 });
+              return;
+            }
+            const u = (t - idleStart) / idleDur;
+            const env = u < 0.8 ? 1 : (1 - u) / 0.2;
+            const s = Math.sin(((t - idleStart) / period) * Math.PI * 2);
+            gsap.set(idle, { y: s * 2 * env });
+          },
+        },
+        0
+      );
+
+      window.__timelines["09-quatre-yeux"] = tl;
+    })();
+  </script>
+</template>

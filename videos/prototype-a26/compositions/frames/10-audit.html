@@ -1,0 +1,359 @@
+<template>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+    }
+
+    #root .clip {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    [id="f-10-audit-bg"] {
+      background: #f8fafc;
+    }
+
+    [id="f-10-audit-tilt"] {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    [id="f-10-audit-page"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      will-change: transform;
+    }
+
+    [id="f-10-audit-shot"] {
+      display: block;
+      width: 1920px;
+      height: 1080px;
+      max-width: none;
+    }
+
+    [id="f-10-audit-hl-wrap"] {
+      position: absolute;
+      left: 288px;
+      top: 164px;
+      width: 1279px;
+      height: 50px;
+      overflow: hidden;
+      border-radius: 10px;
+      pointer-events: none;
+    }
+
+    [id="f-10-audit-hl-bar"] {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 132, 199, 0.24);
+      border-left: 4px solid #0284c7;
+      transform-origin: left center;
+      border-radius: 10px;
+    }
+
+    [id="f-10-audit-circle"] {
+      position: absolute;
+      left: 378px;
+      top: 189px;
+      width: 168px;
+      height: 62px;
+      border: 3px solid #0284c7;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    [id="f-10-audit-spotlight"] {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse 58% 32% at 42% 26%,
+        transparent 42%,
+        rgba(15, 23, 42, 0.4) 100%
+      );
+    }
+
+    [id="f-10-audit-dim"] {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: rgba(15, 23, 42, 0.34);
+    }
+
+    [id="f-10-audit-title"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      margin: 0;
+      padding: 0.45cqw 1.1cqw;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 3.6cqw;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #000000;
+      white-space: nowrap;
+      background: rgba(248, 250, 252, 0.92);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 12px;
+    }
+
+    [id="f-10-audit-card"] {
+      position: absolute;
+      left: 5cqw;
+      top: 520px;
+      width: 22.5cqw;
+      padding: 1.5cqw 1.7cqw 1.4cqw;
+      background: rgba(2, 132, 199, 0.04);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 14px;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    [id="f-10-audit-accent"] {
+      display: block;
+      width: 60px;
+      height: 4px;
+      margin: 0 0 1.1cqw;
+      background: #0284c7;
+      border-radius: 2px;
+    }
+
+    [id="f-10-audit-item-qui"],
+    [id="f-10-audit-item-quoi"],
+    [id="f-10-audit-item-quand"] {
+      display: block;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 2.15cqw;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: #000000;
+      transform-origin: 0% 50%;
+      will-change: transform;
+    }
+
+    [id="f-10-audit-item-quoi"],
+    [id="f-10-audit-item-quand"] {
+      margin-top: 0.35cqw;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="10-audit"
+    data-width="1920"
+    data-height="1080"
+    data-duration="14.601"
+  >
+    <div
+      id="f-10-audit-bg"
+      class="clip"
+      data-start="0"
+      data-duration="14.601"
+      data-track-index="0"
+    ></div>
+
+    <div
+      id="f-10-audit-stage"
+      class="clip"
+      data-start="0"
+      data-duration="14.601"
+      data-track-index="1"
+    >
+      <div id="f-10-audit-tilt">
+        <div id="f-10-audit-page" data-layout-allow-overflow>
+          <img
+            id="f-10-audit-shot"
+            src="assets/09-audit.png"
+            width="1920"
+            height="1080"
+            alt=""
+          />
+          <div id="f-10-audit-hl-wrap">
+            <div id="f-10-audit-hl-bar"></div>
+          </div>
+          <div id="f-10-audit-circle"></div>
+        </div>
+        <div id="f-10-audit-spotlight"></div>
+        <div id="f-10-audit-dim"></div>
+      </div>
+    </div>
+
+    <div
+      id="f-10-audit-chrome"
+      class="clip"
+      data-start="0"
+      data-duration="14.601"
+      data-track-index="2"
+    >
+      <h2 id="f-10-audit-title">Journal d’audit</h2>
+    </div>
+
+    <div
+      id="f-10-audit-artifact"
+      class="clip"
+      data-start="0"
+      data-duration="14.601"
+      data-track-index="3"
+    >
+      <div id="f-10-audit-card">
+        <span id="f-10-audit-accent"></span>
+        <span id="f-10-audit-item-qui">qui</span>
+        <span id="f-10-audit-item-quoi">quoi</span>
+        <span id="f-10-audit-item-quand">quand</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const root = document.querySelector('[data-composition-id="10-audit"]');
+      if (!root || typeof gsap === "undefined") return;
+
+      const page = root.querySelector('[id="f-10-audit-page"]');
+      const title = root.querySelector('[id="f-10-audit-title"]');
+      const hlBar = root.querySelector('[id="f-10-audit-hl-bar"]');
+      const circle = root.querySelector('[id="f-10-audit-circle"]');
+      const spotlight = root.querySelector('[id="f-10-audit-spotlight"]');
+      const dim = root.querySelector('[id="f-10-audit-dim"]');
+      const card = root.querySelector('[id="f-10-audit-card"]');
+      const qui = root.querySelector('[id="f-10-audit-item-qui"]');
+      const quoi = root.querySelector('[id="f-10-audit-item-quoi"]');
+      const quand = root.querySelector('[id="f-10-audit-item-quand"]');
+
+      const SCALE = 2.35;
+      const PAGE_X = -599;
+      const SCROLL_Y = -170;
+
+      gsap.set(page, {
+        x: PAGE_X,
+        y: 0,
+        scale: SCALE,
+        transformOrigin: "0% 0%",
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1 — title docks, then vertical element scroll (tilt 0)
+      tl.fromTo(
+        title,
+        { x: 960, y: 324, xPercent: -50, yPercent: -50, scale: 1, opacity: 0 },
+        {
+          x: 960,
+          y: 324,
+          xPercent: -50,
+          yPercent: -50,
+          scale: 1,
+          opacity: 1,
+          duration: 0.38,
+          ease: "power3.out",
+        },
+        0.08,
+      );
+      tl.to(
+        title,
+        {
+          x: 96,
+          y: 64,
+          xPercent: 0,
+          yPercent: 0,
+          scale: 0.5,
+          duration: 0.92,
+          ease: "power3.out",
+        },
+        0.5,
+      );
+      tl.to(
+        page,
+        { y: SCROLL_Y, duration: 1.68, ease: "power3.out" },
+        1.18,
+      );
+
+      // Scene 2 — hinge: highlight sweep on Calcul de paie + timestamp circle
+      tl.fromTo(
+        spotlight,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: "power1.inOut" },
+        3.12,
+      );
+      tl.fromTo(
+        hlBar,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.5, ease: "power2.out" },
+        3.24,
+      );
+      tl.fromTo(
+        circle,
+        { xPercent: -50, yPercent: -50, scale: 0, rotation: -3 },
+        {
+          xPercent: -50,
+          yPercent: -50,
+          scale: 1,
+          rotation: -3,
+          duration: 0.55,
+          ease: "power3.out",
+        },
+        3.38,
+      );
+
+      // Scene 3 — artifact lockup qui · quoi · quand, then hold
+      tl.fromTo(
+        dim,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.48, ease: "power1.inOut" },
+        4.46,
+      );
+      tl.fromTo(
+        card,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.58, ease: "power3.out" },
+        4.46,
+      );
+      tl.fromTo(
+        qui,
+        { scale: 0.6, opacity: 0, y: 10 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+        4.52,
+      );
+      tl.fromTo(
+        quoi,
+        { scale: 0.6, opacity: 0, y: 10 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+        5.1,
+      );
+      tl.fromTo(
+        quand,
+        { scale: 0.6, opacity: 0, y: 10 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
+        6.16,
+      );
+
+      window.__timelines["10-audit"] = tl;
+    })();
+  </script>
+</template>

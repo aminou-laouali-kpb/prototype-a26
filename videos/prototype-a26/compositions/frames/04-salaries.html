@@ -1,0 +1,447 @@
+<template>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Inter", sans-serif;
+      color: #000000;
+    }
+
+    #root [data-hf="bg"] {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 78% 58% at 50% 36%, rgba(2, 132, 199, 0.1) 0%, transparent 64%),
+        #f8fafc;
+    }
+
+    #root [data-hf="stage"] {
+      position: absolute;
+      inset: 0;
+      perspective: 1400px;
+      perspective-origin: 50% 38%;
+    }
+
+    #root [data-hf="accent"] {
+      position: absolute;
+      left: 9.2cqw;
+      top: 36px;
+      width: 81.6cqw;
+      height: 792px;
+      background: rgba(2, 132, 199, 0.04);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 14px;
+      transform-origin: 50% 50%;
+    }
+
+    #root [data-hf="window"] {
+      position: absolute;
+      left: 11cqw;
+      top: 56px;
+      width: 78cqw;
+      height: 700px;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    #root [data-hf="tilt"] {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f8fafc;
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      transform: perspective(1400px) rotateY(-5deg) rotateX(2.4deg);
+      transform-style: preserve-3d;
+    }
+
+    #root [data-hf="chrome"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 0.7cqw;
+      padding: 0 1cqw;
+      background: rgba(2, 132, 199, 0.04);
+      border-bottom: 1.5px solid rgba(2, 132, 199, 0.2);
+      z-index: 2;
+    }
+
+    #root [data-hf="lights"] {
+      display: flex;
+      align-items: center;
+      gap: 0.35cqw;
+      flex-shrink: 0;
+    }
+
+    #root [data-hf="dot"] {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #9a9a9a;
+    }
+
+    #root [data-hf="dot"][data-tone="mid"] {
+      background: #38bdf8;
+    }
+
+    #root [data-hf="dot"][data-tone="on"] {
+      background: #0284c7;
+    }
+
+    #root [data-hf="url"] {
+      margin-left: 0.4cqw;
+      min-width: 12cqw;
+      height: 26px;
+      padding: 0 0.9cqw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 100px;
+      color: #0c4a6e;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    #root [data-hf="viewport"] {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+
+    #root [data-hf="surface"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      will-change: transform;
+    }
+
+    #root [data-hf="shot"] {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    #root [data-hf="glow"] {
+      position: absolute;
+      display: block;
+      border-radius: 8px;
+      pointer-events: none;
+      opacity: 0;
+      background: rgba(2, 132, 199, 0.18);
+      box-shadow: 0 0 0 rgba(2, 132, 199, 0);
+      transform-origin: 50% 50%;
+    }
+
+    #root [data-word="matricules"][data-hf="glow"] {
+      left: 13.96%;
+      top: 20.19%;
+      width: 8.75%;
+      height: 3.89%;
+    }
+
+    #root [data-word="postes"][data-hf="glow"] {
+      left: 34.79%;
+      top: 20.19%;
+      width: 10.42%;
+      height: 3.89%;
+    }
+
+    #root [data-word="services"][data-hf="glow"] {
+      left: 47.92%;
+      top: 20.19%;
+      width: 11.46%;
+      height: 3.89%;
+    }
+
+    #root [data-word="salaires"][data-hf="glow"] {
+      left: 60.42%;
+      top: 20.19%;
+      width: 11.98%;
+      height: 3.89%;
+    }
+
+    #root [data-word="paiement"][data-hf="glow"] {
+      left: 72.7%;
+      top: 20.19%;
+      width: 8.4%;
+      height: 3.89%;
+    }
+
+    #root [data-hf="rail"] {
+      position: absolute;
+      left: 83.4cqw;
+      top: 196px;
+      width: 14.8cqw;
+      height: 72px;
+      z-index: 4;
+    }
+
+    #root [data-hf="label"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: block;
+      width: 100%;
+      min-width: 14.8cqw;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.45cqw;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+      text-transform: uppercase;
+      color: #0c4a6e;
+      white-space: nowrap;
+      transform-origin: 0% 50%;
+    }
+
+    #root [data-hf="pill"] {
+      position: absolute;
+      top: 64px;
+      right: 3.2cqw;
+      z-index: 5;
+      padding: 0.55cqw 1.15cqw;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 100px;
+      color: #0c4a6e;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.4cqw;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      transform-origin: 50% 50%;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="04-salaries"
+    data-width="1920"
+    data-height="1080"
+    data-duration="13.819"
+  >
+    <div
+      id="f-04-salaries-bg"
+      class="clip"
+      data-hf="bg"
+      data-start="0"
+      data-duration="13.819"
+      data-track-index="0"
+    ></div>
+
+    <div
+      id="f-04-salaries-stage"
+      class="clip"
+      data-hf="stage"
+      data-start="0"
+      data-duration="13.819"
+      data-track-index="1"
+    >
+      <div id="f-04-salaries-accent" data-hf="accent"></div>
+
+      <div id="f-04-salaries-window" data-hf="window" data-layout-allow-overflow>
+        <div id="f-04-salaries-tilt" data-hf="tilt">
+          <div data-hf="chrome">
+            <div data-hf="lights">
+              <span data-hf="dot"></span>
+              <span data-hf="dot" data-tone="mid"></span>
+              <span data-hf="dot" data-tone="on"></span>
+            </div>
+            <div data-hf="url">Salariés</div>
+          </div>
+          <div id="f-04-salaries-viewport" data-hf="viewport">
+            <div id="f-04-salaries-surface" data-hf="surface" data-layout-allow-overflow>
+              <img
+                id="f-04-salaries-shot"
+                data-hf="shot"
+                src="assets/03-salaries.png"
+                width="1920"
+                height="1080"
+                alt=""
+              />
+              <span class="f-04-salaries-glow" data-hf="glow" data-word="matricules"></span>
+              <span class="f-04-salaries-glow" data-hf="glow" data-word="postes"></span>
+              <span class="f-04-salaries-glow" data-hf="glow" data-word="services"></span>
+              <span class="f-04-salaries-glow" data-hf="glow" data-word="salaires"></span>
+              <span class="f-04-salaries-glow" data-hf="glow" data-word="paiement"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="f-04-salaries-rail" data-hf="rail" data-layout-allow-overflow>
+        <span class="f-04-salaries-label" data-hf="label" data-word="matricules">Matricules</span>
+        <span class="f-04-salaries-label" data-hf="label" data-word="postes">Postes</span>
+        <span class="f-04-salaries-label" data-hf="label" data-word="services">Services</span>
+        <span class="f-04-salaries-label" data-hf="label" data-word="salaires">Salaires</span>
+        <span class="f-04-salaries-label" data-hf="label" data-word="paiement">Paiement</span>
+      </div>
+
+      <div id="f-04-salaries-pill" data-hf="pill">« Données fictives »</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const DURATION = 13.419;
+      const SCROLL_AT = 1.17;
+      const SCROLL_DUR = 3.28;
+      const SCROLL_DISTANCE = 136;
+      const ATTACK_DUR = 0.16;
+      const RELEASE = 0.34;
+      const REST_LEVEL = 0.16;
+      const MAX_BLUR = 34;
+      const MAX_SCALE_BOOST = 0.06;
+
+      const TIMINGS = {
+        matricules: { start: 1.396, end: 2.052 },
+        postes: { start: 2.109, end: 2.6 },
+        services: { start: 2.643, end: 3.217 },
+        salaires: { start: 3.266, end: 4.121 },
+        paiement: { start: 4.157, end: 5.514 },
+      };
+
+      const LABEL_ORDER = ["matricules", "postes", "services", "salaires", "paiement"];
+
+      const stage = document.getElementById("f-04-salaries-stage");
+      const win = document.getElementById("f-04-salaries-window");
+      const accent = document.getElementById("f-04-salaries-accent");
+      const surface = document.getElementById("f-04-salaries-surface");
+      const pill = document.getElementById("f-04-salaries-pill");
+      const glowEls = stage.querySelectorAll("[data-hf='glow']");
+      const labelEls = stage.querySelectorAll("[data-hf='label']");
+
+      function envelope(time, start, end) {
+        if (time < start) return 0;
+        if (time < end) return Math.min((time - start) / ATTACK_DUR, 1);
+        const releaseEnd = end + RELEASE;
+        if (time < releaseEnd) return 1 - ((time - end) / RELEASE) * (1 - REST_LEVEL);
+        return REST_LEVEL;
+      }
+
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(win, { x: -1180 });
+      gsap.set(accent, { scale: 0.86, opacity: 0 });
+      gsap.set(pill, { scale: 0, opacity: 0 });
+      gsap.set(labelEls, { y: 18, opacity: 0 });
+
+      tl.fromTo(
+        win,
+        { x: -1180 },
+        { x: 0, duration: 1.12, ease: "power3.out" },
+        0,
+      );
+
+      tl.fromTo(
+        accent,
+        { scale: 0.86, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.92, ease: "power3.out" },
+        0.04,
+      );
+
+      tl.to(
+        surface,
+        { y: -SCROLL_DISTANCE, duration: SCROLL_DUR, ease: "power3.out" },
+        SCROLL_AT,
+      );
+
+      LABEL_ORDER.forEach((key, i) => {
+        const el = stage.querySelector("[data-hf='label'][data-word='" + key + "']");
+        const at = TIMINGS[key].start;
+        if (i > 0) {
+          const prev = stage.querySelector(
+            "[data-hf='label'][data-word='" + LABEL_ORDER[i - 1] + "']",
+          );
+          tl.to(prev, { y: -16, opacity: 0, duration: 0.18, ease: "power2.in" }, at);
+        }
+        tl.fromTo(
+          el,
+          { y: 16, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.26, ease: "power3.out" },
+          at + 0.03,
+        );
+      });
+
+      const glowDriver = { t: 0 };
+      tl.to(
+        glowDriver,
+        {
+          t: DURATION,
+          duration: DURATION,
+          ease: "none",
+          onUpdate: function () {
+            const time = glowDriver.t;
+            glowEls.forEach(function (el) {
+              const timing = TIMINGS[el.getAttribute("data-word")];
+              if (!timing) return;
+              const env = envelope(time, timing.start, timing.end);
+              el.style.opacity = String(env);
+              el.style.background = "rgba(2, 132, 199, " + (0.12 + 0.26 * env) + ")";
+              el.style.boxShadow = "0 0 " + MAX_BLUR * env + "px rgba(2, 132, 199, " + 0.5 * env + ")";
+              el.style.transform = "scale(" + (1 + MAX_SCALE_BOOST * env) + ")";
+            });
+          },
+        },
+        0,
+      );
+
+      tl.fromTo(
+        pill,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.55, ease: "power3.out" },
+        5.582,
+      );
+
+      const idleStart = 6.18;
+      const idleDur = DURATION - idleStart;
+      const cycles = idleDur / 2.45;
+      const jitter = { p: 0 };
+      tl.to(
+        jitter,
+        {
+          p: Math.PI * 2 * cycles,
+          duration: idleDur,
+          ease: "none",
+          onUpdate: function () {
+            const t = jitter.p / (Math.PI * 2 * cycles);
+            const fade = t < 0.8 ? 1 : (1 - t) / 0.2;
+            gsap.set(pill, { y: Math.sin(jitter.p) * 2.2 * fade });
+          },
+        },
+        idleStart,
+      );
+
+      window.__timelines["04-salaries"] = tl;
+    })();
+  </script>
+</template>
