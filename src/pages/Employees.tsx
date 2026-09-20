@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSession } from '../lib/session';
 import {
   Employee, Department, Contract, formatXof, statusLabel, STATUS_COLORS,
 } from '../lib/types';
+import { parseEmployeeCsv, employeeImportTemplateCsv } from '../lib/employeeImport';
 import { Modal, Field, inputClass, ErrorBanner, Spinner, EmptyState, useAsyncAction } from '../components/ui';
-import { Users, Plus, Search, Pencil, Download } from 'lucide-react';
+import { Users, Plus, Search, Pencil, Download, Upload } from 'lucide-react';
 
 export function EmployeesPage() {
   const { activeOrg, activeRole, session } = useSession();
@@ -15,6 +16,9 @@ export function EmployeesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Employee | 'new' | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importBusy, setImportBusy] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const canEdit = activeRole === 'admin_rh';
 
   const load = useCallback(async () => {
@@ -71,6 +75,100 @@ export function EmployeesPage() {
     URL.revokeObjectURL(url);
   };
 
+  const downloadTemplate = () => {
+    const csv = employeeImportTemplateCsv(activeOrg?.country_code);
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'modele-import-salaries.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const onImportFile = async (file: File) => {
+    if (!activeOrg || !canEdit) return;
+    setImportBusy(true);
+    setImportError(null);
+    try {
+      const text = await file.text();
+      const { rows, errors } = parseEmployeeCsv(text, activeOrg.country_code);
+      if (errors.length && rows.length === 0) {
+        setImportError(errors.join(' '));
+        return;
+      }
+      for (const row of rows) {
+        const { data: existing } = await supabase
+          .from('employees')
+          .select('id')
+          .eq('org_id', activeOrg.id)
+          .eq('employee_number', row.employee_number)
+          .maybeSingle();
+        let empId = existing?.id as string | undefined;
+        if (empId) {
+          const { error: empErr } = await supabase.from('employees').update({
+            last_name: row.last_name,
+            first_name: row.first_name,
+            job_title: row.job_title,
+            phone: row.phone,
+            email: row.email,
+            payment_method: row.payment_method,
+            mobile_operator: row.mobile_operator,
+            payment_account: row.payment_account,
+            hire_date: row.hire_date,
+          }).eq('id', empId);
+          if (empErr) throw new Error(empErr.message);
+        } else {
+          const { data: emp, error: empErr } = await supabase
+            .from('employees')
+            .insert({
+              org_id: activeOrg.id,
+              employee_number: row.employee_number,
+              last_name: row.last_name,
+              first_name: row.first_name,
+              job_title: row.job_title,
+              phone: row.phone,
+              email: row.email,
+              payment_method: row.payment_method,
+              mobile_operator: row.mobile_operator,
+              payment_account: row.payment_account,
+              hire_date: row.hire_date,
+              status: 'active',
+            })
+            .select('id')
+            .single();
+          if (empErr) throw new Error(empErr.message);
+          empId = emp.id;
+        }
+        if (empId && row.base_salary != null && row.contract_type) {
+          await supabase.from('contracts').update({ is_current: false }).eq('employee_id', empId).eq('is_current', true);
+          await supabase.from('contracts').insert({
+            org_id: activeOrg.id,
+            employee_id: empId,
+            contract_type: row.contract_type,
+            start_date: row.hire_date || new Date().toISOString().slice(0, 10),
+            base_salary: row.base_salary,
+            monthly_hours: 173.33,
+            is_current: true,
+          });
+        }
+      }
+      await supabase.from('audit_log').insert({
+        org_id: activeOrg.id,
+        actor: session?.user.id ?? null,
+        action: 'import_employees',
+        entity: 'employees',
+        details: { count: rows.length, warnings: errors },
+      });
+      await load();
+      if (errors.length) setImportError(`Import partiel : ${rows.length} lignes OK. ${errors.slice(0, 3).join(' ')}`);
+    } catch (e) {
+      setImportError(e instanceof Error ? e.message : 'Import impossible.');
+    } finally {
+      setImportBusy(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -78,17 +176,41 @@ export function EmployeesPage() {
           <h1 className="text-2xl font-bold text-slate-900">Salariés</h1>
           <p className="text-sm text-slate-500 mt-1">Dossiers du personnel, contrats et coordonnées de paiement.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button onClick={exportCsv} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
             <Download className="w-4 h-4" /> Exporter
           </button>
           {canEdit && (
-            <button onClick={() => setEditing('new')} className="rounded-lg bg-teal-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition inline-flex items-center gap-2">
-              <Plus className="w-4 h-4" /> Ajouter un salarié
-            </button>
+            <>
+              <button onClick={downloadTemplate} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
+                <Download className="w-4 h-4" /> Modèle Excel/CSV
+              </button>
+              <button
+                disabled={importBusy}
+                onClick={() => fileRef.current?.click()}
+                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2 disabled:opacity-50"
+              >
+                <Upload className="w-4 h-4" /> {importBusy ? 'Import…' : 'Importer CSV'}
+              </button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".csv,text/csv"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) onImportFile(f);
+                }}
+              />
+              <button onClick={() => setEditing('new')} className="rounded-lg bg-teal-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition inline-flex items-center gap-2">
+                <Plus className="w-4 h-4" /> Ajouter un salarié
+              </button>
+            </>
           )}
         </div>
       </div>
+
+      <ErrorBanner message={importError} />
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

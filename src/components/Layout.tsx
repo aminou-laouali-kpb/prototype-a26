@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   Clock, LayoutDashboard, Users, CalendarCheck, Fingerprint, LogOut, Settings,
-  ScrollText, Menu, X, Wallet, ClipboardList,
+  ScrollText, Menu, X, Wallet, ClipboardList, Banknote, CreditCard,
 } from 'lucide-react';
 import { useSession, ROLE_LABELS } from '../lib/session';
 import { PAGE_ROLES } from '../lib/access';
@@ -23,8 +23,10 @@ const NAV: NavItem[] = [
   { to: '/conges', label: 'Congés', icon: <CalendarCheck className="w-4 h-4" /> },
   { to: '/feuilles', label: 'Feuilles de temps', icon: <ClipboardList className="w-4 h-4" />, roles: PAGE_ROLES.feuilles },
   { to: '/paie', label: 'Pré-paie', icon: <Wallet className="w-4 h-4" />, roles: PAGE_ROLES.paie },
+  { to: '/paiements', label: 'Paiements', icon: <Banknote className="w-4 h-4" />, roles: PAGE_ROLES.paiements },
   { to: '/bulletins', label: 'Mes bulletins', icon: <Fingerprint className="w-4 h-4" />, roles: PAGE_ROLES.bulletins },
   { to: '/parametres', label: 'Paramètres', icon: <Settings className="w-4 h-4" />, roles: PAGE_ROLES.parametres },
+  { to: '/abonnement', label: 'Abonnement', icon: <CreditCard className="w-4 h-4" />, roles: PAGE_ROLES.abonnement },
   { to: '/audit', label: 'Journal d’audit', icon: <ScrollText className="w-4 h-4" />, roles: PAGE_ROLES.audit },
 ];
 

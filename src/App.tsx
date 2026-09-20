@@ -13,8 +13,10 @@ import { TimePage } from './pages/Time';
 import { LeavePage } from './pages/Leave';
 import { TimesheetsPage } from './pages/Timesheets';
 import { PayrollPage } from './pages/Payroll';
+import { PaymentsPage } from './pages/Payments';
 import { PayslipsPage } from './pages/Payslips';
 import { SettingsPage } from './pages/Settings';
+import { BillingPage } from './pages/Billing';
 import { AuditPage } from './pages/Audit';
 import { ProfilePage } from './pages/Profile';
 import { Spinner } from './components/ui';
@@ -44,8 +46,10 @@ function Shell() {
           <Route path="/conges" element={<LeavePage />} />
           <Route path="/feuilles" element={<RoleRoute roles={PAGE_ROLES.feuilles}><TimesheetsPage /></RoleRoute>} />
           <Route path="/paie" element={<RoleRoute roles={PAGE_ROLES.paie}><PayrollPage /></RoleRoute>} />
+          <Route path="/paiements" element={<RoleRoute roles={PAGE_ROLES.paiements}><PaymentsPage /></RoleRoute>} />
           <Route path="/bulletins" element={<RoleRoute roles={PAGE_ROLES.bulletins}><PayslipsPage /></RoleRoute>} />
           <Route path="/parametres" element={<RoleRoute roles={PAGE_ROLES.parametres}><SettingsPage /></RoleRoute>} />
+          <Route path="/abonnement" element={<RoleRoute roles={PAGE_ROLES.abonnement}><BillingPage /></RoleRoute>} />
           <Route path="/audit" element={<RoleRoute roles={PAGE_ROLES.audit}><AuditPage /></RoleRoute>} />
           <Route path="/profil" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

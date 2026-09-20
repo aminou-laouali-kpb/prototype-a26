@@ -207,18 +207,20 @@ export function computePayslip(
 
   const gross = round(baseProrated + overtimeAmount + input.bonuses);
 
-  // CNPS : pension vieillesse sur brut plafonné
+  const ruleLabel = (code: string, fallback: string) => findRule(code)?.label ?? fallback;
+
+  // Cotisations sociales (libellés selon pack pays — CNPS / CNSS…)
   const plafond = rm.get('plafond_mensuel');
   const taxableBase = Math.min(gross, plafond);
   const cnpsEmployee = round(taxableBase * (rm.get('cnps_pension_tx_salarie') / 100));
-  pushDetail('retenue_salarie', 'CNPS pension vieillesse (plafonnée)', taxableBase, rm.get('cnps_pension_tx_salarie'), cnpsEmployee, 'cnps_pension_tx_salarie');
+  pushDetail('retenue_salarie', ruleLabel('cnps_pension_tx_salarie', 'Cotisation sociale pension (plafonnée)'), taxableBase, rm.get('cnps_pension_tx_salarie'), cnpsEmployee, 'cnps_pension_tx_salarie');
 
   const cmuEmployee = round(gross * (rm.get('cmu_tx_salarie') / 100));
-  pushDetail('retenue_salarie', 'CMU (Couverture Maladie Universelle)', gross, rm.get('cmu_tx_salarie'), cmuEmployee, 'cmu_tx_salarie');
+  pushDetail('retenue_salarie', ruleLabel('cmu_tx_salarie', 'Couverture maladie — part salariale'), gross, rm.get('cmu_tx_salarie'), cmuEmployee, 'cmu_tx_salarie');
 
   const netBeforeTax = round(gross - cnpsEmployee - cmuEmployee);
 
-  // Barème ITS progressif par tranches
+  // Barème d’impôt progressif (ITS / IUTS…)
   let its = 0;
   const brackets = applicableRules
     .filter((r) => r.category === 'impot' && /^its_t\d+_tx$/.test(r.code))
@@ -238,7 +240,7 @@ export function computePayslip(
       || (to !== Infinity && (!Number.isFinite(to) || to <= from))
       || (to === Infinity && index !== brackets.length - 1)
     ) {
-      throw new Error(`Tranche ITS invalide : ${b.code}.`);
+      throw new Error(`Tranche d’impôt invalide : ${b.code}.`);
     }
     if (to !== Infinity) previousTo = to;
     const amount = round(sliceWidth * (rate / 100));
@@ -254,25 +256,25 @@ export function computePayslip(
 
   // Charges patronales
   const pensionEmployer = round(taxableBase * (rm.get('cnps_pension_tx_employeur') / 100));
-  pushDetail('charge_employeur', 'CNPS pension vieillesse (plafonnée)', taxableBase, rm.get('cnps_pension_tx_employeur'), pensionEmployer, 'cnps_pension_tx_employeur');
+  pushDetail('charge_employeur', ruleLabel('cnps_pension_tx_employeur', 'Cotisation sociale pension — employeur'), taxableBase, rm.get('cnps_pension_tx_employeur'), pensionEmployer, 'cnps_pension_tx_employeur');
 
   const pfEmployer = round(gross * (rm.get('cnps_pf_tx_employeur') / 100));
-  pushDetail('charge_employeur', 'CNPS prestations familiales', gross, rm.get('cnps_pf_tx_employeur'), pfEmployer, 'cnps_pf_tx_employeur');
+  pushDetail('charge_employeur', ruleLabel('cnps_pf_tx_employeur', 'Prestations familiales — employeur'), gross, rm.get('cnps_pf_tx_employeur'), pfEmployer, 'cnps_pf_tx_employeur');
 
   const atEmployer = round(gross * (rm.get('cnps_at_tx_employeur') / 100));
-  pushDetail('charge_employeur', 'CNPS accidents du travail', gross, rm.get('cnps_at_tx_employeur'), atEmployer, 'cnps_at_tx_employeur');
+  pushDetail('charge_employeur', ruleLabel('cnps_at_tx_employeur', 'Accidents du travail — employeur'), gross, rm.get('cnps_at_tx_employeur'), atEmployer, 'cnps_at_tx_employeur');
 
   const rpEmployer = round(gross * (rm.get('cnps_rp_tx_employeur') / 100));
-  pushDetail('charge_employeur', 'CNPS risques professionnels', gross, rm.get('cnps_rp_tx_employeur'), rpEmployer, 'cnps_rp_tx_employeur');
+  pushDetail('charge_employeur', ruleLabel('cnps_rp_tx_employeur', 'Risques professionnels — employeur'), gross, rm.get('cnps_rp_tx_employeur'), rpEmployer, 'cnps_rp_tx_employeur');
 
   const cmuEmployer = round(gross * (rm.get('cmu_tx_employeur') / 100));
-  pushDetail('charge_employeur', 'CMU — part employeur', gross, rm.get('cmu_tx_employeur'), cmuEmployer, 'cmu_tx_employeur');
+  pushDetail('charge_employeur', ruleLabel('cmu_tx_employeur', 'Couverture maladie — employeur'), gross, rm.get('cmu_tx_employeur'), cmuEmployer, 'cmu_tx_employeur');
 
   const fdfpEmployer = round(gross * (rm.get('fdfp_tx_employeur') / 100));
-  pushDetail('charge_employeur', 'FDFP formation professionnelle', gross, rm.get('fdfp_tx_employeur'), fdfpEmployer, 'fdfp_tx_employeur');
+  pushDetail('charge_employeur', ruleLabel('fdfp_tx_employeur', 'Formation professionnelle — employeur'), gross, rm.get('fdfp_tx_employeur'), fdfpEmployer, 'fdfp_tx_employeur');
 
   const fdfpPlan = round(gross * (rm.get('fdfp_tx_plan') / 100));
-  pushDetail('charge_employeur', 'FDFP plan de développement', gross, rm.get('fdfp_tx_plan'), fdfpPlan, 'fdfp_tx_plan');
+  pushDetail('charge_employeur', ruleLabel('fdfp_tx_plan', 'Plan de formation — employeur'), gross, rm.get('fdfp_tx_plan'), fdfpPlan, 'fdfp_tx_plan');
 
   const employerCnps = round(pensionEmployer + pfEmployer + atEmployer + rpEmployer);
   const employerCmu = cmuEmployer;

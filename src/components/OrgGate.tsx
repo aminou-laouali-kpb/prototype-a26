@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSession, ROLE_LABELS } from '../lib/session';
 import { Field, inputClass, ErrorBanner } from './ui';
+import { COUNTRY_OPTIONS, type CountryCode } from '../lib/countryPacks';
 import { LogOut, Building2, Sparkles, Store, Globe2, Landmark } from 'lucide-react';
 
 const DEMO_OPTIONS: Array<{
@@ -37,6 +38,7 @@ export function OrgGate() {
   const [name, setName] = useState('');
   const [legalName, setLegalName] = useState('');
   const [ncc, setNcc] = useState('');
+  const [country, setCountry] = useState<CountryCode>('NE');
   const [error, setError] = useState<string | null>(null);
   const [seeding, setSeeding] = useState<'pme' | 'ong' | 'groupe' | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,6 +63,7 @@ export function OrgGate() {
         p_name: trimmedName,
         p_legal_name: legalName.trim() || null,
         p_ncc: ncc.trim() || null,
+        p_country_code: country,
       });
       if (err) throw new Error(err.message);
       if (!data) throw new Error('L’organisation n’a pas pu être créée.');
@@ -251,15 +254,22 @@ export function OrgGate() {
               <Field label="Raison sociale (optionnel)">
                 <input className={inputClass} value={legalName} onChange={(e) => setLegalName(e.target.value)} />
               </Field>
-              <Field label="N° contribuable / NCC (optionnel)">
+              <Field label="N° contribuable (optionnel)">
                 <input className={inputClass} value={ncc} onChange={(e) => setNcc(e.target.value)} />
+              </Field>
+              <Field label="Pays (pack de pré-paie)">
+                <select className={inputClass} value={country} onChange={(e) => setCountry(e.target.value as CountryCode)}>
+                  {COUNTRY_OPTIONS.map((o) => (
+                    <option key={o.code} value={o.code}>{o.label}</option>
+                  ))}
+                </select>
               </Field>
               <button disabled={busy} className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 disabled:opacity-50 transition">
                 {busy ? 'Création…' : 'Créer mon organisation'}
               </button>
               <p className="text-xs text-slate-400">
                 Vous serez administrateur RH : services, types de congés et règles de pré-paie
-                (simulation Côte d’Ivoire) pré-configurés et modifiables.
+                (simulation {country === 'NE' ? 'Niger — CNSS / IUTS' : 'Côte d’Ivoire — CNPS / ITS'}) pré-configurés et modifiables.
               </p>
             </form>
           )}

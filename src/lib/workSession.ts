@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { ClockEntry, OrgSettings, DEFAULT_ORG_SETTINGS } from './types';
+import { enqueueOfflineAction, isOnline } from './offlineQueue';
 
 export function todayIso(): string {
   const d = new Date();
@@ -31,21 +32,43 @@ export async function fetchOpenEntry(employeeId: string, orgId?: string): Promis
 
 export async function startSession(orgId: string, employeeId: string): Promise<ClockEntry> {
   const now = new Date().toISOString();
-  const { data, error } = await supabase
-    .from('clock_entries')
-    .insert({
-      org_id: orgId,
-      employee_id: employeeId,
-      work_date: todayIso(),
-      clock_in: now,
-      last_active_at: now,
-      active_seconds: 0,
-      source: 'web',
-    })
-    .select('*')
-    .single();
-  if (error) throw new Error(error.message);
-  return data as ClockEntry;
+  try {
+    const { data, error } = await supabase
+      .from('clock_entries')
+      .insert({
+        org_id: orgId,
+        employee_id: employeeId,
+        work_date: todayIso(),
+        clock_in: now,
+        last_active_at: now,
+        active_seconds: 0,
+        source: 'web',
+      })
+      .select('*')
+      .single();
+    if (error) throw new Error(error.message);
+    return data as ClockEntry;
+  } catch (e) {
+    if (!isOnline()) {
+      enqueueOfflineAction('clock_in', orgId, { employeeId, clock_in: now, work_date: todayIso() });
+      return {
+        id: `offline-${crypto.randomUUID()}`,
+        org_id: orgId,
+        employee_id: employeeId,
+        work_date: todayIso(),
+        clock_in: now,
+        clock_out: null,
+        source: 'offline',
+        note: 'En file hors-ligne — sera synchronisé à la reconnexion',
+        edited_by: null,
+        edit_reason: null,
+        last_active_at: now,
+        active_seconds: 0,
+        closed_reason: null,
+      };
+    }
+    throw e;
+  }
 }
 
 function accumulate(entry: ClockEntry, settings: OrgSettings | null, until: number): number {

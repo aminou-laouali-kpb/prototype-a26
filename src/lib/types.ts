@@ -4,7 +4,8 @@ export type Role =
   | 'preparateur'
   | 'approveur_paie'
   | 'employee'
-  | 'auditeur';
+  | 'auditeur'
+  | 'cabinet';
 
 export const ROLE_LABELS: Record<Role, string> = {
   admin_rh: 'Administrateur RH',
@@ -13,7 +14,10 @@ export const ROLE_LABELS: Record<Role, string> = {
   approveur_paie: 'Approbateur paie',
   employee: 'Salarié',
   auditeur: 'Auditeur (lecture seule)',
+  cabinet: 'Cabinet / expert-comptable',
 };
+
+export type CountryCode = 'CI' | 'NE';
 
 export interface Org {
   id: string;
@@ -25,6 +29,7 @@ export interface Org {
   timezone: string;
   is_demo: boolean;
   demo_kind: 'pme' | 'ong' | 'groupe' | null;
+  country_code?: CountryCode | string | null;
 }
 
 export interface Membership {
@@ -295,7 +300,63 @@ export const ROLE_COLORS: Record<Role, string> = {
   approveur_paie: 'bg-orange-50 text-orange-700 ring-orange-200',
   employee: 'bg-slate-100 text-slate-700 ring-slate-200',
   auditeur: 'bg-stone-100 text-stone-600 ring-stone-200',
+  cabinet: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
 };
+
+export type PaymentBatchStatus = 'draft' | 'exported' | 'partial' | 'paid' | 'failed' | 'cancelled';
+export type PaymentLineStatus = 'pending' | 'paid' | 'failed' | 'skipped';
+
+export interface PaymentBatch {
+  id: string;
+  org_id: string;
+  period_id: string;
+  channel: 'mobile_money' | 'cash' | 'bank' | 'mixed';
+  operator: string | null;
+  status: PaymentBatchStatus;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface PaymentBatchLine {
+  id: string;
+  org_id: string;
+  batch_id: string;
+  payroll_line_id: string;
+  employee_id: string;
+  amount: number;
+  payment_method: 'mobile_money' | 'bank' | 'cash' | null;
+  mobile_operator: string | null;
+  payment_account: string | null;
+  status: PaymentLineStatus;
+  paid_at: string | null;
+  failure_reason: string | null;
+  receipt_note: string | null;
+  employee?: Employee;
+}
+
+export interface OrgSubscription {
+  org_id: string;
+  plan: 'trial' | 'pme' | 'groupe' | 'cabinet';
+  status: 'trialing' | 'active' | 'past_due' | 'cancelled' | 'expired';
+  trial_ends_at: string | null;
+  current_period_end: string | null;
+  seats: number;
+  amount_xof: number;
+  notes: string | null;
+}
+
+export interface NotificationOutboxItem {
+  id: string;
+  org_id: string;
+  channel: 'whatsapp' | 'email' | 'sms';
+  template_key: string;
+  recipient: string;
+  payload: Record<string, unknown>;
+  status: 'pending' | 'sent' | 'failed' | 'cancelled';
+  error: string | null;
+  created_at: string;
+  sent_at: string | null;
+}
 
 export const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-amber-50 text-amber-700 ring-amber-200',
@@ -311,6 +372,11 @@ export const STATUS_COLORS: Record<string, string> = {
   suspended: 'bg-amber-50 text-amber-700 ring-amber-200',
   archived: 'bg-slate-100 text-slate-600 ring-slate-200',
   calculated: 'bg-sky-50 text-sky-700 ring-sky-200',
+  paid: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+  failed: 'bg-rose-50 text-rose-700 ring-rose-200',
+  exported: 'bg-sky-50 text-sky-700 ring-sky-200',
+  partial: 'bg-amber-50 text-amber-700 ring-amber-200',
+  skipped: 'bg-slate-100 text-slate-600 ring-slate-200',
 };
 
 export function statusLabel(status: string): string {

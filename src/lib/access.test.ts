@@ -13,7 +13,9 @@ describe('canAccessPage', () => {
     expect(canAccessPage('bulletins', 'auditeur')).toBe(false);
   });
 
-  it('rejects a missing role', () => {
-    expect(canAccessPage('audit', null)).toBe(false);
+  it('lets cabinet open pré-paie and abonnement', () => {
+    expect(canAccessPage('paie', 'cabinet')).toBe(true);
+    expect(canAccessPage('abonnement', 'cabinet')).toBe(true);
+    expect(canAccessPage('abonnement', 'employee')).toBe(false);
   });
 });

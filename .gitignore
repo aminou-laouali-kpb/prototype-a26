@@ -34,3 +34,4 @@ videos/*/audio_request.json
 videos/*/audio_engine_meta.json
 videos/*/audio_meta.json
 videos/*/caption_groups.json
+videos/*/caption-overrides.json

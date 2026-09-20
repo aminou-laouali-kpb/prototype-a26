@@ -15,6 +15,18 @@ npm run dev -- --host 127.0.0.1
 
 L’application est ensuite disponible sur <http://localhost:5173/>.
 
+## Packs pays (Niger / Côte d’Ivoire)
+
+La migration `011_country_packs_payments_billing` ajoute :
+
+- `orgs.country_code` (`NE` | `CI`) et RPC `apply_country_pack`
+- Lots de paiement Mobile Money / espèces (`payment_batches`)
+- File WhatsApp (`notification_outbox`)
+- Essai / abonnement XOF (`org_subscriptions`)
+- Rôle `cabinet` (multi-clients)
+
+Les nouvelles organisations sont créées par défaut en pack **Niger** (CNSS / IUTS / AMO — simulation à valider localement). Appliquer cette migration sur Railway/Postgres avant d’utiliser ces écrans.
+
 ## Préparer la base Supabase
 
 Les migrations du dossier `supabase/migrations` doivent être appliquées sur le projet Supabase cible avant la démonstration. Vérifier ensuite que la fonction `create_demo_org(text)` est disponible pour le rôle `authenticated`.
