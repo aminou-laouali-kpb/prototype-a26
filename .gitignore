@@ -24,3 +24,13 @@ dist-ssr
 .video-demo.local.json
 supabase/.branches/
 supabase/.temp/
+videos/*/.media/
+videos/*/node_modules/
+videos/*/.hyperframes/
+videos/*/renders/
+videos/*/snapshots/
+videos/*/assets/
+videos/*/audio_request.json
+videos/*/audio_engine_meta.json
+videos/*/audio_meta.json
+videos/*/caption_groups.json
