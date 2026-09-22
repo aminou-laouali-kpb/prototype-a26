@@ -21,8 +21,10 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  // Never cache Vite HMR / source modules — they change constantly in dev.
+  if (url.pathname.startsWith('/@') || url.pathname.startsWith('/src/') || url.search.includes('t=')) return;
 
-  // Network-first for API / data ; cache-first for navigation shell
+  // Network-first for navigation
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req)
@@ -36,7 +38,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (url.pathname.match(/\.(js|css|svg|png|woff2|webmanifest)$/)) {
+  if (url.pathname.match(/\.(css|svg|png|woff2|webmanifest)$/)) {
     event.respondWith(
       caches.match(req).then((cached) =>
         cached ||
