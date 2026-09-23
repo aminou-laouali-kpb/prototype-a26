@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSession } from '../lib/session';
-import { OrgSubscription, formatDate } from '../lib/types';
+import { OrgSubscription, formatDate, formatXof } from '../lib/types';
 import {
-  PLAN_CATALOG, daysLeftInTrial, formatPlanPrice, planLabel, subscriptionStatusLabel,
+  PLAN_CATALOG, daysLeftInTrial, formatPlanPrice, planLabel, quoteAnnualXof, quoteMonthlyXof,
+  subscriptionStatusLabel, type PlanOffer,
 } from '../lib/billing';
 import { ErrorBanner, Spinner } from '../components/ui';
 import { CreditCard, Sparkles } from 'lucide-react';
@@ -14,6 +15,7 @@ export function BillingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [headcount, setHeadcount] = useState(0);
   const canManage = activeRole === 'admin_rh' || activeRole === 'cabinet';
 
   const load = useCallback(async () => {
@@ -33,6 +35,12 @@ export function BillingPage() {
     } else {
       setSub((data as OrgSubscription) ?? null);
     }
+    const { count } = await supabase
+      .from('employees')
+      .select('id', { count: 'exact', head: true })
+      .eq('org_id', activeOrg.id)
+      .eq('status', 'active');
+    setHeadcount(count ?? 0);
     setLoading(false);
   }, [activeOrg]);
 
@@ -66,12 +74,13 @@ export function BillingPage() {
     setBusy(false);
   };
 
-  const choosePlan = async (planId: typeof PLAN_CATALOG[number]['id']) => {
+  const choosePlan = async (planId: PlanOffer['id']) => {
     if (!activeOrg || !canManage) return;
     const plan = PLAN_CATALOG.find((p) => p.id === planId);
     if (!plan) return;
     setBusy(true);
     setError(null);
+    const amount = quoteMonthlyXof(plan, headcount);
     const payload = {
       org_id: activeOrg.id,
       plan: planId,
@@ -81,7 +90,7 @@ export function BillingPage() {
         : sub?.trial_ends_at ?? null,
       current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       seats: plan.seats,
-      amount_xof: plan.priceXof,
+      amount_xof: amount,
       notes: 'Facturation XOF — paiement Mobile Money / virement (simulation commerciale).',
       updated_at: new Date().toISOString(),
     };
@@ -94,7 +103,7 @@ export function BillingPage() {
         action: 'select_plan',
         entity: 'org_subscriptions',
         entity_id: activeOrg.id,
-        details: { plan: planId, amount_xof: plan.priceXof },
+        details: { plan: planId, amount_xof: amount, employees: headcount },
       });
       await load();
     }
@@ -109,7 +118,9 @@ export function BillingPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Abonnement</h1>
-        <p className="text-sm text-slate-500 mt-1">Essai 30 jours, plans PME / Groupe / Cabinet, facturation en FCFA.</p>
+        <p className="text-sm text-slate-500 mt-1">
+          Tarifs HT au salarié, plancher mensuel, facturation en FCFA. Effectif actuel : {headcount} salarié{headcount > 1 ? 's' : ''}.
+        </p>
       </div>
 
       <ErrorBanner message={error} />
@@ -152,11 +163,21 @@ export function BillingPage() {
           </div>
 
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {PLAN_CATALOG.map((plan) => (
+            {PLAN_CATALOG.map((plan) => {
+              const monthly = quoteMonthlyXof(plan, headcount);
+              const annual = quoteAnnualXof(plan, headcount);
+              return (
               <div key={plan.id} className={`rounded-2xl ring-1 p-5 ${sub?.plan === plan.id ? 'bg-teal-50 ring-teal-200' : 'bg-white ring-slate-200'}`}>
                 <div className="font-semibold text-slate-900">{plan.name}</div>
-                <div className="text-2xl font-bold text-teal-700 mt-2">{formatPlanPrice(plan.priceXof)}</div>
-                <div className="text-xs text-slate-500 mt-1">{plan.seats} salariés max.</div>
+                <div className="text-2xl font-bold text-teal-700 mt-2">{formatPlanPrice(monthly)}</div>
+                {plan.unitXof > 0 ? (
+                  <div className="text-xs text-slate-500 mt-1 space-y-0.5">
+                    <div>{formatXof(plan.unitXof)} HT / salarié · plancher {formatXof(plan.floorXof)}</div>
+                    <div>Jusqu’à {plan.seats} salariés · annuel {formatXof(annual)} (10 mois)</div>
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-500 mt-1">{plan.seats} salariés max.</div>
+                )}
                 <p className="text-sm text-slate-600 mt-3">{plan.blurb}</p>
                 {canManage && (
                   <button
@@ -168,11 +189,14 @@ export function BillingPage() {
                   </button>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <p className="text-xs text-slate-500">
-            Paiement commercial hors plateforme pour l’instant (Mobile Money / virement XOF). Support : WhatsApp FR.
+            Prix HT. TVA en sus selon le pays (18 % CI, 19 % NE). Le montant affiché suit l’effectif actif,
+            avec un plancher : on ne vend plus un forfait 50 sièges au prix d’une TPE.
+            Annuel = 10 mois. Paiement hors plateforme (Mobile Money / virement XOF).
           </p>
         </>
       )}

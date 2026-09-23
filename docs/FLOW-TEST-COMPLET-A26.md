@@ -191,7 +191,7 @@ Cochez chaque case. Notez les anomalies en fin de document.
 | # | Action | Résultat attendu | OK |
 |---|---|---|---|
 | 12.1 | Abonnement → démarrer essai si absent | `trialing`, date de fin ~+30 j | ☐ |
-| 12.2 | Choisir plan PME / Groupe / Cabinet | Plan courant mis à jour (XOF) | ☐ |
+| 12.2 | Choisir plan PME / Groupe / Cabinet | Plan courant mis à jour (HT au salarié + plancher, XOF) | ☐ |
 | 12.3 | Inviter rôle cabinet, se connecter | Accès multi-org / paie lecture + abonnement | ☐ |
 
 ---
