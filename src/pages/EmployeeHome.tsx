@@ -36,7 +36,7 @@ export function EmployeeHome() {
       supabase.from('clock_entries').select('*')
         .eq('org_id', orgId).eq('employee_id', employeeId)
         .order('clock_in', { ascending: false }).limit(30),
-      supabase.from('leave_requests').select('*, leave_type:leave_types(*)')
+      supabase.from('leave_requests').select('*, leave_type:leave_types!leave_type_id(*)')
         .eq('org_id', orgId).eq('employee_id', employeeId)
         .order('start_date', { ascending: false }).limit(5),
       supabase.from('payroll_lines').select('*')

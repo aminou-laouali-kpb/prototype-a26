@@ -1,0 +1,31 @@
+[div] Prototype A26
+[div] KPB Global LLC
+[span] Données chiffrées
+[div] Plateforme RH & paie pour l'Afrique de l'Ouest
+[h1] La gestion du temps, des RH et de la paie, réunie et vérifiable.
+[p] Pointage, congés, feuilles de temps par projet et pré-paie expliquée ligne par ligne, en francs CFA. Chaque montant remonte à sa règle — pensé pour la conformité et la confiance.
+[div] Temps & présences
+[div] Pointage, corrections tracées et feuilles de temps par projet.
+[div] Pré-paie explicable
+[div] Chaque ligne de bulletin remonte à sa règle, en francs CFA.
+[div] Contrôle à quatre yeux
+[div] Séparation stricte entre préparation et validation de la paie.
+[div] Rôles fins
+[div] Accès calibrés : RH, managers, préparateurs, approbateurs, audit.
+[div] 100 %
+[div] Calculs traçables
+[div] XOF
+[div] Franc CFA natif
+[div] Rôles métiers
+[div] 2026
+[div] Prototype A26 — KPB Global LLC
+[span] Prototype A26 — KPB Global LLC
+[h2] Connexion
+[p] Accédez à votre espace de gestion RH et paie.
+[span] Adresse e-mail
+[span] Mot de passe
+[button] Se connecter
+[button] Créer un nouveau compte
+[span] Accès par rôle
+[span] Piste d'audit
+[span] Sécurisé

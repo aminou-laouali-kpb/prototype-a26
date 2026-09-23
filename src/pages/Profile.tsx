@@ -58,12 +58,12 @@ export function ProfilePage() {
       const [ctrRes, depRes, lvRes, ckRes, tsRes] = await Promise.all([
         supabase.from('contracts').select('*').eq('org_id', orgId).eq('employee_id', scopedEmployee.id).eq('is_current', true).maybeSingle(),
         supabase.from('departments').select('*').eq('org_id', orgId).eq('id', scopedEmployee.department_id ?? '').maybeSingle(),
-        supabase.from('leave_requests').select('*, leave_type:leave_types(*)')
+        supabase.from('leave_requests').select('*, leave_type:leave_types!leave_type_id(*)')
           .eq('org_id', orgId).eq('employee_id', scopedEmployee.id).order('start_date', { ascending: false }).limit(10),
         supabase.from('clock_entries').select('*')
           .eq('org_id', orgId).eq('employee_id', scopedEmployee.id)
           .order('clock_in', { ascending: false }).limit(10),
-        supabase.from('timesheet_entries').select('*, project:projects(*)')
+        supabase.from('timesheet_entries').select('*, project:projects!project_id(*)')
           .eq('org_id', orgId).eq('employee_id', scopedEmployee.id).order('work_date', { ascending: false }).limit(10),
       ]);
       const queryError = [ctrRes.error, depRes.error, lvRes.error, ckRes.error, tsRes.error].find(Boolean);

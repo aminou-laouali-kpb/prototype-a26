@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSession } from '../lib/session';
 import { AuditLogEntry } from '../lib/types';
+import { printAuditExport } from '../lib/exports';
 import { EmptyState } from '../components/ui';
-import { ScrollText } from 'lucide-react';
+import { ScrollText, Download } from 'lucide-react';
 
 export function AuditPage() {
   const { activeOrg } = useSession();
@@ -45,11 +46,27 @@ export function AuditPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Journal d’audit</h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Historique inaltérable des actions sensibles : qui, quoi, quand.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Journal d’audit</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Historique inaltérable des actions sensibles : qui, quoi, quand.
+          </p>
+        </div>
+        {entries.length > 0 && (
+          <button
+            onClick={() => printAuditExport(activeOrg, entries.map((e) => ({
+              created_at: new Date(e.created_at).toLocaleString('fr-FR'),
+              actor_email: e.actor_email,
+              action: actionLabels[e.action] ?? e.action,
+              entity: e.entity,
+              details: e.details,
+            })))}
+            className="rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 inline-flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" /> Export PDF tamponnable
+          </button>
+        )}
       </div>
 
       {loading ? null : entries.length === 0 ? (

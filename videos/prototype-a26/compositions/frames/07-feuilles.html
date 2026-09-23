@@ -1,0 +1,497 @@
+<template>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #000000;
+    }
+
+    [id="f-07-feuilles-bg"],
+    [id="f-07-feuilles-stage"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    [id="f-07-feuilles-ground"] {
+      position: absolute;
+      inset: 0;
+      background: #F8FAFC;
+    }
+
+    [id="f-07-feuilles-glow-a"],
+    [id="f-07-feuilles-glow-b"] {
+      position: absolute;
+      width: 48cqw;
+      height: 46cqh;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform, opacity;
+    }
+
+    [id="f-07-feuilles-glow-a"] {
+      left: 2cqw;
+      top: 22cqh;
+      background: radial-gradient(ellipse at 50% 50%, rgba(2, 132, 199, 0.7) 0%, rgba(2, 132, 199, 0) 72%);
+    }
+
+    [id="f-07-feuilles-glow-b"] {
+      right: 2cqw;
+      top: 22cqh;
+      background: radial-gradient(ellipse at 50% 50%, rgba(2, 132, 199, 0.7) 0%, rgba(2, 132, 199, 0) 72%);
+    }
+
+    [id="f-07-feuilles-title-slot"] {
+      position: absolute;
+      top: 3.6cqw;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      z-index: 5;
+    }
+
+    [id="f-07-feuilles-title"] {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 4.2cqw;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #000000;
+      white-space: nowrap;
+      will-change: transform, opacity;
+    }
+
+    [id="f-07-feuilles-title-accent"] {
+      color: #0284C7;
+      font-weight: 700;
+    }
+
+    [id="f-07-feuilles-pair"] {
+      position: absolute;
+      top: 10.4cqw;
+      left: 0;
+      width: 100%;
+      height: 25.6cqw;
+      perspective: 1280px;
+      perspective-origin: 50% 40%;
+      transform-style: preserve-3d;
+      z-index: 3;
+    }
+
+    [id="f-07-feuilles-card-left"],
+    [id="f-07-feuilles-card-right"] {
+      position: absolute;
+      top: 0;
+      width: 39.6cqw;
+      height: 24.6cqw;
+      transform-style: preserve-3d;
+    }
+
+    [id="f-07-feuilles-card-left"] {
+      left: 8.5cqw;
+    }
+
+    [id="f-07-feuilles-card-right"] {
+      right: 8.5cqw;
+    }
+
+    [id="f-07-feuilles-left-pos"],
+    [id="f-07-feuilles-right-pos"],
+    [id="f-07-feuilles-left-tilt"],
+    [id="f-07-feuilles-right-tilt"] {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+    }
+
+    [id="f-07-feuilles-left-tilt"] {
+      transform-origin: 100% 50%;
+    }
+
+    [id="f-07-feuilles-right-tilt"] {
+      transform-origin: 0% 50%;
+    }
+
+    [id="f-07-feuilles-left-face"],
+    [id="f-07-feuilles-right-face"] {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 14px;
+      background: rgba(2, 132, 199, 0.04);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+    }
+
+    [id="f-07-feuilles-left-face"] {
+      box-shadow: 22px 16px 36px rgba(2, 132, 199, 0.12);
+    }
+
+    [id="f-07-feuilles-right-face"] {
+      box-shadow: -22px 16px 36px rgba(2, 132, 199, 0.12);
+    }
+
+    [id="f-07-feuilles-shot-left"],
+    [id="f-07-feuilles-shot-right"] {
+      position: absolute;
+      max-width: none;
+      display: block;
+    }
+
+    [id="f-07-feuilles-shot-left"] {
+      width: 1411px;
+      height: 794px;
+      left: -176px;
+      top: 0;
+    }
+
+    [id="f-07-feuilles-shot-right"] {
+      width: 1411px;
+      height: 794px;
+      left: -188px;
+      top: 0;
+    }
+
+    [id="f-07-feuilles-bakayoko"] {
+      position: absolute;
+      left: 172px;
+      top: 156px;
+      width: 188px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(2, 132, 199, 0.18);
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+
+    [id="f-07-feuilles-badge-soumis"],
+    [id="f-07-feuilles-badge-hours"] {
+      position: absolute;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.62cqw 1.25cqw;
+      border-radius: 100px;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      font-family: "Space Grotesk", sans-serif;
+      white-space: nowrap;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+
+    [id="f-07-feuilles-badge-soumis"] {
+      top: 22.6cqw;
+      left: 40.8cqw;
+      color: #0284C7;
+      font-size: 1.45cqw;
+      font-weight: 600;
+    }
+
+    [id="f-07-feuilles-badge-hours"] {
+      top: 22.6cqw;
+      left: 52.6cqw;
+      color: #0284C7;
+      font-size: 1.7cqw;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    [id="f-07-feuilles-connector"] {
+      position: absolute;
+      top: 36.6cqw;
+      left: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.1cqw;
+      z-index: 5;
+      will-change: transform, opacity;
+    }
+
+    [id="f-07-feuilles-rule-a"],
+    [id="f-07-feuilles-rule-b"] {
+      width: 3.2cqw;
+      height: 4px;
+      border-radius: 2px;
+      background: #0284C7;
+    }
+
+    [id="f-07-feuilles-connector-label"] {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 1.45cqw;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0284C7;
+      white-space: nowrap;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <div id="root" data-composition-id="07-feuilles" data-width="1920" data-height="1080" data-duration="16.491">
+    <div
+      class="clip"
+      id="f-07-feuilles-bg"
+      data-start="0"
+      data-duration="16.491"
+      data-track-index="0"
+    >
+      <div id="f-07-feuilles-ground"></div>
+    </div>
+
+    <div
+      class="clip"
+      id="f-07-feuilles-stage"
+      data-start="0"
+      data-duration="16.491"
+      data-track-index="1"
+    >
+      <div id="f-07-feuilles-glow-a"></div>
+      <div id="f-07-feuilles-glow-b"></div>
+
+      <div id="f-07-feuilles-title-slot">
+        <div id="f-07-feuilles-title">
+          Feuilles de temps <span id="f-07-feuilles-title-accent">projet</span>
+        </div>
+      </div>
+
+      <div id="f-07-feuilles-pair">
+        <div id="f-07-feuilles-card-left">
+          <div id="f-07-feuilles-left-pos">
+            <div id="f-07-feuilles-left-tilt">
+              <div id="f-07-feuilles-left-face">
+                <img
+                  id="f-07-feuilles-shot-left"
+                  src="assets/06-feuilles.png"
+                  alt=""
+                />
+                <div id="f-07-feuilles-bakayoko"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="f-07-feuilles-card-right">
+          <div id="f-07-feuilles-right-pos">
+            <div id="f-07-feuilles-right-tilt">
+              <div id="f-07-feuilles-right-face">
+                <img
+                  id="f-07-feuilles-shot-right"
+                  src="assets/06b-synthese.png"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="f-07-feuilles-badge-soumis">Soumis</div>
+      <div id="f-07-feuilles-badge-hours">8 h</div>
+
+      <div id="f-07-feuilles-connector">
+        <span id="f-07-feuilles-rule-a"></span>
+        <span id="f-07-feuilles-connector-label">vers la pré-paie</span>
+        <span id="f-07-feuilles-rule-b"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const DURATION = 16.091;
+      const TILT = 16;
+      const TILT_OVER = 8;
+      const GLOW_PEAK = 0.3;
+      const GLOW_AMP = 0.03;
+      const GLOW_SCALE_AMP = 0.016;
+
+      const title = document.getElementById("f-07-feuilles-title");
+      const leftPos = document.getElementById("f-07-feuilles-left-pos");
+      const rightPos = document.getElementById("f-07-feuilles-right-pos");
+      const leftTilt = document.getElementById("f-07-feuilles-left-tilt");
+      const rightTilt = document.getElementById("f-07-feuilles-right-tilt");
+      const glowA = document.getElementById("f-07-feuilles-glow-a");
+      const glowB = document.getElementById("f-07-feuilles-glow-b");
+      const badgeSoumis = document.getElementById("f-07-feuilles-badge-soumis");
+      const badgeHours = document.getElementById("f-07-feuilles-badge-hours");
+      const connector = document.getElementById("f-07-feuilles-connector");
+      const bakayoko = document.getElementById("f-07-feuilles-bakayoko");
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(
+        title,
+        { y: -46, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.88, ease: "power3.out" },
+        0.0,
+      );
+
+      tl.fromTo(
+        leftPos,
+        { x: -300, scale: 0.85, opacity: 0 },
+        { x: 0, scale: 1, opacity: 1, duration: 1.05, ease: "power3.out" },
+        1.36,
+      );
+      tl.fromTo(
+        leftTilt,
+        { rotateY: TILT + TILT_OVER },
+        { rotateY: TILT, duration: 1.05, ease: "power3.out" },
+        1.36,
+      );
+
+      tl.fromTo(
+        rightPos,
+        { x: 300, scale: 0.85, opacity: 0 },
+        { x: 0, scale: 1, opacity: 1, duration: 1.05, ease: "power3.out" },
+        1.56,
+      );
+      tl.fromTo(
+        rightTilt,
+        { rotateY: -TILT - TILT_OVER },
+        { rotateY: -TILT, duration: 1.05, ease: "power3.out" },
+        1.56,
+      );
+
+      tl.fromTo(
+        glowA,
+        { opacity: 0, scale: 0.84 },
+        { opacity: GLOW_PEAK, scale: 1, duration: 1.1, ease: "power2.out" },
+        1.36,
+      );
+      tl.fromTo(
+        glowB,
+        { opacity: 0, scale: 0.84 },
+        { opacity: GLOW_PEAK, scale: 1, duration: 1.1, ease: "power2.out" },
+        1.56,
+      );
+
+      const KW_START = 1.585;
+      const KW_END = 2.174;
+      const ATTACK = 0.16;
+      const RELEASE = 0.38;
+      const REST = 0.16;
+      function keywordEnv(time) {
+        if (time < KW_START) return 0;
+        if (time < KW_END) return Math.min((time - KW_START) / ATTACK, 1);
+        const releaseEnd = KW_END + RELEASE;
+        if (time < releaseEnd) return 1 - ((time - KW_END) / RELEASE) * (1 - REST);
+        return REST;
+      }
+      const wordDriver = { t: 0 };
+      tl.to(
+        wordDriver,
+        {
+          t: DURATION,
+          duration: DURATION,
+          ease: "none",
+          onUpdate: function () {
+            const env = keywordEnv(wordDriver.t);
+            bakayoko.style.opacity = String(env);
+            bakayoko.style.boxShadow =
+              "0 0 " + 30 * env + "px rgba(2, 132, 199, " + 0.55 * env + ")";
+            bakayoko.style.transform = "scale(" + (1 + 0.07 * env) + ")";
+          },
+        },
+        0,
+      );
+
+      tl.fromTo(
+        badgeSoumis,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(1.6)" },
+        4.43,
+      );
+      tl.fromTo(
+        badgeHours,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(1.6)" },
+        4.73,
+      );
+
+      tl.fromTo(
+        connector,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.72, ease: "power3.out" },
+        7.05,
+      );
+
+      const glowPhase = { p: 0 };
+      const GLOW_BREATHE_AT = 2.5;
+      const GLOW_BREATHE_DUR = DURATION - GLOW_BREATHE_AT;
+      const GLOW_CYCLES = GLOW_BREATHE_DUR / 3.1;
+      tl.to(
+        glowPhase,
+        {
+          p: Math.PI * 2 * GLOW_CYCLES,
+          duration: GLOW_BREATHE_DUR,
+          ease: "none",
+          onUpdate: function () {
+            const tNorm = glowPhase.p / (Math.PI * 2 * GLOW_CYCLES);
+            const env = tNorm < 0.8 ? 1 : (1 - tNorm) / 0.2;
+            const sA = Math.sin(glowPhase.p);
+            const sB = Math.sin(glowPhase.p + Math.PI);
+            gsap.set(glowA, {
+              opacity: GLOW_PEAK + sA * GLOW_AMP * env,
+              scale: 1 + sA * GLOW_SCALE_AMP * env,
+            });
+            gsap.set(glowB, {
+              opacity: GLOW_PEAK + sB * GLOW_AMP * env,
+              scale: 1 + sB * GLOW_SCALE_AMP * env,
+            });
+          },
+        },
+        GLOW_BREATHE_AT,
+      );
+
+      const idle = { p: 0 };
+      const IDLE_AT = 7.05;
+      const IDLE_DUR = DURATION - IDLE_AT;
+      const IDLE_CYCLES = IDLE_DUR / 3.5;
+      const Y_AMP = 2.2;
+      tl.to(
+        idle,
+        {
+          p: Math.PI * 2 * IDLE_CYCLES,
+          duration: IDLE_DUR,
+          ease: "none",
+          onUpdate: function () {
+            const tNorm = idle.p / (Math.PI * 2 * IDLE_CYCLES);
+            const env = tNorm < 0.8 ? 1 : (1 - tNorm) / 0.2;
+            const amp = Y_AMP * env;
+            gsap.set(leftPos, { y: Math.sin(idle.p) * amp });
+            gsap.set(rightPos, { y: Math.sin(idle.p + Math.PI) * amp });
+          },
+        },
+        IDLE_AT,
+      );
+
+      window.__timelines["07-feuilles"] = tl;
+    })();
+  </script>
+</template>

@@ -172,7 +172,7 @@ export function LeavePage() {
     const [typeRes, empRes, reqRes] = await Promise.all([
       supabase.from('leave_types').select('*').eq('org_id', activeOrgId).order('name'),
       supabase.from('employees').select('*').eq('org_id', activeOrgId).order('last_name'),
-      supabase.from('leave_requests').select('*, leave_type:leave_types(*), employee:employees(*)')
+      supabase.from('leave_requests').select('*, leave_type:leave_types!leave_type_id(*), employee:employees!employee_id(*)')
         .eq('org_id', activeOrgId)
         .order('created_at', { ascending: false }),
     ]);

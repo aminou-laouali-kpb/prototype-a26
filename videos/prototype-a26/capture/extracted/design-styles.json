@@ -1,0 +1,133 @@
+{
+  "typography": [
+    {
+      "role": "display",
+      "fontFamily": "ui-sans-serif",
+      "fontSize": "48px",
+      "fontWeight": "700",
+      "lineHeight": "48px",
+      "letterSpacing": "-1.2px",
+      "color": "#FFFFFF",
+      "sampleText": "La gestion du temps, des RH et de la paie, réunie et vérifia"
+    },
+    {
+      "role": "heading",
+      "fontFamily": "ui-sans-serif",
+      "fontSize": "24px",
+      "fontWeight": "700",
+      "lineHeight": "32px",
+      "letterSpacing": "-0.6px",
+      "color": "#0F172A",
+      "sampleText": "Connexion"
+    },
+    {
+      "role": "body",
+      "fontFamily": "ui-sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "26px",
+      "letterSpacing": "normal",
+      "color": "#CBD5E1",
+      "sampleText": "Pointage, congés, feuilles de temps par projet et pré-paie e"
+    }
+  ],
+  "spacing": {
+    "observed": [
+      2,
+      4,
+      8,
+      10,
+      12,
+      16,
+      24,
+      32,
+      40,
+      64
+    ],
+    "baseUnit": 8
+  },
+  "radius": [
+    "8px"
+  ],
+  "shadows": [
+    {
+      "value": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "count": 4
+    },
+    {
+      "value": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(2, 132, 199, 0.2) 0px 1px 2px 0px",
+      "count": 1
+    },
+    {
+      "value": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(125, 211, 252, 0.3) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "count": 1
+    },
+    {
+      "value": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(125, 211, 252, 0.2) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "count": 1
+    },
+    {
+      "value": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(226, 232, 240, 0.7) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px",
+      "count": 1
+    }
+  ],
+  "buttons": [
+    {
+      "label": "Se connecter",
+      "background": "#0284C7",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#FFFFFF",
+      "padding": "10px 16px",
+      "borderRadius": "8px",
+      "border": "0px solid rgb(229, 231, 235)",
+      "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(2, 132, 199, 0.2) 0px 1px 2px 0px",
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "height": "40px"
+    },
+    {
+      "label": "Créer un nouveau compte",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#334155",
+      "padding": "10px 16px",
+      "borderRadius": "8px",
+      "border": "1px solid rgb(226, 232, 240)",
+      "boxShadow": "none",
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "height": "42px"
+    }
+  ],
+  "cards": [],
+  "nav": null,
+  "chips": [
+    {
+      "label": "Données chiffrées",
+      "background": "#FFFFFF",
+      "color": "#E0F2FE",
+      "padding": "6px 12px",
+      "borderRadius": "9999px",
+      "border": "0px solid rgb(229, 231, 235)",
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "height": "28px"
+    }
+  ],
+  "statCells": [],
+  "tabs": [],
+  "backgrounds": [
+    {
+      "value": "linear-gradient(to right bottom, rgb(2, 6, 23), rgb(8, 47, 73), rgb(15, 23, 42))",
+      "area": 1161203
+    },
+    {
+      "value": "linear-gradient(to right, rgb(255, 255, 255) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(rgb(255, 255, 255) 1px, rgba(0, 0, 0, 0) 1px)",
+      "area": 1161203
+    }
+  ],
+  "glass": []
+}

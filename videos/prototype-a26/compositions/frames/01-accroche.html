@@ -1,0 +1,408 @@
+<template>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    #root > .clip {
+      position: absolute;
+      inset: 0;
+    }
+
+    [id="f-01-accroche-ground"] {
+      z-index: 0;
+    }
+
+    [id="f-01-accroche-canvas"] {
+      position: absolute;
+      inset: 0;
+      background: #f8fafc;
+    }
+
+    [id="f-01-accroche-plate-crop"] {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    [id="f-01-accroche-plate"] {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 4800px;
+      height: 2700px;
+      margin-top: -1350px;
+    }
+
+    [id="f-01-accroche-dim"] {
+      position: absolute;
+      inset: 0;
+      background: #f8fafc;
+      opacity: 0.48;
+    }
+
+    [id="f-01-accroche-line"] {
+      z-index: 2;
+    }
+
+    [id="f-01-accroche-line-stage"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.9cqw;
+    }
+
+    [id="f-01-accroche-stem-wrap"],
+    [id="f-01-accroche-slot-wrap"] {
+      position: relative;
+      display: block;
+      text-align: center;
+    }
+
+    [id="f-01-accroche-stem"] {
+      display: block;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 7.2cqw;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #000000;
+      white-space: nowrap;
+      transform-origin: 50% 50%;
+    }
+
+    [id="f-01-accroche-stem-rule"] {
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      bottom: -0.08em;
+      height: 4px;
+      background: #0284c7;
+      border-radius: 2px;
+      transform-origin: left center;
+      z-index: 0;
+    }
+
+    [id="f-01-accroche-slot-wrap"] {
+      min-width: 18cqw;
+      min-height: 1.2em;
+    }
+
+    [id="f-01-accroche-slot"] {
+      position: relative;
+      display: block;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 5.6cqw;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #000000;
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    [id="f-01-accroche-slot-rule"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -0.06em;
+      height: 4px;
+      background: #0284c7;
+      border-radius: 2px;
+      transform-origin: left center;
+      z-index: 0;
+    }
+
+    [class~="f-01-accroche-slam-stage"] {
+      position: absolute;
+      left: 6cqw;
+      top: 0;
+      width: 60cqw;
+      height: 900px;
+      z-index: 3;
+    }
+
+    [class~="f-01-accroche-slam-word"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      height: 1.1em;
+      margin-top: auto;
+      margin-bottom: auto;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 6cqw;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #000000;
+      white-space: nowrap;
+      transform-origin: 40% 50%;
+    }
+
+    [id="f-01-accroche-hold"] {
+      position: relative;
+      display: inline-block;
+    }
+
+    [id="f-01-accroche-piste"] {
+      position: relative;
+      z-index: 2;
+    }
+
+    [id="f-01-accroche-box"] {
+      position: absolute;
+      top: -0.16em;
+      left: -0.28em;
+      right: -0.28em;
+      bottom: -0.14em;
+      border: 2px solid #0284c7;
+      border-radius: 12px;
+      background: rgba(2, 132, 199, 0.08);
+      transform-origin: 50% 50%;
+      z-index: 0;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="01-accroche"
+    data-width="1920"
+    data-height="1080"
+    data-duration="10.964"
+  >
+    <div
+      class="clip"
+      id="f-01-accroche-ground"
+      data-start="0"
+      data-duration="10.964"
+      data-track-index="0"
+    >
+      <div id="f-01-accroche-canvas"></div>
+      <div id="f-01-accroche-plate-crop" data-layout-allow-overflow="true">
+        <img
+          id="f-01-accroche-plate"
+          src="assets/01-connexion.png"
+          alt=""
+          width="1920"
+          height="1080"
+          data-layout-ignore="true"
+        />
+      </div>
+      <div id="f-01-accroche-dim"></div>
+    </div>
+
+    <div
+      class="clip"
+      id="f-01-accroche-line"
+      data-start="0"
+      data-duration="3"
+      data-track-index="1"
+    >
+      <div id="f-01-accroche-line-stage">
+        <div id="f-01-accroche-stem-wrap">
+          <span id="f-01-accroche-stem">Comment tenir</span>
+          <span id="f-01-accroche-stem-rule"></span>
+        </div>
+        <div id="f-01-accroche-slot-wrap">
+          <span id="f-01-accroche-slot"></span>
+          <span id="f-01-accroche-slot-rule"></span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="clip"
+      id="f-01-accroche-slam-1"
+      data-start="3"
+      data-duration="0.52"
+      data-track-index="2"
+    >
+      <div class="f-01-accroche-slam-stage">
+        <div class="f-01-accroche-slam-word" id="f-01-accroche-slam-1-word">trois dossiers</div>
+      </div>
+    </div>
+
+    <div
+      class="clip"
+      id="f-01-accroche-slam-2"
+      data-start="3.52"
+      data-duration="0.52"
+      data-track-index="2"
+    >
+      <div class="f-01-accroche-slam-stage">
+        <div class="f-01-accroche-slam-word" id="f-01-accroche-slam-2-word">trois versions</div>
+      </div>
+    </div>
+
+    <div
+      class="clip"
+      id="f-01-accroche-slam-3"
+      data-start="4.04"
+      data-duration="6.924"
+      data-track-index="2"
+    >
+      <div class="f-01-accroche-slam-stage">
+        <div class="f-01-accroche-slam-word" id="f-01-accroche-slam-3-word">
+          <span id="f-01-accroche-la">la&nbsp;</span><span id="f-01-accroche-hold"
+            ><span id="f-01-accroche-box"></span><span id="f-01-accroche-piste">piste</span></span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const DURATION = 10.564;
+      const root = document.querySelector('[data-composition-id="01-accroche"]');
+      const el = (id) => root.querySelector('[id="' + id + '"]');
+
+      const plate = el("f-01-accroche-plate");
+      const stem = el("f-01-accroche-stem");
+      const stemRule = el("f-01-accroche-stem-rule");
+      const slot = el("f-01-accroche-slot");
+      const slotRule = el("f-01-accroche-slot-rule");
+      const slam1 = el("f-01-accroche-slam-1-word");
+      const slam2 = el("f-01-accroche-slam-2-word");
+      const slam3 = el("f-01-accroche-slam-3-word");
+      const la = el("f-01-accroche-la");
+      const hold = el("f-01-accroche-hold");
+      const box = el("f-01-accroche-box");
+
+      const SEQUENCE = [
+        { t: 0, text: "" },
+        { t: 1.22, text: "le temps" },
+        { t: 1.81, text: "les RH" },
+        { t: 2.4, text: "la paie" },
+      ];
+
+      function textAt(time) {
+        for (let i = SEQUENCE.length - 1; i >= 0; i--) {
+          if (time >= SEQUENCE[i].t) return SEQUENCE[i].text;
+        }
+        return "";
+      }
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(plate, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power2.out" }, 0);
+
+      tl.fromTo(
+        stem,
+        { opacity: 0, scale: 1.06 },
+        { opacity: 1, scale: 1, duration: 0.1, ease: "none" },
+        0,
+      );
+
+      tl.fromTo(
+        stemRule,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.4, ease: "power2.out" },
+        0.18,
+      );
+      tl.set(stemRule, { scaleX: 0 }, 1.22);
+      tl.set(slotRule, { scaleX: 0 }, 0);
+
+      const driver = { t: 0 };
+      tl.to(
+        driver,
+        {
+          t: DURATION,
+          duration: DURATION,
+          ease: "none",
+          onUpdate: function () {
+            const next = textAt(driver.t);
+            if (slot.textContent !== next) slot.textContent = next;
+          },
+        },
+        0,
+      );
+
+      [1.22, 1.81, 2.4].forEach(function (t) {
+        tl.fromTo(
+          slotRule,
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.42, ease: "power2.out", immediateRender: false },
+          t,
+        );
+      });
+
+      const BEATS = [3.0, 3.52, 4.04];
+
+      tl.fromTo(
+        slam1,
+        { scale: 1.4, filter: "blur(10px)", opacity: 0 },
+        { scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.42, ease: "power4.out" },
+        BEATS[0],
+      );
+
+      tl.fromTo(
+        slam2,
+        { x: -280, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" },
+        BEATS[1],
+      );
+
+      tl.fromTo(
+        slam3,
+        { y: 64, rotation: 5, opacity: 0 },
+        { y: 0, rotation: 0, opacity: 1, duration: 0.44, ease: "circ.out" },
+        BEATS[2],
+      );
+
+      tl.set(la, { opacity: 0 }, 4.56);
+
+      tl.fromTo(
+        box,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, ease: "power3.out" },
+        4.56,
+      );
+
+      const idleStart = 5.06;
+      const idleDur = DURATION - idleStart;
+      const cycles = idleDur / 3.4;
+      const phase = { p: 0 };
+      tl.to(
+        phase,
+        {
+          p: Math.PI * 2 * cycles,
+          duration: idleDur,
+          ease: "none",
+          onUpdate: function () {
+            const u = phase.p / (Math.PI * 2 * cycles);
+            const env = u < 0.8 ? 1 : (1 - u) / 0.2;
+            hold.style.transform = "translateY(" + Math.sin(phase.p) * 1.5 * env + "px)";
+          },
+        },
+        idleStart,
+      );
+
+      window.__timelines["01-accroche"] = tl;
+    })();
+  </script>
+</template>

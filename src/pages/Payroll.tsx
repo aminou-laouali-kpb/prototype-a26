@@ -8,10 +8,15 @@ import {
 import { downloadCsv } from '../lib/csv';
 import { openPrintDocument, annualRecapHtml, AnnualRow } from '../lib/documents';
 import {
+  exportPayrollCsv, exportSocialDeclarationCsv, exportTaxDeclarationCsv,
+  exportOhadaCsv, exportMobileMoneyFile, printPayrollBook,
+} from '../lib/exports';
+import { getCountryPack, payrollColumnLabels } from '../lib/countryPacks';
+import {
   Modal, Field, inputClass, ErrorBanner, Spinner, EmptyState, SimulationNotice, useAsyncAction,
 } from '../components/ui';
 import {
-  Wallet, Calculator, Check, Lock, Plus, Eye, FileSpreadsheet, Landmark, Table2, Variable, ShieldCheck, CalendarRange, Mail,
+  Wallet, Calculator, Check, Lock, Plus, Eye, FileSpreadsheet, Landmark, Table2, Variable, ShieldCheck, CalendarRange, Mail, BookOpen,
 } from 'lucide-react';
 
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -51,7 +56,7 @@ export function PayrollPage() {
     if (current) {
       if (selectedPeriodId !== current.id) setSelectedPeriodId(current.id);
       const lineRes = await supabase
-        .from('payroll_lines').select('*, employee:employees(*)').eq('period_id', current.id);
+        .from('payroll_lines').select('*, employee:employees!employee_id(*)').eq('period_id', current.id);
       setLines((lineRes.data ?? []) as PayrollLine[]);
     } else {
       if (selectedPeriodId !== null) setSelectedPeriodId(null);
@@ -157,27 +162,11 @@ export function PayrollPage() {
 
   const emailedCount = lines.filter((l) => (l as PayrollLine & { emailed_at?: string | null }).emailed_at).length;
 
+  const pack = getCountryPack(activeOrg?.country_code);
+  const colLabels = payrollColumnLabels(pack);
+
   const exportPayroll = () => {
-    downloadCsv(
-      `pre-paie-${period ? `${period.period_year}-${String(period.period_month).padStart(2, '0')}` : 'cycle'}.csv`,
-      ['Matricule', 'Salarié', 'Salaire de base', 'Heures sup', 'Primes', 'Absences non payées (j)', 'Brut', 'CNPS salarié', 'CMU salarié', 'ITS', 'Net à payer', 'Charges employeur', 'Coût total employeur', 'Simulation'],
-      lines.map((l) => [
-        l.employee?.employee_number ?? '',
-        empName(l),
-        Number(l.base_salary),
-        Number(l.overtime_hours),
-        Number(l.bonuses),
-        Number(l.unpaid_absence_days),
-        Number(l.gross),
-        Number(l.cnps_employee),
-        Number(l.cmu_employee),
-        Number(l.its),
-        Number(l.net),
-        Number(l.employer_total),
-        Number(l.gross) + Number(l.employer_total),
-        'SIMULATION — à valider par un expert local',
-      ]),
-    );
+    exportPayrollCsv(pack, period, lines);
   };
 
   const exportPayment = () => {
@@ -203,35 +192,8 @@ export function PayrollPage() {
   };
 
   const exportAccounting = () => {
-    const employerCnps = lines.reduce((s, l) => s + Number(l.employer_cnps), 0);
-    const employerCmu = lines.reduce((s, l) => s + Number(l.employer_cmu), 0);
-    const employerFdfp = lines.reduce((s, l) => s + Number(l.employer_fdfp), 0);
-    const employeeCnps = lines.reduce((s, l) => s + Number(l.cnps_employee), 0);
-    const employeeCmu = lines.reduce((s, l) => s + Number(l.cmu_employee), 0);
-    const its = lines.reduce((s, l) => s + Number(l.its), 0);
-    const totalDebit = totals.gross + employerCnps + employerCmu + employerFdfp;
-    const totalCredit = totals.net + employeeCnps + employeeCmu + its + employerCnps + employerCmu + employerFdfp;
-    if (Math.abs(totalDebit - totalCredit) > 0.01) {
-      setActionError(`Export comptable déséquilibré : débit ${formatXof(totalDebit)}, crédit ${formatXof(totalCredit)}.`);
-      return;
-    }
-
-    downloadCsv(
-      `ecriture-paie-${period ? `${period.period_year}-${String(period.period_month).padStart(2, '0')}` : 'cycle'}.csv`,
-      ['Compte', 'Libellé', 'Débit (FCFA)', 'Crédit (FCFA)', 'Note'],
-      [
-        ['6411', 'Rémunérations du personnel (brut)', totals.gross, null, `Cycle ${period ? monthLabel(period.period_year, period.period_month) : ''}`],
-        ['6461', 'CNPS — part employeur', employerCnps, null, 'Simulation'],
-        ['6471', 'CMU — part employeur', employerCmu, null, ''],
-        ['6472', 'FDFP formation', employerFdfp, null, ''],
-        ['4211', 'Rémunérations dues au personnel', null, totals.net, 'Net à payer'],
-        ['4310', 'CNPS — retenues salariales et patronales', null, employeeCnps + employerCnps, ''],
-        ['4314', 'CMU — retenues salariales et patronales', null, employeeCmu + employerCmu, ''],
-        ['4213', 'État — impôts sur salaires (ITS)', null, its, ''],
-        ['4315', 'FDFP — contribution employeur', null, employerFdfp, ''],
-        ['', 'TOTAL', totalDebit, totalCredit, 'Contrôle débit = crédit'],
-      ],
-    );
+    const result = exportOhadaCsv(pack, period, lines);
+    if (!result.ok) setActionError(result.error);
   };
 
   return (
@@ -239,7 +201,9 @@ export function PayrollPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Pré-paie</h1>
-          <p className="text-sm text-slate-500 mt-1">Cycles mensuels, calcul explicable ligne par ligne et validation à quatre yeux.</p>
+          <p className="text-sm text-slate-500 mt-1">
+            Pack {pack.name} ({colLabels.socialEmployee}, {colLabels.tax}) — cycles mensuels, calcul explicable et validation à quatre yeux.
+          </p>
         </div>
         <div className="flex gap-2">
           <button onClick={() => setAnnualOpen(true)} className="rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
@@ -323,10 +287,22 @@ export function PayrollPage() {
                     <FileSpreadsheet className="w-4 h-4" /> Export paie (CSV)
                   </button>
                   <button onClick={exportPayment} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
-                    <Landmark className="w-4 h-4" /> Fichier de paiement (simulation)
+                    <Landmark className="w-4 h-4" /> Fichier de paiement
+                  </button>
+                  <button onClick={() => exportMobileMoneyFile(pack, period, lines)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
+                    <Landmark className="w-4 h-4" /> Masse Mobile Money
                   </button>
                   <button onClick={exportAccounting} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
-                    <Table2 className="w-4 h-4" /> Export comptable (simulation)
+                    <Table2 className="w-4 h-4" /> Écritures OHADA
+                  </button>
+                  <button onClick={() => exportSocialDeclarationCsv(pack, activeOrg, period, lines)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
+                    <FileSpreadsheet className="w-4 h-4" /> Déclaration {pack.socialShort}
+                  </button>
+                  <button onClick={() => exportTaxDeclarationCsv(pack, activeOrg, period, lines)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
+                    <FileSpreadsheet className="w-4 h-4" /> Déclaration {pack.taxShort}
+                  </button>
+                  <button onClick={() => printPayrollBook(activeOrg, period, lines)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
+                    <BookOpen className="w-4 h-4" /> Livre de paie PDF
                   </button>
                 </div>
               )}
@@ -684,7 +660,7 @@ function AnnualRecapModal({ orgId, org, onClose }: { orgId: string; org: Org; on
     const ids = (periodData ?? []).map((p: { id: string }) => p.id);
     if (ids.length === 0) { setRows([]); setLoading(false); return; }
     const { data: lineData } = await supabase
-      .from('payroll_lines').select('*, employee:employees(*)').in('period_id', ids);
+      .from('payroll_lines').select('*, employee:employees!employee_id(*)').in('period_id', ids);
     const byEmp = new Map<string, AnnualRow>();
     for (const l of (lineData ?? []) as PayrollLine[]) {
       const emp = l.employee;

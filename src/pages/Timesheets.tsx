@@ -54,7 +54,7 @@ export function TimesheetsPage() {
         supabase.from('projects').select('*').eq('org_id', activeOrgId).order('name'),
         supabase.from('employees').select('*').eq('org_id', activeOrgId).order('last_name'),
         supabase.from('timesheet_entries')
-          .select('*, project:projects(*), employee:employees(*)')
+          .select('*, project:projects!project_id(*), employee:employees!employee_id(*)')
           .eq('org_id', activeOrgId)
           .order('work_date', { ascending: false }),
       ]);

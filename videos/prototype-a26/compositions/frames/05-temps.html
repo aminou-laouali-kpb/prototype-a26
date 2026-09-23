@@ -1,0 +1,266 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+    }
+
+    [id="f-05-temps-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #f8fafc;
+    }
+
+    [id="f-05-temps-scene"] {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    [id="f-05-temps-world"] {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    [id="f-05-temps-plate"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      display: block;
+      object-fit: fill;
+    }
+
+    [id="f-05-temps-target"] {
+      position: absolute;
+      left: 612px;
+      top: 162px;
+      width: 308px;
+      height: 128px;
+      box-sizing: border-box;
+      border: 2px solid #0284c7;
+      border-radius: 16px;
+      pointer-events: none;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    [id="f-05-temps-hud"] {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    [class~="f-05-temps-chip"] {
+      position: absolute;
+      left: 1.2cqw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      max-width: 11.6cqw;
+      padding: 0.5cqw 1cqw;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 100px;
+      color: #0284c7;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 500;
+      font-size: 1.45cqw;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      text-align: center;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    [id="f-05-temps-chip-arrivees"] {
+      top: 8.4cqh;
+      white-space: nowrap;
+    }
+
+    [id="f-05-temps-chip-sorties"] {
+      top: 16cqh;
+      white-space: nowrap;
+    }
+
+    [id="f-05-temps-chip-corrections"] {
+      top: 23.6cqh;
+      white-space: normal;
+    }
+
+    [id="f-05-temps-pill-session"] {
+      position: absolute;
+      left: 612px;
+      top: 302px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 0.6cqw 1.35cqw;
+      background: rgba(2, 132, 199, 0.15);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      border-radius: 100px;
+      color: #0284c7;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 1.55cqw;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="05-temps"
+    data-width="1920"
+    data-height="1080"
+    data-duration="14.702"
+  >
+    <div
+      id="f-05-temps-bg"
+      class="clip"
+      data-start="0"
+      data-duration="14.702"
+      data-track-index="0"
+    ></div>
+
+    <div
+      id="f-05-temps-scene"
+      class="clip"
+      data-start="0"
+      data-duration="14.702"
+      data-track-index="1"
+      data-layout-allow-overflow
+    >
+      <div id="f-05-temps-world">
+        <img
+          id="f-05-temps-plate"
+          src="assets/02-tableau-de-bord.png"
+          alt=""
+          width="1920"
+          height="1080"
+          data-layout-allow-caption-zone
+        />
+        <div id="f-05-temps-target"></div>
+      </div>
+
+      <div id="f-05-temps-hud">
+        <div id="f-05-temps-chip-arrivees" class="f-05-temps-chip">Arrivées</div>
+        <div id="f-05-temps-chip-sorties" class="f-05-temps-chip">Sorties</div>
+        <div id="f-05-temps-chip-corrections" class="f-05-temps-chip">Corrections justifiées</div>
+        <div id="f-05-temps-pill-session">Session conservée</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const W = 1920;
+      const H = 1080;
+      const S0 = 6.15;
+      const KEEP_OUT = 890;
+      const ZOOM_AT = 4.22;
+      const ZOOM_DUR = 1.17;
+
+      const world = document.getElementById("f-05-temps-world");
+      const plate = document.getElementById("f-05-temps-plate");
+      const target = document.getElementById("f-05-temps-target");
+      const chipArrivees = document.getElementById("f-05-temps-chip-arrivees");
+      const chipSorties = document.getElementById("f-05-temps-chip-sorties");
+      const chipCorrections = document.getElementById("f-05-temps-chip-corrections");
+      const pillSession = document.getElementById("f-05-temps-pill-session");
+
+      const cx = target.offsetLeft + target.offsetWidth / 2;
+      const cy = target.offsetTop + target.offsetHeight / 2;
+      const cardBottom = target.offsetTop + target.offsetHeight;
+      let aimX = cx;
+      let aimY = cy;
+      const bottomAt = (ay) => S0 * (cardBottom - ay) + H / 2;
+      if (bottomAt(aimY) > KEEP_OUT) {
+        aimY = cardBottom - (KEEP_OUT - H / 2) / S0;
+      }
+      const offsetX = aimX - W / 2;
+      const offsetY = aimY - H / 2;
+      const startX = -offsetX * S0;
+      const startY = -offsetY * S0;
+
+      const cam = { scale: S0, x: startX, y: startY };
+      function applyCamera() {
+        world.style.transform = "translate(" + cam.x + "px, " + cam.y + "px) scale(" + cam.scale + ")";
+      }
+      applyCamera();
+
+      const tl = gsap.timeline({ paused: true, onUpdate: applyCamera });
+
+      tl.to(cam, { scale: S0, x: startX, y: startY, duration: ZOOM_AT, ease: "none" }, 0);
+      tl.to(cam, { scale: 1, x: 0, y: 0, duration: ZOOM_DUR, ease: "expo.out" }, ZOOM_AT);
+
+      tl.fromTo(
+        plate,
+        { filter: "brightness(0.86)" },
+        { filter: "brightness(0.86)", duration: ZOOM_AT, ease: "none" },
+        0,
+      );
+      tl.to(plate, { filter: "brightness(1)", duration: ZOOM_DUR, ease: "expo.out" }, ZOOM_AT);
+
+      tl.fromTo(
+        target,
+        { scale: 0.92, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" },
+        0.1,
+      );
+
+      tl.fromTo(
+        chipArrivees,
+        { scale: 0, opacity: 0, y: 12 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+        0.85,
+      );
+      tl.fromTo(
+        chipSorties,
+        { scale: 0, opacity: 0, y: 12 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+        1.48,
+      );
+      tl.fromTo(
+        chipCorrections,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+        3.6,
+      );
+
+      tl.fromTo(
+        pillSession,
+        { scale: 0, opacity: 0, y: 12 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+        5.79,
+      );
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["05-temps"] = tl;
+    })();
+  </script>
+</template>

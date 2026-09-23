@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSession, ROLE_LABELS } from '../lib/session';
-import { LeaveType, PayrollRule, OrgInvite, Role, PayrollTimeBasis, DEFAULT_ORG_SETTINGS } from '../lib/types';
+import { LeaveType, PayrollRule, OrgInvite, Role, PayrollTimeBasis, DEFAULT_ORG_SETTINGS, NotificationOutboxItem } from '../lib/types';
+import { COUNTRY_OPTIONS, getCountryPack } from '../lib/countryPacks';
 import { Modal, Field, inputClass, ErrorBanner, Spinner, EmptyState, useAsyncAction, SimulationNotice } from '../components/ui';
-import { Building, CalendarDays, Calculator, Plus, Ticket, Copy, Ban, RefreshCw, TimerReset, CheckCircle2 } from 'lucide-react';
+import { Building, CalendarDays, Calculator, Plus, Ticket, Copy, Ban, RefreshCw, TimerReset, CheckCircle2, MessageCircle } from 'lucide-react';
 
 export function SettingsPage() {
   const { activeOrg, activeRole } = useSession();
-  const [tab, setTab] = useState<'org' | 'time' | 'leaves' | 'payroll' | 'access'>('payroll');
+  const [tab, setTab] = useState<'org' | 'time' | 'leaves' | 'payroll' | 'access' | 'notifications'>('payroll');
   const isAdmin = activeRole === 'admin_rh';
-  const canManage = isAdmin || activeRole === 'preparateur';
+  const canManage = isAdmin || activeRole === 'preparateur' || activeRole === 'cabinet';
 
   useEffect(() => {
     if (!isAdmin && (tab === 'org' || tab === 'leaves' || tab === 'access')) setTab('payroll');
@@ -20,7 +21,7 @@ export function SettingsPage() {
   if (!canManage) {
     return (
       <div className="rounded-2xl bg-white ring-1 ring-slate-200">
-        <EmptyState title="Accès limité" description="Seuls l’administrateur RH et le préparateur de paie peuvent consulter ces paramètres." />
+        <EmptyState title="Accès limité" description="Seuls l’administrateur RH, le préparateur et le cabinet peuvent consulter ces paramètres." />
       </div>
     );
   }
@@ -29,7 +30,7 @@ export function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Paramètres</h1>
-        <p className="text-sm text-slate-500 mt-1">Organisation, types de congés, règles de pré-paie (simulation) et accès.</p>
+        <p className="text-sm text-slate-500 mt-1">Organisation, pack pays, congés, règles de pré-paie, accès et WhatsApp.</p>
       </div>
 
       <div className="flex flex-wrap gap-2 p-1 bg-slate-100 rounded-lg w-fit">
@@ -38,6 +39,9 @@ export function SettingsPage() {
         {isAdmin && <TabButton active={tab === 'leaves'} onClick={() => setTab('leaves')}>Congés</TabButton>}
         <TabButton active={tab === 'payroll'} onClick={() => setTab('payroll')}>Règles de paie</TabButton>
         {isAdmin && <TabButton active={tab === 'access'} onClick={() => setTab('access')}>Accès et invitations</TabButton>}
+        {(isAdmin || activeRole === 'preparateur') && (
+          <TabButton active={tab === 'notifications'} onClick={() => setTab('notifications')}>WhatsApp</TabButton>
+        )}
       </div>
 
       {tab === 'org' && <OrgTab />}
@@ -45,6 +49,7 @@ export function SettingsPage() {
       {tab === 'leaves' && <LeaveTypesTab />}
       {tab === 'payroll' && <RulesTab />}
       {tab === 'access' && <AccessTab />}
+      {tab === 'notifications' && <NotificationsTab />}
     </div>
   );
 }
@@ -58,19 +63,21 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
 }
 
 function OrgTab() {
-  const { activeOrg, refresh } = useSession();
+  const { activeOrg, refresh, session } = useSession();
   const [name, setName] = useState(activeOrg?.name ?? '');
   const [legalName, setLegalName] = useState(activeOrg?.legal_name ?? '');
   const [ncc, setNcc] = useState(activeOrg?.ncc ?? '');
+  const [country, setCountry] = useState(activeOrg?.country_code ?? 'NE');
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { session } = useSession();
+  const [packBusy, setPackBusy] = useState(false);
 
   useEffect(() => {
     setName(activeOrg?.name ?? '');
     setLegalName(activeOrg?.legal_name ?? '');
     setNcc(activeOrg?.ncc ?? '');
-  }, [activeOrg?.id, activeOrg?.name, activeOrg?.legal_name, activeOrg?.ncc]);
+    setCountry(activeOrg?.country_code ?? 'NE');
+  }, [activeOrg?.id, activeOrg?.name, activeOrg?.legal_name, activeOrg?.ncc, activeOrg?.country_code]);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,21 +104,68 @@ function OrgTab() {
     await refresh();
   };
 
+  const applyPack = async () => {
+    if (!activeOrg) return;
+    if (!confirm(`Appliquer le pack ${country === 'NE' ? 'Niger (CNSS / IUTS)' : 'Côte d’Ivoire (CNPS / ITS)'} ? Les règles actives actuelles seront désactivées.`)) return;
+    setPackBusy(true);
+    setError(null);
+    const { error: err } = await supabase.rpc('apply_country_pack', {
+      p_org: activeOrg.id,
+      p_country: country,
+    });
+    if (err) {
+      // Fallback client-side if RPC not yet migrated: update country_code only
+      const { error: upErr } = await supabase.from('orgs').update({ country_code: country }).eq('id', activeOrg.id);
+      setError(err.message + (upErr ? ` / ${upErr.message}` : ' — si la migration 011 n’est pas appliquée, seul le code pays a pu être mis à jour.'));
+    }
+    await refresh();
+    setPackBusy(false);
+  };
+
+  const pack = getCountryPack(country);
+
   return (
-    <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-6 max-w-xl">
-      <h2 className="font-semibold text-slate-900 mb-4 inline-flex items-center gap-2">
-        <Building className="w-4 h-4 text-teal-600" /> Informations de l’entreprise
-      </h2>
-      <ErrorBanner message={error} />
-      <form onSubmit={save} className="space-y-4">
-        <Field label="Nom"><input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} required /></Field>
-        <Field label="Raison sociale"><input className={inputClass} value={legalName} onChange={(e) => setLegalName(e.target.value)} /></Field>
-        <Field label="N° contribuable (NCC)"><input className={inputClass} value={ncc} onChange={(e) => setNcc(e.target.value)} /></Field>
-        <div className="flex items-center gap-3">
-          <button type="submit" className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition">Enregistrer</button>
-          {saved && <span className="text-sm text-emerald-700">Enregistré</span>}
-        </div>
-      </form>
+    <div className="space-y-6 max-w-xl">
+      <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-6">
+        <h2 className="font-semibold text-slate-900 mb-4 inline-flex items-center gap-2">
+          <Building className="w-4 h-4 text-teal-600" /> Informations de l’entreprise
+        </h2>
+        <ErrorBanner message={error} />
+        <form onSubmit={save} className="space-y-4">
+          <Field label="Nom"><input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} required /></Field>
+          <Field label="Raison sociale"><input className={inputClass} value={legalName} onChange={(e) => setLegalName(e.target.value)} /></Field>
+          <Field label={`${pack.taxIdLabel} (n° contribuable)`}><input className={inputClass} value={ncc} onChange={(e) => setNcc(e.target.value)} /></Field>
+          <div className="flex items-center gap-3">
+            <button type="submit" className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition">Enregistrer</button>
+            {saved && <span className="text-sm text-emerald-700">Enregistré</span>}
+          </div>
+        </form>
+      </div>
+
+      <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-6">
+        <h2 className="font-semibold text-slate-900 mb-2">Pack pays (pré-paie)</h2>
+        <p className="text-sm text-slate-500 mb-4">{pack.simulationNote}</p>
+        <Field label="Pays">
+          <select className={inputClass} value={country} onChange={(e) => setCountry(e.target.value)}>
+            {COUNTRY_OPTIONS.map((o) => (
+              <option key={o.code} value={o.code}>{o.label}</option>
+            ))}
+          </select>
+        </Field>
+        <ul className="mt-3 text-sm text-slate-600 list-disc pl-5 space-y-1">
+          <li>{pack.socialShort} — {pack.socialFull}</li>
+          <li>{pack.healthShort} — {pack.healthFull}</li>
+          <li>{pack.taxShort} — {pack.taxFull}</li>
+        </ul>
+        <button
+          type="button"
+          disabled={packBusy}
+          onClick={applyPack}
+          className="mt-4 rounded-lg border border-teal-600 text-teal-700 px-4 py-2 text-sm font-semibold hover:bg-teal-50 disabled:opacity-50"
+        >
+          {packBusy ? 'Application…' : 'Appliquer le pack (reseeder les règles)'}
+        </button>
+      </div>
     </div>
   );
 }
@@ -338,7 +392,7 @@ function RulesTab() {
   const load = useCallback(async () => {
     if (!orgId) return;
     const { data } = await supabase
-      .from('payroll_rules').select('*').eq('org_id', orgId)
+      .from('payroll_rules').select('*').eq('org_id', orgId).eq('active', true)
       .order('category').order('label');
     setRules((data ?? []) as PayrollRule[]);
     setLoading(false);
@@ -362,11 +416,10 @@ function RulesTab() {
       <SimulationNotice />
       <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-6">
         <h2 className="font-semibold text-slate-900 mb-1 inline-flex items-center gap-2">
-          <Calculator className="w-4 h-4 text-teal-600" /> Règles de pré-paie (simulation)
+          <Calculator className="w-4 h-4 text-teal-600" /> Règles de pré-paie (barème 2026)
         </h2>
         <p className="text-sm text-slate-500 mb-4">
-          Toutes les valeurs sont des simulations de démonstration, modifiables ici.
-          Faites-les valider par un expert-comptable local avant tout usage réel.
+          Taux officiels 2026 du pack pays, modifiables ici. Seules les règles actives sont affichées.
         </p>
         {loading ? <Spinner /> : rules.length === 0 ? (
           <EmptyState title="Aucune règle" />
@@ -664,5 +717,128 @@ function InviteModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
         </form>
       )}
     </Modal>
+  );
+}
+
+function NotificationsTab() {
+  const { activeOrg, session } = useSession();
+  const [items, setItems] = useState<NotificationOutboxItem[]>([]);
+  const [phone, setPhone] = useState('');
+  const [template, setTemplate] = useState('payslip_ready');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const load = useCallback(async () => {
+    if (!activeOrg) return;
+    const { data, error: err } = await supabase
+      .from('notification_outbox')
+      .select('*')
+      .eq('org_id', activeOrg.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (err) setError(err.message);
+    else setItems((data ?? []) as NotificationOutboxItem[]);
+  }, [activeOrg]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const enqueue = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeOrg || !phone.trim()) return;
+    setBusy(true);
+    setError(null);
+    const { error: err } = await supabase.rpc('enqueue_notification', {
+      p_org: activeOrg.id,
+      p_channel: 'whatsapp',
+      p_template: template,
+      p_recipient: phone.trim(),
+      p_payload: { org: activeOrg.name, queued_by: session?.user.email ?? null },
+    });
+    if (err) {
+      const { error: insErr } = await supabase.from('notification_outbox').insert({
+        org_id: activeOrg.id,
+        channel: 'whatsapp',
+        template_key: template,
+        recipient: phone.trim(),
+        payload: { org: activeOrg.name },
+        status: 'pending',
+      });
+      if (insErr) setError(err.message);
+    }
+    setPhone('');
+    await load();
+    setBusy(false);
+  };
+
+  const markSent = async (id: string) => {
+    await supabase.from('notification_outbox').update({
+      status: 'sent',
+      sent_at: new Date().toISOString(),
+    }).eq('id', id);
+    await load();
+  };
+
+  return (
+    <div className="space-y-6 max-w-2xl">
+      <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-6">
+        <h2 className="font-semibold text-slate-900 mb-2 inline-flex items-center gap-2">
+          <MessageCircle className="w-4 h-4 text-teal-600" /> File WhatsApp
+        </h2>
+        <p className="text-sm text-slate-500 mb-4">
+          Les messages sont mis en file (notification_outbox). Branchez l&apos;API WhatsApp Business pour l&apos;envoi réel ;
+          en attendant, marquez « envoyé » après envoi manuel.
+        </p>
+        <ErrorBanner message={error} />
+        <form onSubmit={enqueue} className="grid sm:grid-cols-3 gap-3 items-end">
+          <Field label="Modèle">
+            <select className={inputClass} value={template} onChange={(e) => setTemplate(e.target.value)}>
+              <option value="payslip_ready">Bulletin prêt</option>
+              <option value="leave_approved">Congé approuvé</option>
+              <option value="clock_reminder">Rappel pointage</option>
+              <option value="payroll_approval">Validation paie requise</option>
+            </select>
+          </Field>
+          <Field label="N° WhatsApp (+227…)">
+            <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+22790…" required />
+          </Field>
+          <button type="submit" disabled={busy} className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 disabled:opacity-50">
+            Mettre en file
+          </button>
+        </form>
+      </div>
+
+      <div className="rounded-2xl bg-white ring-1 ring-slate-200 overflow-hidden">
+        {items.length === 0 ? (
+          <EmptyState title="File vide" description="Aucune notification en attente." />
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-3 py-2 text-left">Destinataire</th>
+                <th className="px-3 py-2 text-left">Modèle</th>
+                <th className="px-3 py-2 text-left">Statut</th>
+                <th className="px-3 py-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((i) => (
+                <tr key={i.id} className="border-t border-slate-100">
+                  <td className="px-3 py-2">{i.recipient}</td>
+                  <td className="px-3 py-2">{i.template_key}</td>
+                  <td className="px-3 py-2">{i.status}</td>
+                  <td className="px-3 py-2 text-right">
+                    {i.status === 'pending' && (
+                      <button onClick={() => markSent(i.id)} className="text-xs font-semibold text-teal-700 hover:underline">
+                        Marquer envoyé
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
   );
 }

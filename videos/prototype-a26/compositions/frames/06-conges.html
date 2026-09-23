@@ -1,0 +1,408 @@
+<template>
+  <style>
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-400.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-400.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/inter-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-600.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-600.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-ext-700.woff2") format("woff2"); unicode-range: U+0100-02AF; }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("assets/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #000000;
+    }
+
+    #root * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    #root [data-hf="bg"] {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 78% 58% at 52% 36%, rgba(2, 132, 199, 0.10) 0%, transparent 64%),
+        #F8FAFC;
+    }
+
+    #root [data-hf="scene"] {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    #root [data-hf="safe"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 900px;
+      overflow: hidden;
+    }
+
+    #root [data-hf="accent"] {
+      position: absolute;
+      left: 50%;
+      top: 46%;
+      width: 52cqw;
+      height: 36cqw;
+      margin-left: -26cqw;
+      margin-top: -18cqw;
+      border-radius: 50%;
+      background: rgba(2, 132, 199, 0.15);
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    #root [data-hf="tilt"] {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 76cqw;
+      height: 42.75cqw;
+      margin-left: -38cqw;
+      margin-top: -21.375cqw;
+      perspective: 1400px;
+      perspective-origin: 50% 50%;
+    }
+
+    #root [data-hf="window"] {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      background: rgba(2, 132, 199, 0.04);
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    #root [data-hf="chrome"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 38px;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 0.7cqw;
+      padding: 0 1.1cqw;
+      background: linear-gradient(to bottom, rgba(248, 250, 252, 0.94), rgba(248, 250, 252, 0.0));
+      pointer-events: none;
+    }
+
+    #root [data-hf="dot"] {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #0284C7;
+      flex-shrink: 0;
+    }
+
+    #root [data-hf="dot"][data-n="2"] { opacity: 0.55; }
+    #root [data-hf="dot"][data-n="3"] { opacity: 0.28; }
+
+    #root [data-hf="url"] {
+      margin-left: 0.5cqw;
+      padding: 0.18cqw 0.9cqw;
+      border-radius: 100px;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      color: #0c4a6e;
+      line-height: 1;
+    }
+
+    #root [data-hf="viewport"] {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    #root [data-hf="surface"] {
+      position: absolute;
+      inset: 0;
+      transform-origin: 48.31% 50.56%;
+      will-change: transform;
+    }
+
+    #root [data-hf="shot"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+    }
+
+    #root [data-hf="row-mark"] {
+      position: absolute;
+      left: 15%;
+      top: 48.15%;
+      width: 66.7%;
+      height: 4.9%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #root [data-hf="row-bar"] {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 132, 199, 0.15);
+      border-left: 4px solid #0284C7;
+      border-radius: 10px;
+      transform-origin: left center;
+      will-change: transform;
+    }
+
+    #root [data-hf="spot"] {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse 58% 26% at 48.3% 50.6%,
+        transparent 48%,
+        rgba(2, 132, 199, 0.12) 100%
+      );
+    }
+
+    #root [data-hf="pill"] {
+      position: relative;
+      display: inline-block;
+      margin-top: 1.5cqw;
+      z-index: 7;
+      padding: 0.5cqw 1.35cqw;
+      border-radius: 100px;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1.5px solid rgba(2, 132, 199, 0.2);
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 1.4cqw;
+      letter-spacing: 0.04em;
+      color: #0c4a6e;
+      line-height: 1;
+      white-space: nowrap;
+      transform-origin: 0% 50%;
+      will-change: transform;
+    }
+
+    #root [data-hf="labels"] {
+      position: absolute;
+      left: 1.4cqw;
+      top: 31%;
+      width: 11cqw;
+      z-index: 8;
+    }
+
+    #root [data-hf="accent-line"] {
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #0284C7;
+      transform-origin: left center;
+      margin-bottom: 0.7cqw;
+      will-change: transform;
+    }
+
+    #root [data-hf="label-slot"] {
+      position: relative;
+      height: 2.4cqw;
+      overflow: hidden;
+    }
+
+    #root [data-hf="label"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 1.4cqw;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0c4a6e;
+      line-height: 1.1;
+      white-space: nowrap;
+      will-change: transform;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <div id="root" data-composition-id="06-conges" data-width="1920" data-height="1080" data-duration="14.202">
+    <div
+      id="f-06-conges-bg"
+      class="clip"
+      data-hf="bg"
+      data-start="0"
+      data-duration="14.202"
+      data-track-index="0"
+    ></div>
+
+    <div
+      id="f-06-conges-scene"
+      class="clip"
+      data-hf="scene"
+      data-start="0"
+      data-duration="14.202"
+      data-track-index="1"
+    >
+      <div id="f-06-conges-safe" class="f-06-conges-safe" data-hf="safe">
+        <div id="f-06-conges-accent" class="f-06-conges-accent" data-hf="accent"></div>
+
+        <div id="f-06-conges-tilt" class="f-06-conges-tilt" data-hf="tilt">
+          <div id="f-06-conges-window" class="f-06-conges-window" data-hf="window">
+            <div id="f-06-conges-chrome" class="f-06-conges-chrome" data-hf="chrome">
+              <span class="f-06-conges-dot" data-hf="dot" data-n="1"></span>
+              <span class="f-06-conges-dot" data-hf="dot" data-n="2"></span>
+              <span class="f-06-conges-dot" data-hf="dot" data-n="3"></span>
+              <span class="f-06-conges-url" data-hf="url">Congés</span>
+            </div>
+
+            <div id="f-06-conges-viewport" class="f-06-conges-viewport" data-hf="viewport">
+              <div
+                id="f-06-conges-surface"
+                class="f-06-conges-surface"
+                data-hf="surface"
+                data-layout-allow-overflow="true"
+              >
+                <img
+                  id="f-06-conges-shot"
+                  class="f-06-conges-shot"
+                  data-hf="shot"
+                  src="assets/05-conges.png"
+                  alt=""
+                  width="1920"
+                  height="1080"
+                />
+                <div id="f-06-conges-row-mark" class="f-06-conges-row-mark" data-hf="row-mark">
+                  <div id="f-06-conges-row-bar" class="f-06-conges-row-bar" data-hf="row-bar"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="f-06-conges-spot" class="f-06-conges-spot" data-hf="spot"></div>
+          </div>
+        </div>
+
+        <div id="f-06-conges-labels" class="f-06-conges-labels" data-hf="labels">
+          <div id="f-06-conges-accent-line" class="f-06-conges-accent-line" data-hf="accent-line"></div>
+          <div id="f-06-conges-label-slot" class="f-06-conges-label-slot" data-hf="label-slot">
+            <div id="f-06-conges-label-soldes" class="f-06-conges-label" data-hf="label">Soldes</div>
+            <div id="f-06-conges-label-demandes" class="f-06-conges-label" data-hf="label">Demandes</div>
+            <div id="f-06-conges-label-validation" class="f-06-conges-label" data-hf="label">Validation</div>
+          </div>
+          <div id="f-06-conges-pill" class="f-06-conges-pill" data-hf="pill">Journal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const win = document.getElementById("f-06-conges-window");
+      const accent = document.getElementById("f-06-conges-accent");
+      const surface = document.getElementById("f-06-conges-surface");
+      const bar = document.getElementById("f-06-conges-row-bar");
+      const spot = document.getElementById("f-06-conges-spot");
+      const pill = document.getElementById("f-06-conges-pill");
+      const line = document.getElementById("f-06-conges-accent-line");
+      const soldes = document.getElementById("f-06-conges-label-soldes");
+      const demandes = document.getElementById("f-06-conges-label-demandes");
+      const validation = document.getElementById("f-06-conges-label-validation");
+
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set([soldes, demandes, validation], { opacity: 0, y: 18 });
+      gsap.set(win, { transformPerspective: 1400, transformStyle: "preserve-3d" });
+
+      /* Scene 1 (0.0–1.09): window settles tilt → flat; accent blob springs behind. */
+      tl.fromTo(
+        accent,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.82, ease: "back.out(1.35)" },
+        0
+      );
+      tl.fromTo(
+        win,
+        { rotateX: 7, rotateY: -9, y: 16 },
+        { rotateX: 0, rotateY: 0, y: 0, duration: 1.09, ease: "power2.out" },
+        0
+      );
+
+      /* Scene 2 (1.09–4.02): side labels cycle; pan/focus-lock onto demandes table. */
+      tl.fromTo(
+        line,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.4, ease: "power3.out" },
+        1.09
+      );
+      tl.fromTo(
+        soldes,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+        1.09
+      );
+      tl.fromTo(
+        surface,
+        { scale: 1 },
+        { scale: 1.34, duration: 1.88, ease: "power3.inOut" },
+        1.09
+      );
+
+      tl.to(soldes, { opacity: 0, y: -18, duration: 0.32, ease: "power2.in" }, 2.04);
+      tl.fromTo(
+        demandes,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.42, ease: "power3.out", immediateRender: false },
+        2.04
+      );
+
+      tl.to(demandes, { opacity: 0, y: -18, duration: 0.32, ease: "power2.in" }, 3.02);
+      tl.fromTo(
+        validation,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.42, ease: "power3.out", immediateRender: false },
+        3.02
+      );
+
+      /* Scene 3 (4.02–5.76): highlight sweep on Approuvé row (KONÉ / Validation demo). */
+      tl.fromTo(
+        bar,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.72, ease: "power2.out" },
+        4.02
+      );
+      tl.fromTo(
+        spot,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.55, ease: "power1.inOut" },
+        4.02
+      );
+
+      /* Scene 4 (5.76–13.602): Journal pill spring-pops. Hold. */
+      tl.fromTo(
+        pill,
+        { scale: 0, opacity: 0, y: 10 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+        5.76
+      );
+
+      window.__timelines["06-conges"] = tl;
+    })();
+  </script>
+</template>
