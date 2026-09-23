@@ -2,7 +2,9 @@
  * Packs pays Afrique de l’Ouest.
  * Les codes techniques (cnps_*, cmu_*, its_*, fdfp_*) restent stables pour le
  * moteur de pré-paie ; seuls libellés, taux et congés changent selon le pays.
- * Valeurs = SIMULATION à faire valider par un expert local.
+ *
+ * Taux figés après recherche 2026 (voir commentaires de chaque règle).
+ * CMU CI : valeur >= 100 = forfait XOF. its_on_gross = 1 → ITS sur le brut.
  */
 
 export type CountryCode = 'CI' | 'NE';
@@ -54,44 +56,59 @@ export interface CountryPack {
   mobileOperators: string[];
 }
 
+/** Côte d'Ivoire — CLEISS 01/2025, CGI art. 119 bis (ord. 2023-719), FDFP, décret 2022-986. */
 const CI_RULES: PackRuleSeed[] = [
   { code: 'cnps_pension_tx_salarie', label: 'CNPS pension vieillesse — part salariale', category: 'cotisation_salarie', value: 6.3, bracket_from: null, bracket_to: null },
   { code: 'cnps_pension_tx_employeur', label: 'CNPS pension vieillesse — part employeur', category: 'cotisation_employeur', value: 7.7, bracket_from: null, bracket_to: null },
-  { code: 'cnps_pf_tx_employeur', label: 'CNPS prestations familiales — part employeur', category: 'cotisation_employeur', value: 5.75, bracket_from: null, bracket_to: null },
-  { code: 'cnps_at_tx_employeur', label: 'CNPS accidents du travail — part employeur', category: 'cotisation_employeur', value: 2.0, bracket_from: null, bracket_to: null },
-  { code: 'cnps_rp_tx_employeur', label: 'CNPS risques professionnels — part employeur', category: 'cotisation_employeur', value: 1.0, bracket_from: null, bracket_to: null },
-  { code: 'fdfp_tx_employeur', label: 'FDFP formation professionnelle — part employeur', category: 'cotisation_employeur', value: 1.4, bracket_from: null, bracket_to: null },
-  { code: 'fdfp_tx_plan', label: 'FDFP plan de développement — part employeur', category: 'abarissement', value: 0.4, bracket_from: null, bracket_to: null },
-  { code: 'cmu_tx_salarie', label: 'CMU — part salariale', category: 'cotisation_salarie', value: 1.0, bracket_from: null, bracket_to: null },
-  { code: 'cmu_tx_employeur', label: 'CMU — part employeur', category: 'cotisation_employeur', value: 4.0, bracket_from: null, bracket_to: null },
-  { code: 'plafond_mensuel', label: 'Plafond mensuel de cotisation CNPS (SIMULATION)', category: 'plafond', value: 70000, bracket_from: null, bracket_to: null },
-  { code: 'smig_mensuel', label: 'SMIG mensuel ivoirien (SIMULATION)', category: 'plafond', value: 75000, bracket_from: null, bracket_to: null },
+  { code: 'cnps_pf_tx_employeur', label: 'CNPS prestations familiales — part employeur', category: 'cotisation_employeur', value: 5.0, bracket_from: null, bracket_to: null },
+  { code: 'cnps_at_tx_employeur', label: 'CNPS accidents du travail — part employeur (secteur tertiaire)', category: 'cotisation_employeur', value: 2.0, bracket_from: null, bracket_to: null },
+  { code: 'cnps_rp_tx_employeur', label: 'CNPS assurance maternité — part employeur', category: 'cotisation_employeur', value: 0.75, bracket_from: null, bracket_to: null },
+  { code: 'fdfp_tx_employeur', label: 'FDFP taxe additionnelle formation continue', category: 'cotisation_employeur', value: 1.2, bracket_from: null, bracket_to: null },
+  { code: 'fdfp_tx_plan', label: 'FDFP taxe d’apprentissage', category: 'abarissement', value: 0.4, bracket_from: null, bracket_to: null },
+  { code: 'cmu_tx_salarie', label: 'CMU — forfait salarial (XOF / personne)', category: 'cotisation_salarie', value: 500, bracket_from: null, bracket_to: null },
+  { code: 'cmu_tx_employeur', label: 'CMU — forfait employeur (XOF / personne)', category: 'cotisation_employeur', value: 500, bracket_from: null, bracket_to: null },
+  { code: 'plafond_mensuel', label: 'Plafond mensuel CNPS retraite (45 × SMIG)', category: 'plafond', value: 3375000, bracket_from: null, bracket_to: null },
+  { code: 'plafond_prestations', label: 'Plafond CNPS PF / maternité / AT', category: 'plafond', value: 70000, bracket_from: null, bracket_to: null },
+  { code: 'smig_mensuel', label: 'SMIG mensuel ivoirien', category: 'plafond', value: 75000, bracket_from: null, bracket_to: null },
   { code: 'taux_heures_supp', label: 'Majoration heures supplémentaires (%)', category: 'autre', value: 125, bracket_from: null, bracket_to: null },
-  { code: 'its_t1_tx', label: 'ITS tranche 1 (0 à 50 000) — taux', category: 'impot', value: 0, bracket_from: 0, bracket_to: 50000 },
-  { code: 'its_t2_tx', label: 'ITS tranche 2 (50 001 à 290 000) — taux', category: 'impot', value: 10, bracket_from: 50000, bracket_to: 290000 },
-  { code: 'its_t3_tx', label: 'ITS tranche 3 (290 001 à 530 000) — taux', category: 'impot', value: 15, bracket_from: 290000, bracket_to: 530000 },
-  { code: 'its_t4_tx', label: 'ITS tranche 4 (au-delà de 530 000) — taux', category: 'impot', value: 25, bracket_from: 530000, bracket_to: null },
+  { code: 'its_on_gross', label: 'ITS assiette = brut (1) ou net social (0)', category: 'autre', value: 1, bracket_from: null, bracket_to: null },
+  { code: 'its_t1_tx', label: 'ITS tranche 1 (0 à 75 000) — taux', category: 'impot', value: 0, bracket_from: 0, bracket_to: 75000 },
+  { code: 'its_t2_tx', label: 'ITS tranche 2 (75 001 à 240 000) — taux', category: 'impot', value: 16, bracket_from: 75000, bracket_to: 240000 },
+  { code: 'its_t3_tx', label: 'ITS tranche 3 (240 001 à 800 000) — taux', category: 'impot', value: 21, bracket_from: 240000, bracket_to: 800000 },
+  { code: 'its_t4_tx', label: 'ITS tranche 4 (800 001 à 2 400 000) — taux', category: 'impot', value: 24, bracket_from: 800000, bracket_to: 2400000 },
+  { code: 'its_t5_tx', label: 'ITS tranche 5 (2 400 001 à 8 000 000) — taux', category: 'impot', value: 28, bracket_from: 2400000, bracket_to: 8000000 },
+  { code: 'its_t6_tx', label: 'ITS tranche 6 (au-delà de 8 000 000) — taux', category: 'impot', value: 32, bracket_from: 8000000, bracket_to: null },
 ];
 
-/** Taux indicatifs Niger — SIMULATION, à valider (CNSS / IUTS / AMO). */
+/**
+ * Niger — décret 2023-449 (JO 15/06/2023), ANPE 1 % au 01/01/2024,
+ * plafond décret 2013-279, SMIG décret 2025-607 (42 000 F au 01/01/2026),
+ * ITS/IUTS CGI art. 150 / LF 2026 (ord. 2025-44), FAFPA 3 % entreprises nationales.
+ */
 const NE_RULES: PackRuleSeed[] = [
-  { code: 'cnps_pension_tx_salarie', label: 'CNSS pension vieillesse — part salariale', category: 'cotisation_salarie', value: 1.6, bracket_from: null, bracket_to: null },
-  { code: 'cnps_pension_tx_employeur', label: 'CNSS pension vieillesse — part employeur', category: 'cotisation_employeur', value: 4.0, bracket_from: null, bracket_to: null },
-  { code: 'cnps_pf_tx_employeur', label: 'CNSS prestations familiales — part employeur', category: 'cotisation_employeur', value: 5.5, bracket_from: null, bracket_to: null },
-  { code: 'cnps_at_tx_employeur', label: 'CNSS accidents du travail — part employeur', category: 'cotisation_employeur', value: 2.0, bracket_from: null, bracket_to: null },
-  { code: 'cnps_rp_tx_employeur', label: 'CNSS risques professionnels — part employeur', category: 'cotisation_employeur', value: 1.0, bracket_from: null, bracket_to: null },
-  { code: 'fdfp_tx_employeur', label: 'Formation professionnelle — part employeur', category: 'cotisation_employeur', value: 1.2, bracket_from: null, bracket_to: null },
-  { code: 'fdfp_tx_plan', label: 'Contribution formation complémentaire — part employeur', category: 'abarissement', value: 0.3, bracket_from: null, bracket_to: null },
-  { code: 'cmu_tx_salarie', label: 'AMO / couverture maladie — part salariale', category: 'cotisation_salarie', value: 1.0, bracket_from: null, bracket_to: null },
-  { code: 'cmu_tx_employeur', label: 'AMO / couverture maladie — part employeur', category: 'cotisation_employeur', value: 3.0, bracket_from: null, bracket_to: null },
-  { code: 'plafond_mensuel', label: 'Plafond mensuel de cotisation CNSS (SIMULATION)', category: 'plafond', value: 500000, bracket_from: null, bracket_to: null },
-  { code: 'smig_mensuel', label: 'SMIG mensuel nigérien (SIMULATION)', category: 'plafond', value: 36000, bracket_from: null, bracket_to: null },
+  { code: 'cnps_pension_tx_salarie', label: 'CNSS pension vieillesse — part salariale', category: 'cotisation_salarie', value: 5.25, bracket_from: null, bracket_to: null },
+  { code: 'cnps_pension_tx_employeur', label: 'CNSS pension vieillesse — part employeur', category: 'cotisation_employeur', value: 9.75, bracket_from: null, bracket_to: null },
+  { code: 'cnps_pf_tx_employeur', label: 'CNSS prestations familiales — part employeur', category: 'cotisation_employeur', value: 4.9, bracket_from: null, bracket_to: null },
+  { code: 'cnps_at_tx_employeur', label: 'CNSS accidents du travail — part employeur', category: 'cotisation_employeur', value: 1.75, bracket_from: null, bracket_to: null },
+  { code: 'cnps_rp_tx_employeur', label: 'ANPE — cotisation employeur', category: 'cotisation_employeur', value: 1.0, bracket_from: null, bracket_to: null },
+  { code: 'fdfp_tx_employeur', label: 'FAFPA taxe d’apprentissage (entreprises nationales)', category: 'cotisation_employeur', value: 3.0, bracket_from: null, bracket_to: null },
+  { code: 'fdfp_tx_plan', label: 'Formation complémentaire — non instituée', category: 'abarissement', value: 0, bracket_from: null, bracket_to: null },
+  { code: 'cmu_tx_salarie', label: 'AMO / RAMU — non prélevée sur la paie privée', category: 'cotisation_salarie', value: 0, bracket_from: null, bracket_to: null },
+  { code: 'cmu_tx_employeur', label: 'AMO / RAMU — non prélevée sur la paie privée', category: 'cotisation_employeur', value: 0, bracket_from: null, bracket_to: null },
+  { code: 'plafond_mensuel', label: 'Plafond mensuel de cotisation CNSS', category: 'plafond', value: 500000, bracket_from: null, bracket_to: null },
+  { code: 'plafond_prestations', label: 'Plafond CNSS PF / AT / ANPE', category: 'plafond', value: 500000, bracket_from: null, bracket_to: null },
+  { code: 'smig_mensuel', label: 'SMIG mensuel nigérien (01/2026)', category: 'plafond', value: 42000, bracket_from: null, bracket_to: null },
   { code: 'taux_heures_supp', label: 'Majoration heures supplémentaires (%)', category: 'autre', value: 125, bracket_from: null, bracket_to: null },
-  { code: 'its_t1_tx', label: 'IUTS tranche 1 (0 à 25 000) — taux', category: 'impot', value: 0, bracket_from: 0, bracket_to: 25000 },
-  { code: 'its_t2_tx', label: 'IUTS tranche 2 (25 001 à 50 000) — taux', category: 'impot', value: 2, bracket_from: 25000, bracket_to: 50000 },
-  { code: 'its_t3_tx', label: 'IUTS tranche 3 (50 001 à 100 000) — taux', category: 'impot', value: 8, bracket_from: 50000, bracket_to: 100000 },
-  { code: 'its_t4_tx', label: 'IUTS tranche 4 (100 001 à 200 000) — taux', category: 'impot', value: 15, bracket_from: 100000, bracket_to: 200000 },
-  { code: 'its_t5_tx', label: 'IUTS tranche 5 (au-delà de 200 000) — taux', category: 'impot', value: 20, bracket_from: 200000, bracket_to: null },
+  { code: 'its_on_gross', label: 'IUTS assiette = brut (1) ou net social (0)', category: 'autre', value: 0, bracket_from: null, bracket_to: null },
+  { code: 'its_t1_tx', label: 'IUTS / ITS tranche 1 (0 à 25 000) — taux', category: 'impot', value: 1, bracket_from: 0, bracket_to: 25000 },
+  { code: 'its_t2_tx', label: 'IUTS / ITS tranche 2 (25 001 à 50 000) — taux', category: 'impot', value: 2, bracket_from: 25000, bracket_to: 50000 },
+  { code: 'its_t3_tx', label: 'IUTS / ITS tranche 3 (50 001 à 100 000) — taux', category: 'impot', value: 6, bracket_from: 50000, bracket_to: 100000 },
+  { code: 'its_t4_tx', label: 'IUTS / ITS tranche 4 (100 001 à 150 000) — taux', category: 'impot', value: 13, bracket_from: 100000, bracket_to: 150000 },
+  { code: 'its_t5_tx', label: 'IUTS / ITS tranche 5 (150 001 à 300 000) — taux', category: 'impot', value: 25, bracket_from: 150000, bracket_to: 300000 },
+  { code: 'its_t6_tx', label: 'IUTS / ITS tranche 6 (300 001 à 400 000) — taux', category: 'impot', value: 30, bracket_from: 300000, bracket_to: 400000 },
+  { code: 'its_t7_tx', label: 'IUTS / ITS tranche 7 (400 001 à 700 000) — taux', category: 'impot', value: 32, bracket_from: 400000, bracket_to: 700000 },
+  { code: 'its_t8_tx', label: 'IUTS / ITS tranche 8 (700 001 à 1 000 000) — taux', category: 'impot', value: 34, bracket_from: 700000, bracket_to: 1000000 },
+  { code: 'its_t9_tx', label: 'IUTS / ITS tranche 9 (au-delà de 1 000 000) — taux', category: 'impot', value: 35, bracket_from: 1000000, bracket_to: null },
 ];
 
 const SHARED_LEAVES_CI: PackLeaveType[] = [
@@ -128,7 +145,7 @@ export const COUNTRY_PACKS: Record<CountryCode, CountryPack> = {
     healthFull: 'Couverture Maladie Universelle',
     taxFull: 'Impôt sur les traitements et salaires',
     trainingFull: 'Fonds de Développement de la Formation Professionnelle',
-    simulationNote: 'Simulation Côte d’Ivoire — à valider par un expert local.',
+    simulationNote: 'Barème 2026 : CNPS CLEISS, ITS CGI art. 119 bis, FDFP 1,2 % + 0,4 %, CMU 500 F, SMIG 75 000 F.',
     ohadaAccounts: {
       gross: '6411',
       employerSocial: '6461',
@@ -158,7 +175,7 @@ export const COUNTRY_PACKS: Record<CountryCode, CountryPack> = {
     healthFull: 'Assurance maladie / couverture santé',
     taxFull: 'Impôt unique sur les traitements et salaires',
     trainingFull: 'Contribution à la formation professionnelle',
-    simulationNote: 'Simulation Niger — à valider par un expert-comptable / CNSS locales.',
+    simulationNote: 'Barème 2026 : CNSS décret 2023-449, ANPE 1 %, SMIG 42 000 F, IUTS CGI art. 150 / LF 2026, FAFPA 3 %.',
     ohadaAccounts: {
       gross: '6411',
       employerSocial: '6461',

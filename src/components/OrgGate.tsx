@@ -14,19 +14,19 @@ const DEMO_OPTIONS: Array<{
   {
     kind: 'pme',
     title: 'PME',
-    description: 'Distribution Ivoire SARL — 10 salariés, pointages, congés, cycle de paie du mois.',
+    description: 'Distribution Sahel SARL (Niger) — 10 salariés, pointages, congés, cycle de paie du mois.',
     icon: <Store className="w-5 h-5" />,
   },
   {
     kind: 'ong',
     title: 'ONG',
-    description: 'Horizon Santé CI — 12 salariés, 3 projets bailleurs, feuilles de temps imputées.',
+    description: 'ONG Horizon Santé Niger — 12 salariés, 3 projets bailleurs, feuilles de temps imputées.',
     icon: <Globe2 className="w-5 h-5" />,
   },
   {
     kind: 'groupe',
     title: 'Grande structure',
-    description: 'Groupe ATLANTIQUE CI — 18 salariés, DRH, comptabilité, ateliers.',
+    description: 'Groupe SAHEL Holding (Niger) — 18 salariés, DRH, comptabilité, ateliers.',
     icon: <Landmark className="w-5 h-5" />,
   },
 ];

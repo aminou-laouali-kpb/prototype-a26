@@ -25,7 +25,12 @@ La migration `011_country_packs_payments_billing` ajoute :
 - Essai / abonnement XOF (`org_subscriptions`)
 - Rôle `cabinet` (multi-clients)
 
-Les nouvelles organisations sont créées par défaut en pack **Niger** (CNSS / IUTS / AMO — simulation à valider localement). Appliquer cette migration sur Railway/Postgres avant d’utiliser ces écrans.
+Les nouvelles organisations et les espaces démo sont créés en pack **Niger**. La migration `012_official_2026_rates` fige les taux 2026 :
+
+- Niger : CNSS 5,25 % / 9,75 % / 4,90 % / 1,75 %, ANPE 1 %, plafond 500 000 F, SMIG 42 000 F, IUTS CGI art. 150 (1–35 %), FAFPA 3 %. AMO/RAMU = 0 (pas de prélèvement paie privée confirmé).
+- Côte d’Ivoire : CNPS 6,3 / 7,7 / 5 / 0,75 / 2 %, plafonds 3 375 000 F (retraite) et 70 000 F (PF/AT), CMU 500 F forfait, FDFP 1,2 % + 0,4 %, ITS CGI art. 119 bis sur le brut, SMIG 75 000 F.
+
+Appliquer les migrations `011` puis `012` sur Railway/Postgres avant d’utiliser ces écrans.
 
 ## Préparer la base Supabase
 

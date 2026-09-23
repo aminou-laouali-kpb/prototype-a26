@@ -13,7 +13,7 @@ Cochez chaque case. Notez les anomalies en fin de document.
 
 | # | Préparation | OK |
 |---|---|---|
-| P1 | Migrations `001` → `011` appliquées sur Postgres Railway (sans wipe `pgdata`) | ☐ |
+| P1 | Migrations `001` → `012` appliquées sur Postgres Railway (sans wipe `pgdata`) | ☐ |
 | P2 | `.env` local : `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` (jamais de `service_role`) | ☐ |
 | P3 | `npm install` puis `npm run dev -- --host 127.0.0.1` → http://127.0.0.1:5173 | ☐ |
 | P4 | Navigateur : 3 sessions distinctes (profils ou fenêtres privées séparées) | ☐ |

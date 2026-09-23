@@ -46,21 +46,32 @@ describe('country packs', () => {
 });
 
 describe('Niger payroll engine', () => {
-  it('balances net = brut − cotisations − IUTS', () => {
+  it('balances net = brut − cotisations − IUTS with 2026 official rates', () => {
     const rules = rulesFromPack('NE');
     const result = computePayslip(FULL_MONTH, rules, () => 1, () => 'test');
+    expect(result.gross).toBe(200000);
+    expect(result.cnpsEmployee).toBe(10500);
+    expect(result.cmuEmployee).toBe(0);
+    expect(result.its).toBe(20125);
+    expect(result.net).toBe(169375);
     expect(result.net).toBeCloseTo(
       result.gross - result.cnpsEmployee - result.cmuEmployee - result.its,
       1,
     );
     expect(result.details.some((d) => d.label.includes('CNSS'))).toBe(true);
     expect(result.details.some((d) => d.label.includes('IUTS') || d.category === 'impot')).toBe(true);
+    expect(COUNTRY_PACKS.NE.rules.find((r) => r.code === 'smig_mensuel')?.value).toBe(42000);
   });
 
-  it('keeps Côte d’Ivoire pack compatible', () => {
+  it('applies Côte d’Ivoire ITS on gross and CMU forfait 500 F', () => {
     const rules = rulesFromPack('CI');
     const result = computePayslip(FULL_MONTH, rules, () => 1, () => 'test');
+    expect(result.cnpsEmployee).toBe(12600);
+    expect(result.cmuEmployee).toBe(500);
+    expect(result.its).toBe(20000);
+    expect(result.net).toBe(166900);
     expect(result.details.some((d) => d.label.includes('CNPS'))).toBe(true);
+    expect(result.employerCmu).toBe(500);
   });
 });
 
