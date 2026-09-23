@@ -392,7 +392,7 @@ function RulesTab() {
   const load = useCallback(async () => {
     if (!orgId) return;
     const { data } = await supabase
-      .from('payroll_rules').select('*').eq('org_id', orgId)
+      .from('payroll_rules').select('*').eq('org_id', orgId).eq('active', true)
       .order('category').order('label');
     setRules((data ?? []) as PayrollRule[]);
     setLoading(false);
@@ -416,11 +416,10 @@ function RulesTab() {
       <SimulationNotice />
       <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-6">
         <h2 className="font-semibold text-slate-900 mb-1 inline-flex items-center gap-2">
-          <Calculator className="w-4 h-4 text-teal-600" /> Règles de pré-paie (simulation)
+          <Calculator className="w-4 h-4 text-teal-600" /> Règles de pré-paie (barème 2026)
         </h2>
         <p className="text-sm text-slate-500 mb-4">
-          Toutes les valeurs sont des simulations de démonstration, modifiables ici.
-          Faites-les valider par un expert-comptable local avant tout usage réel.
+          Taux officiels 2026 du pack pays, modifiables ici. Seules les règles actives sont affichées.
         </p>
         {loading ? <Spinner /> : rules.length === 0 ? (
           <EmptyState title="Aucune règle" />
