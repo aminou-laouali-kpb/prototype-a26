@@ -56,7 +56,7 @@ export interface CountryPack {
   mobileOperators: string[];
 }
 
-/** Côte d'Ivoire — CLEISS 01/2025, CGI art. 119 bis (ord. 2023-719), FDFP, décret 2022-986. */
+/** Côte d'Ivoire — CLEISS 01/2025, CGI art. 119 bis (ord. 2023-719), FDFP 1,2+0,4, CMU 500 F, SMIG décret 2022-986. Recoupé 23/09/2026, valeurs conservées. */
 const CI_RULES: PackRuleSeed[] = [
   { code: 'cnps_pension_tx_salarie', label: 'CNPS pension vieillesse — part salariale', category: 'cotisation_salarie', value: 6.3, bracket_from: null, bracket_to: null },
   { code: 'cnps_pension_tx_employeur', label: 'CNPS pension vieillesse — part employeur', category: 'cotisation_employeur', value: 7.7, bracket_from: null, bracket_to: null },
@@ -81,9 +81,18 @@ const CI_RULES: PackRuleSeed[] = [
 ];
 
 /**
- * Niger — décret 2023-449 (JO 15/06/2023), ANPE 1 % au 01/01/2024,
- * plafond décret 2013-279, SMIG décret 2025-607 (42 000 F au 01/01/2026),
- * ITS/IUTS CGI art. 150 / LF 2026 (ord. 2025-44), FAFPA 3 % entreprises nationales.
+ * Niger — taux figés après recoupement (23/09/2026). On conserve ces valeurs.
+ *
+ * CNSS 5,25 / 9,75 / 4,90 / 1,75 : décret 2023-449/PRN/MET/PS (JO spécial n°08
+ * du 15/06/2023), communiqué DG CNSS (nigermarches), CdM 25/05/2023 — réallocation
+ * vers les pensions, taux global inchangé 16,40 % + 5,25 %. CNSS.ne et CLEISS 2024
+ * listent encore l’ancienne ventilation 6,25 / 8,40 : écart documenté, on suit le décret.
+ * ANPE 1 % : décret 03/11/2023, applicable 01/01/2024 (SG ANPE / Le Sahel). CNSS.ne
+ * et Africarrieres citent encore 0,5 % (taux antérieur).
+ * Plafond 500 000 F : décret 2013-279. SMIG 42 000 F : décret 2025-607, 01/01/2026
+ * (ANP, gouv.ne). IUTS 1–35 % / 9 tranches : CGI art. 150, ord. 2025-44 LF 2026
+ * (DGI : barème inchangé). FAFPA TAP 3 % nationaux (5 % étrangers, non mappé) :
+ * CGI art. 127–138, DG FAFPA, ALBASHI. AMO/RAMU = 0 (pas de prélèvement paie privée).
  */
 const NE_RULES: PackRuleSeed[] = [
   { code: 'cnps_pension_tx_salarie', label: 'CNSS pension vieillesse — part salariale', category: 'cotisation_salarie', value: 5.25, bracket_from: null, bracket_to: null },

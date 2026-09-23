@@ -32,6 +32,42 @@ const FULL_MONTH: ComputeInput = {
   effectiveDate: '2026-09-30',
 };
 
+describe('locked 2026 official rates', () => {
+  it('keeps the researched Niger CNSS / ANPE / IUTS / FAFPA / SMIG table', () => {
+    const byCode = Object.fromEntries(COUNTRY_PACKS.NE.rules.map((r) => [r.code, r.value]));
+    expect(byCode.cnps_pension_tx_salarie).toBe(5.25);
+    expect(byCode.cnps_pension_tx_employeur).toBe(9.75);
+    expect(byCode.cnps_pf_tx_employeur).toBe(4.9);
+    expect(byCode.cnps_at_tx_employeur).toBe(1.75);
+    expect(byCode.cnps_rp_tx_employeur).toBe(1);
+    expect(byCode.fdfp_tx_employeur).toBe(3);
+    expect(byCode.cmu_tx_salarie).toBe(0);
+    expect(byCode.plafond_mensuel).toBe(500000);
+    expect(byCode.smig_mensuel).toBe(42000);
+    expect(byCode.its_on_gross).toBe(0);
+    expect(byCode.its_t1_tx).toBe(1);
+    expect(byCode.its_t9_tx).toBe(35);
+  });
+
+  it('keeps the researched Côte d’Ivoire CNPS / CMU / ITS / FDFP table', () => {
+    const byCode = Object.fromEntries(COUNTRY_PACKS.CI.rules.map((r) => [r.code, r.value]));
+    expect(byCode.cnps_pension_tx_salarie).toBe(6.3);
+    expect(byCode.cnps_pension_tx_employeur).toBe(7.7);
+    expect(byCode.cnps_pf_tx_employeur).toBe(5);
+    expect(byCode.cnps_at_tx_employeur).toBe(2);
+    expect(byCode.cnps_rp_tx_employeur).toBe(0.75);
+    expect(byCode.fdfp_tx_employeur).toBe(1.2);
+    expect(byCode.fdfp_tx_plan).toBe(0.4);
+    expect(byCode.cmu_tx_salarie).toBe(500);
+    expect(byCode.plafond_mensuel).toBe(3375000);
+    expect(byCode.plafond_prestations).toBe(70000);
+    expect(byCode.smig_mensuel).toBe(75000);
+    expect(byCode.its_on_gross).toBe(1);
+    expect(byCode.its_t1_tx).toBe(0);
+    expect(byCode.its_t6_tx).toBe(32);
+  });
+});
+
 describe('country packs', () => {
   it('defaults unknown codes to Niger', () => {
     expect(getCountryPack(null).code).toBe('NE');

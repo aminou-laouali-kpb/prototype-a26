@@ -46,7 +46,7 @@ Cochez chaque case. Notez les anomalies en fin de document.
 | 1.7 | **Paramètres → Règles de paie** | Libellés CNSS / IUTS / AMO (pas CNPS/ITS seuls) | ☐ |
 | 1.8 | **Abonnement** | Essai 30 jours démarrable / visible | ☐ |
 
-*Variante démo rapide :* OrgGate → **Démonstration → PME** (données CI démo). Noter pack CI si utilisé.
+*Variante démo rapide :* OrgGate → **Démonstration → PME** (Distribution Sahel SARL, pack Niger).
 
 ---
 
@@ -253,4 +253,4 @@ Cochez chaque case. Notez les anomalies en fin de document.
 
 ---
 
-*Document généré pour la recette Prototype A26 — packs Niger / Côte d’Ivoire. Les taux de paie sont des SIMULATIONS à faire valider par un expert local avant tout usage déclaratif officiel.*
+*Document généré pour la recette Prototype A26 — packs Niger / Côte d’Ivoire. Taux 2026 figés après recoupement des textes (décrets CNSS/ANPE/SMIG, CGI, CLEISS). Un expert local reste requis avant tout dépôt déclaratif officiel.*
