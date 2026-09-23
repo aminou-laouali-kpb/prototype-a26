@@ -36,8 +36,8 @@ export function PaymentsPage() {
       .order('period_month', { ascending: false });
     const list = (data ?? []) as PayrollPeriod[];
     setPeriods(list);
-    if (!periodId && list[0]) setPeriodId(list[0].id);
-  }, [activeOrg, periodId]);
+    setPeriodId((current) => current || list[0]?.id || '');
+  }, [activeOrg, setPeriods, setPeriodId]);
 
   const loadBatches = useCallback(async () => {
     if (!activeOrg || !periodId) {
@@ -64,7 +64,7 @@ export function PaymentsPage() {
       .order('amount', { ascending: false });
     setLines((data ?? []) as PaymentBatchLine[]);
     setActiveBatch(batchId);
-  }, []);
+  }, [setLines, setActiveBatch]);
 
   useEffect(() => { loadPeriods(); }, [loadPeriods]);
   useEffect(() => { loadBatches(); }, [loadBatches]);
