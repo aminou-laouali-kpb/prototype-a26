@@ -328,12 +328,14 @@ Trois protections simples :
 
 ## 12. Combien ça coûte ?
 
-| Formule | Prix par mois | Nombre de salariés |
-|---|---|---|
-| **Essai** | Gratuit, 30 jours | jusqu'à 25 |
-| **PME** | 45 000 FCFA | jusqu'à 50 |
-| **Groupe** | 120 000 FCFA | jusqu'à 200 |
-| **Cabinet** | 180 000 FCFA | jusqu'à 500, plusieurs entreprises |
+| Formule | Tarif HT | Plancher / mois | Sièges |
+|---|---|---|---|
+| **Essai** | Gratuit, 30 jours | — | 25 |
+| **PME** | 2 500 F / salarié | 75 000 F | 50 |
+| **Groupe** | 2 000 F / salarié | 200 000 F | 200 |
+| **Cabinet** | 1 800 F / salarié | 350 000 F | 500, multi-entreprises |
+
+Exemple : 40 salariés en PME = 100 000 F HT / mois. Annuel = 10 mois (2 offerts). TVA en sus.
 
 - Paiement par Mobile Money ou virement.
 - Facturation en FCFA.
