@@ -534,6 +534,7 @@ function AccessTab() {
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
+  const [cleaning, setCleaning] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
   const orgId = activeOrg?.id;
@@ -565,6 +566,19 @@ function AccessTab() {
     setResetting(false);
     if (err) { setNotice('Réinitialisation impossible : ' + err.message); return; }
     await load();
+  };
+
+  const cleanClones = async () => {
+    if (!window.confirm('Supprimer les fiches de démonstration en double (même nom, autre matricule) ? La fiche rattachée à un compte, ou la plus complète, est conservée.')) return;
+    setCleaning(true);
+    setNotice(null);
+    const { data, error: err } = await supabase.rpc('cleanup_demo_name_clones', { p_org: activeOrg.id });
+    setCleaning(false);
+    if (err) { setNotice('Ménage impossible : ' + err.message); return; }
+    const removed = (data as { removed?: number } | null)?.removed ?? 0;
+    setNotice(removed === 0
+      ? 'Aucun doublon de nom trouvé.'
+      : `${removed} fiche${removed > 1 ? 's' : ''} en double supprimée${removed > 1 ? 's' : ''}.`);
   };
 
   return (
@@ -637,15 +651,24 @@ function AccessTab() {
             Cet espace contient un jeu de données fictif ({activeOrg.demo_kind === 'pme' ? 'PME' : activeOrg.demo_kind === 'ong' ? 'ONG' : 'grande structure'}).
             La remise à zéro efface toutes les données saisies puis régénère le jeu initial.
           </p>
-          <button
-            onClick={resetDemo}
-            disabled={resetting}
-            className="rounded-lg border border-amber-300 bg-white px-3.5 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100 disabled:opacity-50 transition inline-flex items-center gap-2"
-          >
-            <RefreshCw className={`w-4 h-4 ${resetting ? 'animate-spin' : ''}`} />
-            {resetting ? 'Régénération…' : 'Réinitialiser les données de démonstration'}
-          </button>
-          {notice && <p className="mt-2 text-xs text-rose-700">{notice}</p>}
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={cleanClones}
+              disabled={cleaning || resetting}
+              className="rounded-lg border border-amber-300 bg-white px-3.5 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100 disabled:opacity-50 transition inline-flex items-center gap-2"
+            >
+              {cleaning ? 'Ménage…' : 'Nettoyer les fiches en double'}
+            </button>
+            <button
+              onClick={resetDemo}
+              disabled={resetting || cleaning}
+              className="rounded-lg border border-amber-300 bg-white px-3.5 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100 disabled:opacity-50 transition inline-flex items-center gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${resetting ? 'animate-spin' : ''}`} />
+              {resetting ? 'Régénération…' : 'Réinitialiser les données de démonstration'}
+            </button>
+          </div>
+          {notice && <p className={`mt-2 text-xs ${notice.startsWith('Ménage') || notice.startsWith('Réinitialisation') ? 'text-rose-700' : 'text-emerald-800'}`}>{notice}</p>}
         </div>
       )}
 

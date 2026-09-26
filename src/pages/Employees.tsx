@@ -5,6 +5,7 @@ import {
   Employee, Department, Contract, formatXof, statusLabel, STATUS_COLORS,
 } from '../lib/types';
 import { parseEmployeeCsv, employeeImportTemplateCsv } from '../lib/employeeImport';
+import { findNameClone } from '../lib/employees';
 import { canEditEmployees, canSeeContractPay } from '../lib/access';
 import { Modal, Field, inputClass, ErrorBanner, Spinner, EmptyState, useAsyncAction } from '../components/ui';
 import { Users, Plus, Search, Pencil, Download, Upload } from 'lucide-react';
@@ -305,6 +306,7 @@ export function EmployeesPage() {
       {editing && activeRole === 'admin_rh' && (
         <EmployeeModal
           employee={editing === 'new' ? null : editing}
+          colleagues={employees}
           departments={departments}
           orgId={activeOrg.id}
           currentUserId={session?.user.id ?? null}
@@ -316,8 +318,9 @@ export function EmployeesPage() {
   );
 }
 
-function EmployeeModal({ employee, departments, orgId, currentUserId, onClose, onSaved }: {
+function EmployeeModal({ employee, colleagues, departments, orgId, currentUserId, onClose, onSaved }: {
   employee: Employee | null;
+  colleagues: Employee[];
   departments: Department[];
   orgId: string;
   currentUserId: string | null;
@@ -354,6 +357,12 @@ function EmployeeModal({ employee, departments, orgId, currentUserId, onClose, o
       const lastName = form.last_name.trim();
       if (!employeeNumber || !firstName || !lastName) {
         throw new Error('Matricule, nom et prénoms sont obligatoires.');
+      }
+      const clone = findNameClone(colleagues, firstName, lastName, employee?.id);
+      if (clone && !window.confirm(
+        `Une fiche ${clone.last_name} ${clone.first_name} existe déjà (${clone.employee_number}). Créer un doublon quand même ?`,
+      )) {
+        return;
       }
 
       const baseSalary = Number(form.base_salary);
