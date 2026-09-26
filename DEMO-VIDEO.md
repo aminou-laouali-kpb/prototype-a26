@@ -113,4 +113,5 @@ Suivre les sections 1 à 8 de `DOCUMENT-TEST.md`, puis refaire le parcours enreg
 
 - Une fenêtre salarié inactive est déconnectée au bout d’environ 30 minutes : relancer la session avant chaque prise.
 - Filmer un jour ouvré : le compteur « Présents aujourd’hui » reste à 0 le week-end.
-- Les captures de `videos/prototype-a26/capture/assets/` datent d’avant les packs pays (Côte d’Ivoire, sans Primes / Paiements / Abonnement) : les refaire, puis mettre à jour `SCRIPT.md` et `STORYBOARD.md` (nom de l’organisation, montants, IUTS au lieu d’ITS).
+- Captures Niger à jour dans `videos/prototype-a26/capture/assets/` (recette du 26/09/2026 sur la base de démo). Le parcours complet, rôle par rôle, est dans `capture/assets-niger/` (connexion → chronomètre → congé → pré-paie → refus quatre yeux → validation → verrouillage → bulletin → audit).
+- `SCRIPT.md` et `STORYBOARD.md` reprennent les chiffres du cycle d’août : brut 3 619 014 F, net 2 814 933 F, charges 615 140 F. La voix off et `compositions/captions.html` sont à régénérer à partir du nouveau script.

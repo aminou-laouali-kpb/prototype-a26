@@ -47,7 +47,7 @@ export function PayslipsPage() {
       const { data, error: err } = await supabase
         .from('payroll_lines')
         // A calculated line is not a published bulletin.
-        .select('*, period:payroll_periods!inner(*)')
+        .select('*, period:payroll_periods!payroll_lines_period_id_fkey!inner(*)')
         .eq('org_id', orgId)
         .eq('employee_id', scopedEmployee.id)
         .in('period.status', ['approved', 'locked'])

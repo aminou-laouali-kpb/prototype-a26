@@ -19,13 +19,13 @@ The `logo-<hash>.svg` filename prefix is a structural hint (DOM said this SVG wa
 ## Authenticated app screens (1920×1080, no browser chrome)
 
 - app/01-connexion.png — page de connexion et promesse produit, split marketing / formulaire
-- app/02-tableau-de-bord.png — tableau de bord Distribution Ivoire SARL, badge DÉMO, KPIs effectif et congés
-- app/03-salaries.png — liste des 10 salariés fictifs, matricules, salaires FCFA
+- app/02-tableau-de-bord.png — tableau de bord Distribution Sahel SARL, badge DÉMO, KPIs effectif et congés
+- app/03-salaries.png — liste des 12 salariés fictifs, matricules, salaires FCFA
 - app/04-temps.png — temps de travail, sessions du jour
 - app/05-conges.png — congés — soldes et demandes
 - app/06-feuilles.png — feuilles de temps par projet
-- app/07-prepaie.png — pré-paie septembre, totaux brut/net, bouton quatre yeux
+- app/07-prepaie.png — pré-paie août, totaux brut/net, bouton quatre yeux
 - app/08-bulletins.png — mes bulletins (vue admin non rattachée)
 - app/09-audit.png — journal d’audit : calcul de paie et congés approuvés
 - app/10-parametres.png — paramètres de l’espace démo
-- app/06b-synthese.png — synthèse mensuelle projet Distribution Abidjan, 8 h BAKAYOKO Mariam
+- app/06b-synthese.png — synthèse mensuelle 3 projets, heures de GARBA Issaka ventilées par projet
