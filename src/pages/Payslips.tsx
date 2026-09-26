@@ -7,6 +7,7 @@ import {
 } from '../lib/types';
 import { Modal, ErrorBanner, Spinner, EmptyState, SimulationNotice } from '../components/ui';
 import { openPrintDocument, payslipHtml } from '../lib/documents';
+import { getCountryPack } from '../lib/countryPacks';
 import { Fingerprint, FileText, Download } from 'lucide-react';
 
 export function PayslipsPage() {
@@ -46,7 +47,7 @@ export function PayslipsPage() {
       const { data, error: err } = await supabase
         .from('payroll_lines')
         // A calculated line is not a published bulletin.
-        .select('*, period:payroll_periods!inner(*)')
+        .select('*, period:payroll_periods!payroll_lines_period_id_fkey!inner(*)')
         .eq('org_id', orgId)
         .eq('employee_id', scopedEmployee.id)
         .in('period.status', ['approved', 'locked'])
@@ -192,7 +193,7 @@ function PayslipModal({ data, org, employee, onClose }: {
           </div>
           {org?.ncc && (
             <div className="flex justify-between mt-1">
-              <span className="text-slate-500">NCC</span>
+              <span className="text-slate-500">{getCountryPack(org.country_code).taxIdLabel}</span>
               <span className="font-medium text-slate-900">{org.ncc}</span>
             </div>
           )}

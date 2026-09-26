@@ -198,7 +198,8 @@ export const COUNTRY_PACKS: Record<CountryCode, CountryPack> = {
     },
     leaveTypes: SHARED_LEAVES_NE,
     rules: NE_RULES,
-    mobileOperators: ['Airtel Money', 'Moov Money', 'Orange Money', 'Zamani'],
+    // Orange Niger est devenu Zamani Telecom (2019) : pas d’Orange Money au Niger.
+    mobileOperators: ['Airtel Money', 'Moov Money', 'Zamani'],
   },
 };
 

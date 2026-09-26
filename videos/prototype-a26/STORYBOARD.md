@@ -83,8 +83,8 @@ Scene 4 (6.27–13.438s): pills clear; a cobalt CTA-shaped chip « francs C.F.A.
 
 ## Frame 3 — Espace démo
 
-- scene: Tableau de bord Distribution Ivoire, badge DÉMO, KPIs
-- voiceover: "Nous ouvrons l’espace Démo — Distribution Ivoire. Effectif : dix. Congés à valider. Masse nette : un million quatre cent neuf mille francs. Le badge Démo est visible. Rien n’est ambigu."
+- scene: Tableau de bord Distribution Sahel, badge DÉMO, KPIs
+- voiceover: "Nous ouvrons l’espace Démo — Distribution Sahel. Effectif : douze. Congés à valider. Masse nette : deux millions huit cent quatorze mille francs. Le badge Démo est visible. Rien n’est ambigu."
 - duration: 18.233s
 - poster: 8s
 - transition_in: blur-crossfade
@@ -97,24 +97,24 @@ Scene 4 (6.27–13.438s): pills clear; a cobalt CTA-shaped chip « francs C.F.A.
 - focal: assets/02-tableau-de-bord.png
 - roles: 02-tableau-de-bord = background (full-bleed, dim ~20% then lift)
 - sfx: ping, pop
-- asset_candidates: assets/02-tableau-de-bord.png — tableau de bord Distribution Ivoire SARL, badge DÉMO, KPIs effectif et congés
+- asset_candidates: assets/02-tableau-de-bord.png — tableau de bord Distribution Sahel SARL, badge DÉMO, KPIs effectif et congés
 
 narrativeRole: Preuve que l’espace est marqué Démo et que les KPIs RH/paie sont déjà là.
 keyMessage: Un espace Démo lisible, avec l’effectif et la masse nette.
 
 Adapt: keep count-up + camera land-on-hero-metric; numbers overlay the real dashboard instead of invented charts; no reconstructed KPI cards.
 
-Scene 1 (0.0–2.25s): dashboard plate full-bleed, slight 3D tilt. Overlay display « Distribution Ivoire » per-word staggered reveal. Slow push/focus on the org header. Full-width, 3 layers.
+Scene 1 (0.0–2.25s): dashboard plate full-bleed, slight 3D tilt. Overlay display « Distribution Sahel » per-word staggered reveal. Slow push/focus on the org header. Full-width, 3 layers.
 Scene 2 (2.25–4.91s): overlay stat « 10 » counts 0→10 with scale growth, label « Effectif ». Ring sweep around the number. Dashboard remains the plate.
-Scene 3 (4.91–8.57s): camera zoom-to-target the masse-nette region of the screenshot. Overlay « 1 409 258 » counts up, label « Masse nette F CFA ». Accent glow bloom behind the overlay.
+Scene 3 (4.91–8.57s): camera zoom-to-target the masse-nette region of the screenshot. Overlay « 2 814 933 » counts up, label « Masse nette F CFA ». Accent glow bloom behind the overlay.
 Scene 4 (8.57–18.233s): a DÉMO pill spring-pops top-right of the keep-out-safe band. Camera eases to a wider settle; hold. No further push.
 
 ---
 
 ## Frame 4 — Salariés
 
-- scene: Liste des dix salariés fictifs, matricules et salaires FCFA
-- voiceover: "Voici les dix salariés. Matricules, postes, services, salaires de base, coordonnées de paiement. Toutes les données sont fictives."
+- scene: Liste des douze salariés fictifs nigériens, matricules et salaires FCFA
+- voiceover: "Voici les douze salariés. Matricules, postes, services, salaires de base, coordonnées de paiement. Toutes les données sont fictives."
 - duration: 13.419s
 - poster: 7s
 - transition_in: push-slide LEFT
@@ -127,7 +127,7 @@ Scene 4 (8.57–18.233s): a DÉMO pill spring-pops top-right of the keep-out-saf
 - focal: assets/03-salaries.png
 - roles: 03-salaries = cutout
 - sfx: whoosh-short, pop
-- asset_candidates: assets/03-salaries.png — liste des 10 salariés fictifs, matricules, salaires FCFA
+- asset_candidates: assets/03-salaries.png — liste des 12 salariés fictifs, matricules, salaires FCFA
 
 narrativeRole: Le dossier RH est dans le même espace — contrats et salaires, jeu fictif.
 keyMessage: Le dossier salarié est complet, simulé, en francs CFA.
@@ -156,7 +156,7 @@ Scene 3 (4.56–13.419s): scroll settles mid-list. Pill « Données fictives » 
 - focal: assets/02-tableau-de-bord.png
 - roles: 02-tableau-de-bord = background
 - sfx: whoosh, chime
-- asset_candidates: assets/02-tableau-de-bord.png — tableau de bord Distribution Ivoire SARL, badge DÉMO, KPIs effectif et congés
+- asset_candidates: assets/02-tableau-de-bord.png — tableau de bord Distribution Sahel SARL, badge DÉMO, KPIs effectif et congés
 
 narrativeRole: Le temps de travail n’est pas un autre outil — il alimente le même cockpit.
 keyMessage: Pointage et présences dans le même espace, session conservée.
@@ -203,7 +203,7 @@ Scene 4 (5.76–13.602s): pill « Journal » spring-pops. Hold.
 ## Frame 7 — Feuilles de temps
 
 - scene: Feuille soumise à gauche, synthèse projet à droite
-- voiceover: "Feuilles de temps par projet. Bakayoko Mariam : huit heures sur Distribution Abidjan. Soumis. Contrôle. Puis export. La ventilation alimente ensuite la pré-paie."
+- voiceover: "Feuilles de temps par projet. Garba Issaka : ses heures ventilées sur trois projets, huit heures par jour au maximum. Soumis. Contrôle. Puis export. La ventilation alimente ensuite la pré-paie."
 - duration: 16.091s
 - poster: 8s
 - transition_in: blur-crossfade
@@ -216,7 +216,7 @@ Scene 4 (5.76–13.602s): pill « Journal » spring-pops. Hold.
 - focal: assets/06-feuilles.png
 - roles: 06-feuilles = cutout; 06b-synthese = supporting
 - sfx: whoosh-short, pop
-- asset_candidates: assets/06-feuilles.png — feuilles de temps par projet; assets/06b-synthese.png — synthèse mensuelle projet Distribution Abidjan, 8 h BAKAYOKO Mariam
+- asset_candidates: assets/06-feuilles.png — feuilles de temps par projet; assets/06b-synthese.png — synthèse mensuelle 3 projets, heures de GARBA Issaka ventilées par projet
 
 narrativeRole: Les heures projet sont contrôlées avant d’entrer en paie.
 keyMessage: Heures projet soumises, synthétisées, prêtes pour la pré-paie.
@@ -225,15 +225,15 @@ Adapt: keep mirrored book-open split-tilt signature; both cards are real screens
 
 Scene 1 (0.0–1.36s): title « Feuilles de temps » slides down from above, accent on « projet ». Centered T-shape.
 Scene 2 (1.36–4.43s): left card (06-feuilles) and right card (06b-synthese) enter from opposite wings with mirrored rotateY. Dual ambient glow. Asymmetric? No — 50/50 split, cards in top 83%.
-Scene 3 (4.43–7.05s): inner-edge badges « Soumis » then « 8 h » spring-pop. Keyword glow on Bakayoko when named.
+Scene 3 (4.43–7.05s): inner-edge badges « Soumis » then « 8 h / jour » spring-pop. Keyword glow on Garba when named.
 Scene 4 (7.05–16.091s): a thin connector label « vers la pré-paie » fades under the pair. Hold, phase-opposed subtle jitter on the two cards.
 
 ---
 
 ## Frame 8 — Pré-paie
 
-- scene: Cycle septembre Calculée, brut et net FCFA
-- voiceover: "Pré-paie de septembre. Nous lisons le calcul. Brut : un million cinq cent quatre-vingt-dix-huit mille. Cotisations. I.T.S. Net à payer : un million quatre cent neuf mille. Charges employeur. Chaque ligne remonte à sa règle. En simulation."
+- scene: Cycle août Calculée, brut et net FCFA
+- voiceover: "Pré-paie d’août. Nous lisons le calcul. Brut : trois millions six cent dix-neuf mille. Cotisations C.N.S.S. I.U.T.S. Net à payer : deux millions huit cent quatorze mille. Charges employeur. Chaque ligne remonte à sa règle. En simulation."
 - duration: 20.852s
 - poster: 10s
 - transition_in: zoom-through
@@ -246,7 +246,7 @@ Scene 4 (7.05–16.091s): a thin connector label « vers la pré-paie » fades u
 - focal: assets/07-prepaie.png
 - roles: 07-prepaie = background
 - sfx: ping, impact-bass-1
-- asset_candidates: assets/07-prepaie.png — pré-paie septembre, totaux brut/net, bouton quatre yeux
+- asset_candidates: assets/07-prepaie.png — pré-paie août, totaux brut/net, bouton quatre yeux
 - handoff_out:
   - element: payroll-screen
   - x: 960
@@ -255,14 +255,14 @@ Scene 4 (7.05–16.091s): a thin connector label « vers la pré-paie » fades u
   - opacity: 1
   - motion: hold still
 
-narrativeRole: Preuve chiffrée : brut, ITS, net, charges — explicable, en simulation CFA.
+narrativeRole: Preuve chiffrée : brut, IUTS, net, charges — explicable, en simulation CFA.
 keyMessage: Chaque montant de pré-paie remonte à sa règle.
 
 Adapt: keep count-up instruments landing on a hero net metric; overlays on the real pré-paie screenshot; do not invent a chart.
 
 Scene 1 (0.0–2.43s): pré-paie plate full-bleed, dim ~15%. Overlay « Septembre » then « Calculée » per-word. Centered.
-Scene 2 (2.43–6.14s): overlay brut counts to 1 598 214. Bar fill beside it. Then chips Cotisations / I.T.S. pop.
-Scene 3 (6.14–9.85s): camera zoom-to-target the net region. Hero « 1 409 258 » counts up, label « Net à payer ». Glow bloom.
+Scene 2 (2.43–6.14s): overlay brut counts to 3 619 014. Bar fill beside it. Then chips Cotisations / I.U.T.S. pop.
+Scene 3 (6.14–9.85s): camera zoom-to-target the net region. Hero « 2 814 933 » counts up, label « Net à payer ». Glow bloom.
 Scene 4 (9.85–20.852s): pull to a settled wider view of the whole cycle (ends at scale 0.88, x 960, y 486 — handoff). Line « En simulation » holds. Stillness.
 
 ---
@@ -283,7 +283,7 @@ Scene 4 (9.85–20.852s): pull to a settled wider view of the whole cycle (ends 
 - focal: assets/07-prepaie.png
 - roles: 07-prepaie = background (dim ~40% after wipe)
 - sfx: chime
-- asset_candidates: assets/07-prepaie.png — pré-paie septembre, totaux brut/net, bouton quatre yeux
+- asset_candidates: assets/07-prepaie.png — pré-paie août, totaux brut/net, bouton quatre yeux
 - handoff_in:
   - element: payroll-screen
   - x: 960

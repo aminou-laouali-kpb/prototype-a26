@@ -118,11 +118,12 @@ Deno.serve(async (req: Request) => {
 
     const { data: org, error: orgError } = await userClient
       .from("orgs")
-      .select("name, legal_name")
+      .select("name, legal_name, country_code")
       .eq("id", period.org_id)
       .maybeSingle();
     if (orgError) return json({ error: orgError.message }, 400);
     const orgName = String(org?.legal_name || org?.name || "Votre employeur").trim();
+    const deductionsLabel = org?.country_code === "CI" ? "CNPS, CMU, ITS" : "CNSS, IUTS";
     const displayOrgName = safeHeaderText(orgName, "Votre employeur");
     const periodLabel = `${MONTHS[period.period_month - 1] ?? "Période"} ${period.period_year}`;
     const safePeriodLabel = escapeHtml(periodLabel);
@@ -163,7 +164,7 @@ Deno.serve(async (req: Request) => {
           <p>Votre bulletin de paie de simulation pour <strong>${safePeriodLabel}</strong> est disponible.</p>
           <table style="width:100%;border-collapse:collapse;margin:16px 0">
             <tr><td style="padding:6px 0;color:#64748b">Salaire brut</td><td style="text-align:right">${escapeHtml(fmtXof(line.gross))}</td></tr>
-            <tr><td style="padding:6px 0;color:#64748b">Retenues (CNPS, CMU, ITS)</td><td style="text-align:right">${escapeHtml(fmtXof(Number(line.cnps_employee) + Number(line.cmu_employee) + Number(line.its)))}</td></tr>
+            <tr><td style="padding:6px 0;color:#64748b">Retenues (${deductionsLabel})</td><td style="text-align:right">${escapeHtml(fmtXof(Number(line.cnps_employee) + Number(line.cmu_employee) + Number(line.its)))}</td></tr>
             <tr><td style="padding:10px 0;font-weight:700;border-top:1px solid #e2e8f0">Net à payer</td><td style="text-align:right;font-weight:700;border-top:1px solid #e2e8f0;color:#0f766e">${escapeHtml(fmtXof(line.net))}</td></tr>
           </table>
           <p>Connectez-vous à votre espace pour consulter et télécharger le détail complet en PDF.</p>

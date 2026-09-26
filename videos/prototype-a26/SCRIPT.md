@@ -2,7 +2,7 @@
 
 **Voice:** Aminou (ElevenLabs) `sW2GXm6gxkDcOrJSCPxv`
 **Voice settings:** stability 0.42 · similarity 0.80 · style 0.12 · model `eleven_multilingual_v2`
-**Voice direction:** Francophone mesuré, B2B, sans hype. Articuler les chiffres. Prononcer C.F.A. et I.T.S. lettre par lettre. Pauses courtes entre les cues.
+**Voice direction:** Francophone mesuré, B2B, sans hype. Articuler les chiffres. Prononcer C.F.A., C.N.S.S. et I.U.T.S. lettre par lettre. Pauses courtes entre les cues.
 
 ---
 
@@ -25,14 +25,14 @@
 **Time:** 24.0 – 40.0s
 **Delivery:** Lecture de cockpit. Chiffres clairs, sans précipitation.
 
-    Nous ouvrons l’espace Démo — Distribution Ivoire. Effectif : dix. Congés à valider. Masse nette : un million quatre cent neuf mille francs. Le badge Démo est visible. Rien n’est ambigu.
+    Nous ouvrons l’espace Démo — Distribution Sahel. Effectif : douze. Congés à valider. Masse nette : deux millions huit cent quatorze mille francs. Le badge Démo est visible. Rien n’est ambigu.
 
 ## Line 4 — Salariés (Frame 4)
 
 **Time:** 40.0 – 54.0s
 **Delivery:** Inventaire calme. Souligner « fictives ».
 
-    Voici les dix salariés. Matricules, postes, services, salaires de base, coordonnées de paiement. Toutes les données sont fictives.
+    Voici les douze salariés. Matricules, postes, services, salaires de base, coordonnées de paiement. Toutes les données sont fictives.
 
 ## Line 5 — Temps et présences (Frame 5)
 
@@ -53,14 +53,14 @@
 **Time:** 82.0 – 98.0s
 **Delivery:** Nom propre articulé. Enchaînement soumis → contrôle → export.
 
-    Feuilles de temps par projet. Bakayoko Mariam : huit heures sur Distribution Abidjan. Soumis. Contrôle. Puis export. La ventilation alimente ensuite la pré-paie.
+    Feuilles de temps par projet. Garba Issaka : ses heures ventilées sur trois projets, huit heures par jour au maximum. Soumis. Contrôle. Puis export. La ventilation alimente ensuite la pré-paie.
 
 ## Line 8 — Pré-paie (Frame 8)
 
 **Time:** 98.0 – 116.0s
-**Delivery:** Comptable. I.T.S. épelé. « En simulation » en coda.
+**Delivery:** Comptable. I.U.T.S. épelé. « En simulation » en coda.
 
-    Pré-paie de septembre. Nous lisons le calcul. Brut : un million cinq cent quatre-vingt-dix-huit mille. Cotisations. I.T.S. Net à payer : un million quatre cent neuf mille. Charges employeur. Chaque ligne remonte à sa règle. En simulation.
+    Pré-paie d’août. Nous lisons le calcul. Brut : trois millions six cent dix-neuf mille. Cotisations C.N.S.S. I.U.T.S. Net à payer : deux millions huit cent quatorze mille. Charges employeur. Chaque ligne remonte à sa règle. En simulation.
 
 ## Line 9 — Quatre yeux (Frame 9)
 

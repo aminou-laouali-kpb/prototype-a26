@@ -14,7 +14,7 @@ const DEMO_OPTIONS: Array<{
   {
     kind: 'pme',
     title: 'PME',
-    description: 'Distribution Sahel SARL (Niger) — 10 salariés, pointages, congés, cycle de paie du mois.',
+    description: 'Distribution Sahel SARL (Niamey) — 12 salariés, 3 projets, pointages, congés, cycle de paie du mois précédent.',
     icon: <Store className="w-5 h-5" />,
   },
   {
@@ -26,7 +26,7 @@ const DEMO_OPTIONS: Array<{
   {
     kind: 'groupe',
     title: 'Grande structure',
-    description: 'Groupe SAHEL Holding (Niger) — 18 salariés, DRH, comptabilité, ateliers.',
+    description: 'Groupe SAHEL Holding (Niger) — 18 salariés, DRH, comptabilité, ateliers et chantiers.',
     icon: <Landmark className="w-5 h-5" />,
   },
 ];
@@ -201,7 +201,7 @@ export function OrgGate() {
           {tab === 'demo' && (
             <div className="space-y-3">
               <p className="text-sm text-slate-500">
-                Chargez une entreprise fictive complète (données ivoiriennes réalistes) pour une démonstration immédiate.
+                Chargez une entreprise fictive complète (données nigériennes réalistes, pack CNSS / IUTS) pour une démonstration immédiate.
               </p>
               {DEMO_OPTIONS.map((o) => (
                 <button
@@ -223,20 +223,20 @@ export function OrgGate() {
                 </button>
               ))}
               <p className="text-xs text-slate-400">
-                Un espace de démonstration est clairement marqué « DÉMO » et peut être remis à zéro à tout moment depuis les Paramètres.
+                Un espace de démonstration est clairement marqué « DÉMO » et peut être remis à zéro à tout moment depuis Paramètres → Accès et invitations.
               </p>
             </div>
           )}
 
           {tab === 'join' && (
             <form onSubmit={redeem} className="space-y-4">
-              <Field label="Code d’invitation" hint="Fourni par l’administrateur RH de votre organisation (ex. TEMPOS-4F7A)">
+              <Field label="Code d’invitation" hint="Fourni par l’administrateur RH de votre organisation (ex. A26-4F7AK2M9)">
                 <input
                   className={inputClass}
                   value={inviteCode}
                   onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
                   required
-                  placeholder="TEMPOS-…"
+                  placeholder="A26-…"
                   autoCapitalize="characters"
                 />
               </Field>

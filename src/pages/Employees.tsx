@@ -6,6 +6,7 @@ import {
 } from '../lib/types';
 import { parseEmployeeCsv, employeeImportTemplateCsv } from '../lib/employeeImport';
 import { findNameClone } from '../lib/employees';
+import { getCountryPack } from '../lib/countryPacks';
 import { canEditEmployees, canSeeContractPay } from '../lib/access';
 import { Modal, Field, inputClass, ErrorBanner, Spinner, EmptyState, useAsyncAction } from '../components/ui';
 import { Users, Plus, Search, Pencil, Download, Upload } from 'lucide-react';
@@ -327,6 +328,9 @@ function EmployeeModal({ employee, colleagues, departments, orgId, currentUserId
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { activeOrg } = useSession();
+  const pack = getCountryPack(activeOrg?.country_code);
+  const phonePlaceholder = pack.code === 'CI' ? '+225 07 00 00 00 00' : '+227 90 00 00 00';
   const [form, setForm] = useState({
     employee_number: employee?.employee_number ?? '',
     first_name: employee?.first_name ?? '',
@@ -456,7 +460,7 @@ function EmployeeModal({ employee, colleagues, departments, orgId, currentUserId
       <form onSubmit={submit} className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Matricule">
-            <input className={inputClass} value={form.employee_number} onChange={(e) => setForm({ ...form, employee_number: e.target.value })} required placeholder="EMP-001" />
+            <input className={inputClass} value={form.employee_number} onChange={(e) => setForm({ ...form, employee_number: e.target.value })} required placeholder="PME-013" />
           </Field>
           <Field label="Date d’embauche">
             <input type="date" className={inputClass} value={form.hire_date} onChange={(e) => setForm({ ...form, hire_date: e.target.value })} />
@@ -477,7 +481,7 @@ function EmployeeModal({ employee, colleagues, departments, orgId, currentUserId
             </select>
           </Field>
           <Field label="Téléphone">
-            <input className={inputClass} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+225 07 00 00 00 00" />
+            <input className={inputClass} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder={phonePlaceholder} />
           </Field>
           <Field label="E-mail">
             <input type="email" className={inputClass} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
@@ -517,10 +521,10 @@ function EmployeeModal({ employee, colleagues, departments, orgId, currentUserId
               <Field label="Opérateur">
                 <select className={inputClass} value={form.mobile_operator} onChange={(e) => setForm({ ...form, mobile_operator: e.target.value })}>
                   <option value="">Choisir…</option>
-                  <option>Orange Money</option>
-                  <option>MTN MoMo</option>
-                  <option>Moov Money</option>
-                  <option>Wave</option>
+                  {pack.mobileOperators.map((op) => <option key={op}>{op}</option>)}
+                  {form.mobile_operator && !pack.mobileOperators.includes(form.mobile_operator) && (
+                    <option>{form.mobile_operator}</option>
+                  )}
                 </select>
               </Field>
             )}

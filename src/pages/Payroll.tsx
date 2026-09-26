@@ -713,10 +713,12 @@ function AnnualRecapModal({ orgId, org, onClose }: { orgId: string; org: Org; on
     its: a.its + r.its, net: a.net + r.net, employer: a.employer + r.employer,
   }), { gross: 0, cnps: 0, cmu: 0, its: 0, net: 0, employer: 0 });
 
+  const cols = payrollColumnLabels(getCountryPack(org.country_code));
+
   const exportCsv = () => {
     downloadCsv(
       `recapitulatif-annuel-${year}.csv`,
-      ['Matricule', 'Salarié', 'Brut annuel', 'CNPS salarié', 'CMU salarié', 'ITS', 'Net annuel', 'Charges employeur'],
+      ['Matricule', 'Salarié', 'Brut annuel', cols.socialEmployee, cols.healthEmployee, cols.tax, 'Net annuel', 'Charges employeur'],
       [
         ...rows.map((r) => [r.number, r.name, r.gross, r.cnps, r.cmu, r.its, r.net, r.employer]),
         ['', 'TOTAL', totals.gross, totals.cnps, totals.cmu, totals.its, totals.net, totals.employer],
@@ -756,9 +758,9 @@ function AnnualRecapModal({ orgId, org, onClose }: { orgId: string; org: Org; on
                 <tr className="text-left text-xs uppercase tracking-wide text-slate-500 bg-slate-50 border-b border-slate-200">
                   <th className="px-3 py-2 font-semibold">Salarié</th>
                   <th className="px-3 py-2 font-semibold text-right">Brut</th>
-                  <th className="px-3 py-2 font-semibold text-right hidden sm:table-cell">CNPS</th>
-                  <th className="px-3 py-2 font-semibold text-right hidden sm:table-cell">CMU</th>
-                  <th className="px-3 py-2 font-semibold text-right">ITS</th>
+                  <th className="px-3 py-2 font-semibold text-right hidden sm:table-cell">{cols.socialEmployee}</th>
+                  <th className="px-3 py-2 font-semibold text-right hidden sm:table-cell">{cols.healthEmployee}</th>
+                  <th className="px-3 py-2 font-semibold text-right">{cols.tax}</th>
                   <th className="px-3 py-2 font-semibold text-right">Net</th>
                   <th className="px-3 py-2 font-semibold text-right hidden md:table-cell">Charges empl.</th>
                 </tr>

@@ -18,8 +18,26 @@ const FEATURES = [
 const STATS = [
   { value: '100 %', label: 'Calculs traçables' },
   { value: 'XOF', label: 'Franc CFA natif' },
-  { value: '6', label: 'Rôles métiers' },
+  { value: '7', label: 'Rôles métiers' },
 ];
+
+const AUTH_ERRORS: Array<[RegExp, string]> = [
+  [/invalid login credentials/i, 'Adresse e-mail ou mot de passe incorrect.'],
+  [/email not confirmed/i, 'Adresse e-mail non confirmée : ouvrez le lien reçu par e-mail.'],
+  [/user already registered|already been registered/i, 'Un compte existe déjà avec cette adresse e-mail.'],
+  [/password should be at least/i, 'Le mot de passe doit contenir au moins 6 caractères.'],
+  [/rate limit|too many requests/i, 'Trop de tentatives. Patientez quelques minutes avant de réessayer.'],
+  [/unable to validate email|invalid email/i, 'Adresse e-mail invalide.'],
+  [/failed to fetch|network/i, 'Connexion au serveur impossible. Vérifiez votre accès Internet.'],
+];
+
+function authErrorMessage(e: unknown): string {
+  const raw = e instanceof Error ? e.message : '';
+  for (const [pattern, message] of AUTH_ERRORS) {
+    if (pattern.test(raw)) return message;
+  }
+  return raw || 'Erreur de connexion';
+}
 
 function AuthScreen() {
   const { refresh } = useSession();
@@ -62,7 +80,7 @@ function AuthScreen() {
         await refresh();
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erreur de connexion');
+      setError(authErrorMessage(e));
     } finally {
       setBusy(false);
     }
@@ -175,7 +193,7 @@ function AuthScreen() {
                 </Field>
               )}
               <Field label="Adresse e-mail">
-                <input type="email" className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@entreprise.ci" required />
+                <input type="email" className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@entreprise.ne" required />
               </Field>
               <Field label="Mot de passe" hint={mode === 'signup' ? '6 caractères minimum' : undefined}>
                 <input type="password" className={inputClass} value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required />

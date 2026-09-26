@@ -43,8 +43,12 @@ const {data:employees,error:ee}=await admin.from('employees').select('id,employe
 if(ee)throw new Error(ee.message);
 for(const role of ['employee','manager']){
   const a=state.accounts[role];
-  if(a.employee_id)continue;
-  const e=employees.find(e=>!e.user_id);
+  // Vérifie le rattachement réel (une remise à zéro recrée les fiches).
+  const linked=employees.find(e=>e.user_id===a.id);
+  if(linked){a.employee_id=linked.id;a.employee_number=linked.employee_number;save();continue;}
+  // Fiches crédibles à l'écran : chauffeur-livreur (salarié) et responsable logistique (manager).
+  const preferred={employee:'PME-004',manager:'PME-002'}[role];
+  const e=employees.find(e=>!e.user_id&&e.employee_number===preferred)??employees.find(e=>!e.user_id);
   if(!e)throw new Error('Aucune fiche disponible');
   const {error}=await admin.from('employees').update({email:a.email,user_id:a.id}).eq('id',e.id).eq('org_id',state.org_id);
   if(error)throw new Error(`Rattachement ${role}: ${error.message}`);

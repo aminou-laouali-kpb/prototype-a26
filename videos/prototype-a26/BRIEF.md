@@ -22,7 +22,7 @@ Vidéo commerciale A–Z, show-it-as-is, pour montrer Prototype A26 à des prosp
 ## Assets
 
 - App locale `http://127.0.0.1:5173/` — page de connexion / promesse produit.
-- Captures authentifiées admin RH (Distribution Ivoire SARL, jeu fictif) à déposer dans `capture/assets/` après Step 1.
+- Captures authentifiées admin RH (Distribution Sahel SARL, Niamey — jeu fictif Niger) à déposer dans `capture/assets/` après Step 1.
 
 ## Customizations
 
@@ -33,6 +33,6 @@ Vidéo commerciale A–Z, show-it-as-is, pour montrer Prototype A26 à des prosp
 
 ## Notes
 
-- Données fictives Côte d’Ivoire. Ne jamais afficher de mot de passe.
+- Données fictives Niger (pack CNSS / IUTS). Ne jamais afficher de mot de passe.
 - HeyGen unsigned-in ; TTS local ElevenLabs ready. Autonomous run.
 - Ne pas redéployer postgres. Ne pas committer `.env` ni clés.

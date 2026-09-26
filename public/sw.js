@@ -1,6 +1,6 @@
 /* Prototype A26 — cache shell léger pour 2G / hors-ligne partiel */
-const CACHE = 'a26-shell-v1';
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/vite.svg'];
+const CACHE = 'a26-shell-v2';
+const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
