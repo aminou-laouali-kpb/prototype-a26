@@ -1,7 +1,8 @@
 # SCRIPT — prototype-a26
 
-**Voice:** Aminou (ElevenLabs) `sW2GXm6gxkDcOrJSCPxv`
-**Voice settings:** stability 0.42 · similarity 0.80 · style 0.12 · model `eleven_multilingual_v2`
+**Voice:** Celine (Higgsfield, preset `57ccb351-84d7-54ba-afd4-26b566ca6023`) — jeune, francophone, accent parisien, professionnelle
+**Modèle:** `seed_audio` — fichiers `assets/voice/01.wav` … `11.wav` (non versionnés)
+**Écriture phonétique envoyée au modèle** (sinon mal prononcé) : « A vingt-six », « pré-paye », « l'Oueste », « cé-èf-a », « i, u, té, esse »
 **Voice direction:** Francophone mesuré, B2B, sans hype. Articuler les chiffres. Prononcer C.F.A., C.N.S.S. et I.U.T.S. lettre par lettre. Pauses courtes entre les cues.
 
 ---
@@ -25,7 +26,7 @@
 **Time:** 24.0 – 40.0s
 **Delivery:** Lecture de cockpit. Chiffres clairs, sans précipitation.
 
-    Nous ouvrons l’espace Démo — Distribution Sahel. Effectif : douze. Congés à valider. Masse nette : deux millions huit cent quatorze mille francs. Le badge Démo est visible. Rien n’est ambigu.
+    Nous ouvrons l’espace Démo : Distribution Sahel. Effectif : douze. Congés à valider. Masse nette : deux millions huit cent quatorze mille francs. Le badge Démo est visible. Rien n’est ambigu.
 
 ## Line 4 — Salariés (Frame 4)
 
@@ -53,21 +54,21 @@
 **Time:** 82.0 – 98.0s
 **Delivery:** Nom propre articulé. Enchaînement soumis → contrôle → export.
 
-    Feuilles de temps par projet. Garba Issaka : ses heures ventilées sur trois projets, huit heures par jour au maximum. Soumis. Contrôle. Puis export. La ventilation alimente ensuite la pré-paie.
+    Feuilles de temps par projet. Pour Garba Issaka, le temps passé est ventilé sur trois projets, huit heures par jour au maximum. Soumis. Contrôle. Puis export. La ventilation alimente ensuite la pré-paie.
 
 ## Line 8 — Pré-paie (Frame 8)
 
 **Time:** 98.0 – 116.0s
 **Delivery:** Comptable. I.U.T.S. épelé. « En simulation » en coda.
 
-    Pré-paie d’août. Nous lisons le calcul. Brut : trois millions six cent dix-neuf mille. Cotisations C.N.S.S. I.U.T.S. Net à payer : deux millions huit cent quatorze mille. Charges employeur. Chaque ligne remonte à sa règle. En simulation.
+    La pré-paie du mois d’août. Nous lisons le calcul. Brut : trois millions six cent dix-neuf mille. Cotisations CNSS. Impôt : IUTS. Net à payer : deux millions huit cent quatorze mille. Charges employeur. Chaque ligne remonte à sa règle. En simulation.
 
 ## Line 9 — Quatre yeux (Frame 9)
 
 **Time:** 116.0 – 130.0s
 **Delivery:** Fermeté douce. Chaque phrase est une règle.
 
-    Le contrôle à quatre yeux s’applique. Le préparateur ne valide pas sa propre paie. Un approbateur distinct confirme. Puis l’administrateur peut verrouiller.
+    Le contrôle à quatre yeux s’applique. Le préparateur ne valide pas sa propre paie. Un approbateur différent confirme. Puis l’administrateur peut verrouiller.
 
 ## Line 10 — Audit (Frame 10)
 

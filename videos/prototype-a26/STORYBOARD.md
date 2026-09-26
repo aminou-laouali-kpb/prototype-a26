@@ -84,7 +84,7 @@ Scene 4 (6.27–13.438s): pills clear; a cobalt CTA-shaped chip « francs C.F.A.
 ## Frame 3 — Espace démo
 
 - scene: Tableau de bord Distribution Sahel, badge DÉMO, KPIs
-- voiceover: "Nous ouvrons l’espace Démo — Distribution Sahel. Effectif : douze. Congés à valider. Masse nette : deux millions huit cent quatorze mille francs. Le badge Démo est visible. Rien n’est ambigu."
+- voiceover: "Nous ouvrons l’espace Démo : Distribution Sahel. Effectif : douze. Congés à valider. Masse nette : deux millions huit cent quatorze mille francs. Le badge Démo est visible. Rien n’est ambigu."
 - duration: 18.233s
 - poster: 8s
 - transition_in: blur-crossfade
@@ -203,7 +203,7 @@ Scene 4 (5.76–13.602s): pill « Journal » spring-pops. Hold.
 ## Frame 7 — Feuilles de temps
 
 - scene: Feuille soumise à gauche, synthèse projet à droite
-- voiceover: "Feuilles de temps par projet. Garba Issaka : ses heures ventilées sur trois projets, huit heures par jour au maximum. Soumis. Contrôle. Puis export. La ventilation alimente ensuite la pré-paie."
+- voiceover: "Feuilles de temps par projet. Pour Garba Issaka, le temps passé est ventilé sur trois projets, huit heures par jour au maximum. Soumis. Contrôle. Puis export. La ventilation alimente ensuite la pré-paie."
 - duration: 16.091s
 - poster: 8s
 - transition_in: blur-crossfade
@@ -233,7 +233,7 @@ Scene 4 (7.05–16.091s): a thin connector label « vers la pré-paie » fades u
 ## Frame 8 — Pré-paie
 
 - scene: Cycle août Calculée, brut et net FCFA
-- voiceover: "Pré-paie d’août. Nous lisons le calcul. Brut : trois millions six cent dix-neuf mille. Cotisations C.N.S.S. I.U.T.S. Net à payer : deux millions huit cent quatorze mille. Charges employeur. Chaque ligne remonte à sa règle. En simulation."
+- voiceover: "La pré-paie du mois d’août. Nous lisons le calcul. Brut : trois millions six cent dix-neuf mille. Cotisations CNSS. Impôt : IUTS. Net à payer : deux millions huit cent quatorze mille. Charges employeur. Chaque ligne remonte à sa règle. En simulation."
 - duration: 20.852s
 - poster: 10s
 - transition_in: zoom-through
@@ -270,7 +270,7 @@ Scene 4 (9.85–20.852s): pull to a settled wider view of the whole cycle (ends 
 ## Frame 9 — Quatre yeux
 
 - scene: Bouton Valider 4 yeux sur le cycle calculé
-- voiceover: "Le contrôle à quatre yeux s’applique. Le préparateur ne valide pas sa propre paie. Un approbateur distinct confirme. Puis l’administrateur peut verrouiller."
+- voiceover: "Le contrôle à quatre yeux s’applique. Le préparateur ne valide pas sa propre paie. Un approbateur différent confirme. Puis l’administrateur peut verrouiller."
 - duration: 14.236s
 - poster: 7s
 - transition_in: crossfade
