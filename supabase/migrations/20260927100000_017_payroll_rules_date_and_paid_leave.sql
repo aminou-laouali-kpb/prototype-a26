@@ -6,7 +6,7 @@
 Une organisation créée le 5 octobre ne pouvait donc pas calculer la paie de
 septembre (« Règle de paie manquante »). Les barèmes pays étant ceux de 2026,
 ils démarrent désormais au 01/01/2026. Les règles déjà créées et jamais
-modifiées (une seule version par code) sont recalées sur cette date.
+modifiées (version 1, une seule ligne par code) sont recalées sur cette date.
 
 ## 2. Congés payés retenus sur le salaire
 Quand un salarié pointe, les heures travaillées viennent des pointages. Les
@@ -14,7 +14,8 @@ jours de congé payé approuvés n'ayant pas de pointage, ils étaient retirés 
 salaire (« Proratisation du temps »). Ils comptent maintenant comme du temps
 travaillé : jours de congé payé dans la période × horaire journalier du
 contrat (horaire mensuel × 12 / 52 / 5, soit 8 h pour 173,33 h). Le congé sans
-solde (SOL) reste retenu comme avant.
+solde (SOL) et les absences déclarées restent retenus par la règle
+« Absence non payée » (jours / jours calendaires du mois).
 
 ## 3. Mois courts ou longs proratisés à tort
 Les heures pointées étaient comparées à l'horaire mensuel moyen (173,33 h).
@@ -23,6 +24,14 @@ perdait donc du salaire. Les heures pointées (+ congés payés) sont maintenant
 rapportées aux heures attendues du mois réel (jours ouvrés du lundi au
 vendredi × horaire journalier), puis ramenées à l'horaire mensuel du contrat.
 Les jours fériés ne sont pas encore déduits des jours ouvrés.
+
+## 4. Remise à zéro des espaces démo créés avant la 016
+Les comptes rattachés aux fiches NE-04781 / NE-04782 (migration 015) sont
+rattachés à leur équivalent PME-012 / PME-011.
+
+## 5. Libellé « Absence non payée (1.00000000000000000000 j) »
+Le nombre de jours d'absence était arrondi par une division qui gardait
+20 décimales. Il est maintenant arrondi à 1 décimale.
 
 ## Sécurité
 Aucune modification de schéma ni de RLS. Fonctions remplacées avec les mêmes
@@ -108,11 +117,12 @@ REVOKE ALL ON FUNCTION private.seed_country_rules(uuid, text) FROM PUBLIC, anon;
 
 ALTER FUNCTION private.seed_country_rules(uuid, text) SET search_path = '';
 
--- Recale les barèmes pays jamais modifiés sur le 01/01/2026.
+-- Recale les barèmes pays jamais modifiés (version 1, une seule ligne) sur le 01/01/2026.
 UPDATE public.payroll_rules AS pr
 SET effective_from = DATE '2026-01-01'
 WHERE pr.effective_from > DATE '2026-01-01'
   AND pr.source LIKE 'Barème 2026%'
+  AND pr.version = 1
   AND NOT EXISTS (
     SELECT 1 FROM public.payroll_rules AS other
     WHERE other.org_id = pr.org_id AND other.code = pr.code AND other.id <> pr.id
@@ -145,6 +155,8 @@ DECLARE
   v_unpaid numeric;
   v_leave numeric;
   v_paid_leave numeric;
+  v_unpaid_leave numeric;
+  v_declared_absence numeric;
   v_daily numeric;
   v_workdays integer;
   v_result jsonb;
@@ -267,10 +279,16 @@ BEGIN
     IF v_worked IS NULL THEN
       v_worked := v_contract.monthly_hours;
     ELSE
-      -- Les jours de congé payé approuvés comptent comme du temps travaillé
-      -- (sinon l'absence de pointage ces jours-là est retenue sur le salaire).
-      SELECT COALESCE(SUM(private.prorate_leave_days(lr.days, lr.start_date, lr.end_date, v_start, v_end)), 0)
-        INTO v_paid_leave
+      -- Les jours de congé approuvés et les absences déclarées ne sont pas
+      -- pointés : on les réintègre avant de comparer au mois réel. Le congé
+      -- payé compte alors comme travaillé ; le sans-solde et les absences
+      -- restent retenus par la règle « Absence non payée » (jours / jours du mois).
+      SELECT
+        COALESCE(SUM(private.prorate_leave_days(lr.days, lr.start_date, lr.end_date, v_start, v_end))
+          FILTER (WHERE lt.paid = true AND lt.code <> 'SOL'), 0),
+        COALESCE(SUM(private.prorate_leave_days(lr.days, lr.start_date, lr.end_date, v_start, v_end))
+          FILTER (WHERE lt.paid = false OR lt.code = 'SOL'), 0)
+        INTO v_paid_leave, v_unpaid_leave
       FROM public.leave_requests AS lr
       JOIN public.leave_types AS lt
         ON lt.id = lr.leave_type_id AND lt.org_id = lr.org_id
@@ -278,15 +296,19 @@ BEGIN
         AND lr.employee_id = v_emp.id
         AND lr.status = 'approved'
         AND lr.start_date <= v_end
-        AND lr.end_date >= v_start
-        AND lt.paid = true
-        AND lt.code <> 'SOL';
+        AND lr.end_date >= v_start;
+
+      SELECT COALESCE(pv.unpaid_absence_days, 0) INTO v_declared_absence
+      FROM public.payroll_variables AS pv
+      WHERE pv.org_id = v_org AND pv.period_id = p_period_id AND pv.employee_id = v_emp.id;
+
       -- Heures attendues du mois réel (jours ouvrés lun.–ven. × horaire
       -- journalier) ramenées à l'horaire mensuel du contrat : un mois de
       -- 21 jours pointés à 8 h n'est plus proratisé face aux 173,33 h.
       v_daily := v_contract.monthly_hours * 12 / 52 / 5;
       v_worked := pg_catalog.round(
-        (GREATEST(0, v_worked) + COALESCE(v_paid_leave, 0) * v_daily)
+        (GREATEST(0, v_worked)
+          + (COALESCE(v_paid_leave, 0) + COALESCE(v_unpaid_leave, 0) + COALESCE(v_declared_absence, 0)) * v_daily)
           * v_contract.monthly_hours / NULLIF(v_workdays * v_daily, 0),
         2
       );
@@ -320,7 +342,7 @@ BEGIN
       AND lr.start_date <= v_end
       AND lr.end_date >= v_start
       AND (lt.paid = false OR lt.code = 'SOL');
-    v_unpaid := pg_catalog.round((COALESCE(v_leave, 0) + v_unpaid) * 10, 0) / 10;
+    v_unpaid := pg_catalog.round(COALESCE(v_leave, 0) + v_unpaid, 1);
 
     v_result := private.compute_payslip(
       v_contract.base_salary,
@@ -412,3 +434,52 @@ $$;
 
 REVOKE ALL ON FUNCTION public.prepare_payroll_period(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.prepare_payroll_period(uuid) TO authenticated;
+
+-- Remise à zéro : les comptes rattachés aux fiches Niger historiques de la
+-- migration 015 (NE-04781 / NE-04782) retrouvent leur équivalent du jeu 016.
+CREATE OR REPLACE FUNCTION public.reseed_demo_data(p_org uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  v_uid uuid;
+  v_kind text;
+  v_links jsonb;
+BEGIN
+  v_uid := (SELECT auth.uid());
+  SELECT o.demo_kind INTO v_kind
+  FROM public.orgs AS o
+  WHERE o.id = p_org AND o.is_demo = true;
+  IF v_uid IS NULL OR v_kind IS NULL
+     OR NOT private.has_org_role(p_org, ARRAY['admin_rh']::text[]) THEN
+    RAISE EXCEPTION 'Réinitialisation réservée à un administrateur de cet espace de démonstration';
+  END IF;
+
+  SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+    'number', CASE e.employee_number
+                WHEN 'NE-04782' THEN 'PME-011'
+                WHEN 'NE-04781' THEN 'PME-012'
+                ELSE e.employee_number
+              END,
+    'user_id', e.user_id, 'email', e.email))
+    INTO v_links
+  FROM public.employees AS e
+  WHERE e.org_id = p_org AND e.user_id IS NOT NULL;
+
+  PERFORM public.reset_demo_data(p_org);
+  PERFORM public.seed_demo_data(p_org, v_kind);
+
+  IF v_links IS NOT NULL THEN
+    UPDATE public.employees AS e
+    SET user_id = (l.value->>'user_id')::uuid,
+        email = COALESCE(l.value->>'email', e.email)
+    FROM pg_catalog.jsonb_array_elements(v_links) AS l
+    WHERE e.org_id = p_org AND e.employee_number = l.value->>'number';
+  END IF;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.reseed_demo_data(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.reseed_demo_data(uuid) TO authenticated;
