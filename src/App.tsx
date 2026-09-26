@@ -18,6 +18,7 @@ import { PayslipsPage } from './pages/Payslips';
 import { SettingsPage } from './pages/Settings';
 import { BillingPage } from './pages/Billing';
 import { AuditPage } from './pages/Audit';
+import { BonusesPage } from './pages/Bonuses';
 import { ProfilePage } from './pages/Profile';
 import { Spinner } from './components/ui';
 
@@ -46,6 +47,7 @@ function Shell() {
           <Route path="/conges" element={<LeavePage />} />
           <Route path="/feuilles" element={<RoleRoute roles={PAGE_ROLES.feuilles}><TimesheetsPage /></RoleRoute>} />
           <Route path="/paie" element={<RoleRoute roles={PAGE_ROLES.paie}><PayrollPage /></RoleRoute>} />
+          <Route path="/primes" element={<RoleRoute roles={PAGE_ROLES.primes}><BonusesPage /></RoleRoute>} />
           <Route path="/paiements" element={<RoleRoute roles={PAGE_ROLES.paiements}><PaymentsPage /></RoleRoute>} />
           <Route path="/bulletins" element={<RoleRoute roles={PAGE_ROLES.bulletins}><PayslipsPage /></RoleRoute>} />
           <Route path="/parametres" element={<RoleRoute roles={PAGE_ROLES.parametres}><SettingsPage /></RoleRoute>} />

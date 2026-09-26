@@ -2,7 +2,7 @@
 
 **Produit :** Prototype A26 (KPB Global LLC) — RH, temps, congés, pré-paie Afrique de l’Ouest  
 **Packs :** Niger (CNSS / IUTS / AMO) · Côte d’Ivoire (CNPS / ITS / CMU)  
-**Version cible :** branche `cursor/roadmap-niger-ao-351b` + migration `011`  
+**Version cible :** `main` + migration `013` (primes annuelles)  
 **Date du test :** ____________ **Testeur :** ____________ **URL :** ____________
 
 Cochez chaque case. Notez les anomalies en fin de document.
@@ -13,7 +13,7 @@ Cochez chaque case. Notez les anomalies en fin de document.
 
 | # | Préparation | OK |
 |---|---|---|
-| P1 | Migrations `001` → `012` appliquées sur Postgres Railway (sans wipe `pgdata`) | ☐ |
+| P1 | Migrations `001` → `013` appliquées sur Postgres Railway (sans wipe `pgdata`) | ☐ |
 | P2 | `.env` local : `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` (jamais de `service_role`) | ☐ |
 | P3 | `npm install` puis `npm run dev -- --host 127.0.0.1` → http://127.0.0.1:5173 | ☐ |
 | P4 | Navigateur : 3 sessions distinctes (profils ou fenêtres privées séparées) | ☐ |
@@ -126,6 +126,16 @@ Cochez chaque case. Notez les anomalies en fin de document.
 | 7.5 | Session A tente d’approuver son propre cycle | Refus « quatre yeux » | ☐ |
 | 7.6 | Session D approuve | Cycle `approved` | ☐ |
 | 7.7 | Session A verrouille | Cycle `locked` | ☐ |
+
+### Flow 7b — Prime annuelle (portail)
+
+| # | Action | Résultat attendu | OK |
+|---|---|---|---|
+| 7b.1 | Menu **Primes** → Attribuer (performance, année, montant) | Ligne `approved` (admin) ou `draft` (manager) | ☐ |
+| 7b.2 | Si brouillon : RH clique **Valider** | Statut `approved` | ☐ |
+| 7b.3 | **Verser sur un cycle** ouvert | Statut `scheduled`, cycle rattaché | ☐ |
+| 7b.4 | Relancer le calcul du cycle | Brut += prime ; variables du mois inchangées | ☐ |
+| 7b.5 | Compte salarié ouvre `/primes` | Voit sa propre prime, pas les autres | ☐ |
 
 ### Exports conformité (après calcul)
 

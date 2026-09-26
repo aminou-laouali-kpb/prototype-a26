@@ -16,7 +16,7 @@ const DEMO_STEPS = [
   { icon: <Users className="w-4 h-4" />, title: '1. Salariés', text: 'Parcourez les dossiers : matricule, contrat, coordonnées de paiement (Mobile Money, banque).' },
   { icon: <Clock className="w-4 h-4" />, title: '2. Temps', text: 'Pointez une arrivée puis une sortie ; montrez une correction avec son motif.' },
   { icon: <CalendarClock className="w-4 h-4" />, title: '3. Congés', text: 'Créez une demande, puis validez-la depuis la vue « Toutes les demandes ».' },
-  { icon: <Wallet className="w-4 h-4" />, title: '4. Pré-paie', text: 'Saisissez les variables du mois (heures sup, primes), lancez le calcul, explorez le détail de chaque bulletin.' },
+  { icon: <Wallet className="w-4 h-4" />, title: '4. Pré-paie', text: 'Saisissez les variables du mois (heures sup, primes). Les primes annuelles s’attribuent dans Primes, puis se versent sur un cycle ouvert.' },
   { icon: <Users className="w-4 h-4" />, title: '5. Quatre yeux', text: 'Connectez-vous avec un compte Approbateur paie pour valider le cycle (le préparateur ne peut pas le faire).' },
   { icon: <PlayCircle className="w-4 h-4" />, title: '6. Bulletins', text: 'Chaque salarié voit ses bulletins, imprimables en PDF, avec empreinte de vérification.' },
 ];

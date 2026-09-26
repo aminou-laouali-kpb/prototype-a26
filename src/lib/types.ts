@@ -263,6 +263,26 @@ export interface PayrollVariable {
   notes: string | null;
 }
 
+export type BonusKind = 'performance' | '13e_mois' | 'autre';
+export type BonusStatus = 'draft' | 'approved' | 'scheduled' | 'paid' | 'cancelled';
+
+export interface EmployeeBonus {
+  id: string;
+  org_id: string;
+  employee_id: string;
+  year: number;
+  kind: BonusKind;
+  label: string;
+  amount: number;
+  status: BonusStatus;
+  period_id: string | null;
+  reason: string | null;
+  awarded_by: string | null;
+  approved_by: string | null;
+  created_at: string;
+  employee?: Employee;
+}
+
 export interface OrgInvite {
   id: string;
   org_id: string;
@@ -372,6 +392,7 @@ export const STATUS_COLORS: Record<string, string> = {
   suspended: 'bg-amber-50 text-amber-700 ring-amber-200',
   archived: 'bg-slate-100 text-slate-600 ring-slate-200',
   calculated: 'bg-sky-50 text-sky-700 ring-sky-200',
+  scheduled: 'bg-sky-50 text-sky-700 ring-sky-200',
   paid: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
   failed: 'bg-rose-50 text-rose-700 ring-rose-200',
   exported: 'bg-sky-50 text-sky-700 ring-sky-200',
@@ -394,6 +415,8 @@ export function statusLabel(status: string): string {
     suspended: 'Suspendu',
     archived: 'Archivé',
     calculated: 'Calculé',
+    scheduled: 'Planifiée',
+    paid: 'Versée',
   };
   return map[status] ?? status;
 }

@@ -143,8 +143,13 @@ Il approuve ou refuse. Rien n'est validé tout seul.
 Le préparateur ouvre le mois, ajoute ce qui change :
 
 - les heures supplémentaires,
-- les primes,
+- les primes du mois,
 - les absences non payées.
+
+Une **prime annuelle** (performance, 13e mois) s'attribue à part, dans le menu
+**Primes**. Le RH ou le manager la saisit depuis le portail, puis on la rattache
+à un mois ouvert. Elle s'ajoute au brut de ce mois (cotisations et impôt compris).
+Elle ne remplace pas les primes ponctuelles du mois.
 
 Puis il appuie sur **Lancer le calcul**. La plateforme calcule tous les
 bulletins d'un coup.
@@ -377,6 +382,11 @@ connexion revient. Le calcul de paie, lui, se fait quand vous êtes connecté.
 **Mes employés n'ont pas tous un smartphone.**
 Le responsable peut saisir ou corriger les pointages. Le paiement en espèces est
 prévu, avec un reçu à signer.
+
+**Peut-on verser une prime annuelle depuis le portail ?**
+Oui. Menu **Primes** : le manager propose, l'administrateur RH valide, puis le
+préparateur rattache le montant à un cycle ouvert. Au verrouillage du mois, la
+prime passe en « versée ».
 
 **Est-ce que je peux essayer sans payer ?**
 Oui, 30 jours, jusqu'à 25 salariés.

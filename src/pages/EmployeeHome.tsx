@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useSession } from '../lib/session';
 import {
-  ClockEntry, LeaveRequest, PayrollLine, formatDate, formatXof, statusLabel, STATUS_COLORS,
+  ClockEntry, EmployeeBonus, LeaveRequest, PayrollLine, formatDate, formatXof, statusLabel, STATUS_COLORS,
 } from '../lib/types';
 import { grossSeconds, formatDuration } from '../lib/workSession';
 import { SessionControlCard } from '../components/SessionControlCard';
 import { ProjectTimerCard } from '../components/ProjectTimerCard';
 import { ClaimEmployeeCard } from '../components/ClaimEmployeeCard';
 import { EmptyState, Spinner } from '../components/ui';
-import { CalendarCheck, Clock, Fingerprint, ArrowRight } from 'lucide-react';
+import { Award, CalendarCheck, Clock, Fingerprint, ArrowRight } from 'lucide-react';
 
 function startOfWeek(): Date {
   const d = new Date();
@@ -27,12 +27,13 @@ export function EmployeeHome() {
   const [clocks, setClocks] = useState<ClockEntry[]>([]);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
   const [payslips, setPayslips] = useState<PayrollLine[]>([]);
+  const [bonuses, setBonuses] = useState<EmployeeBonus[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     if (!employeeId || !orgId) { setLoading(false); return; }
     setLoading(true);
-    const [ckRes, lvRes, psRes] = await Promise.all([
+    const [ckRes, lvRes, psRes, bnRes] = await Promise.all([
       supabase.from('clock_entries').select('*')
         .eq('org_id', orgId).eq('employee_id', employeeId)
         .order('clock_in', { ascending: false }).limit(30),
@@ -41,10 +42,14 @@ export function EmployeeHome() {
         .order('start_date', { ascending: false }).limit(5),
       supabase.from('payroll_lines').select('*')
         .eq('org_id', orgId).eq('employee_id', employeeId).limit(3),
+      supabase.from('employee_bonuses').select('*')
+        .eq('org_id', orgId).eq('employee_id', employeeId)
+        .order('created_at', { ascending: false }).limit(5),
     ]);
     setClocks((ckRes.data ?? []) as ClockEntry[]);
     setLeaves((lvRes.data ?? []) as unknown as LeaveRequest[]);
     setPayslips((psRes.data ?? []) as PayrollLine[]);
+    setBonuses((bnRes.error ? [] : bnRes.data ?? []) as EmployeeBonus[]);
     setLoading(false);
   }, [employeeId, orgId]);
 
@@ -166,6 +171,27 @@ export function EmployeeHome() {
             )}
             {pendingLeaves > 0 && (
               <p className="text-xs text-amber-600 mt-3">{pendingLeaves} demande(s) en attente de décision.</p>
+            )}
+          </div>
+
+          <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-semibold text-slate-900 inline-flex items-center gap-2">
+                <Award className="w-4 h-4 text-teal-600" /> Mes primes
+              </h2>
+              <Link to="/primes" className="text-xs font-medium text-teal-700 hover:underline">Voir</Link>
+            </div>
+            {bonuses.length === 0 ? (
+              <p className="text-sm text-slate-400">Aucune prime annuelle pour le moment.</p>
+            ) : (
+              <div className="space-y-2">
+                {bonuses.map((b) => (
+                  <div key={b.id} className="flex items-center justify-between text-sm gap-2">
+                    <span className="text-slate-600 truncate">{b.label} · {b.year}</span>
+                    <span className="font-semibold text-slate-900 whitespace-nowrap">{formatXof(b.amount)}</span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
