@@ -34,6 +34,8 @@ Appliquer les migrations `011`, `012`, `013` (primes) puis `014` (correctifs d�
 
 La migration `013_annual_employee_bonuses` ajoute le menu **Primes** : attribution (RH / manager / cabinet), validation RH, rattachement à un cycle ouvert, inclusion au brut à la pré-paie, passage en « versée » au verrouillage. Les variables mensuelles (`payroll_variables.bonuses`) restent inchangées.
 
+La migration `013_annual_employee_bonuses` ajoute le menu **Primes** : attribution (RH / manager / cabinet), validation RH, rattachement à un cycle ouvert, inclusion au brut à la pré-paie, passage en « versée » au verrouillage. Les variables mensuelles (`payroll_variables.bonuses`) restent inchangées.
+
 ## Préparer la base Supabase
 
 Les migrations du dossier `supabase/migrations` doivent être appliquées sur le projet Supabase cible avant la démonstration. Vérifier ensuite que la fonction `create_demo_org(text)` est disponible pour le rôle `authenticated`.
