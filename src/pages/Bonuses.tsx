@@ -245,7 +245,7 @@ function GrantBonusModal({
             <input type="number" min={2020} max={2100} className={inputClass} value={year} onChange={(e) => setYear(Number(e.target.value))} />
           </Field>
           <Field label="Montant (FCFA)">
-            <input type="number" min={1} step={1000} className={inputClass} value={amount} onChange={(e) => setAmount(e.target.value)} required />
+            <input type="number" min={1} step={1} className={inputClass} value={amount} onChange={(e) => setAmount(e.target.value)} required />
           </Field>
         </div>
         <Field label="Type">
