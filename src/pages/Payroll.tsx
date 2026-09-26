@@ -13,11 +13,12 @@ import {
   exportOhadaCsv, exportMobileMoneyFile, printPayrollBook,
 } from '../lib/exports';
 import { getCountryPack, payrollColumnLabels } from '../lib/countryPacks';
+import { canApprovePayroll, canLockPayroll, canPreparePayroll } from '../lib/access';
 import {
   Modal, Field, inputClass, ErrorBanner, Spinner, EmptyState, SimulationNotice, useAsyncAction,
 } from '../components/ui';
 import {
-  Wallet, Calculator, Check, Lock, Plus, Eye, FileSpreadsheet, Landmark, Table2, Variable, ShieldCheck, CalendarRange, Mail, BookOpen,
+  Wallet, Calculator, Check, Lock, Plus, Eye, FileSpreadsheet, Landmark, Table2, Variable, ShieldCheck, CalendarRange, Mail, BookOpen, RotateCcw,
 } from 'lucide-react';
 
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -38,19 +39,20 @@ export function PayrollPage() {
   const [emailing, setEmailing] = useState(false);
   const [emailResult, setEmailResult] = useState<string | null>(null);
 
-  const canPrepare = activeRole === 'admin_rh' || activeRole === 'preparateur';
-  const canApprove = activeRole === 'approveur_paie' || activeRole === 'admin_rh';
-  const canLock = activeRole === 'admin_rh';
+  const canPrepare = canPreparePayroll(activeRole);
+  const canApprove = canApprovePayroll(activeRole);
+  const canLock = canLockPayroll(activeRole);
 
   const load = useCallback(async () => {
     if (!activeOrg) return;
     setLoading(true);
-    const { data: periodData } = await supabase
+    const { data: periodData, error: periodErr } = await supabase
       .from('payroll_periods')
       .select('*')
       .eq('org_id', activeOrg.id)
       .order('period_year', { ascending: false })
       .order('period_month', { ascending: false });
+    if (periodErr) setActionError(`Chargement des cycles impossible : ${periodErr.message}`);
     const list = (periodData ?? []) as PayrollPeriod[];
     setPeriods(list);
     const current = list.find((p) => p.id === selectedPeriodId) ?? list[0] ?? null;
@@ -58,6 +60,7 @@ export function PayrollPage() {
       if (selectedPeriodId !== current.id) setSelectedPeriodId(current.id);
       const lineRes = await supabase
         .from('payroll_lines').select('*, employee:employees!employee_id(*)').eq('period_id', current.id);
+      if (lineRes.error) setActionError(`Chargement des bulletins impossible : ${lineRes.error.message}`);
       setLines((lineRes.data ?? []) as PayrollLine[]);
     } else {
       if (selectedPeriodId !== null) setSelectedPeriodId(null);
@@ -117,6 +120,17 @@ export function PayrollPage() {
       return;
     }
     const { error } = await supabase.rpc('approve_payroll_period', {
+      p_period_id: period.id,
+    });
+    if (error) { setActionError(error.message); return; }
+    load();
+  };
+
+  const reopenPeriod = async () => {
+    if (!period) return;
+    if (!window.confirm('Rouvrir ce cycle ? Les bulletins calculés seront supprimés et il faudra relancer le calcul.')) return;
+    setActionError(null);
+    const { error } = await supabase.rpc('reopen_payroll_period', {
       p_period_id: period.id,
     });
     if (error) { setActionError(error.message); return; }
@@ -267,6 +281,11 @@ export function PayrollPage() {
             {period && canApprove && period.status === 'prepared' && (
               <button onClick={approvePeriod} className="rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition inline-flex items-center gap-2">
                 <Check className="w-4 h-4" /> Valider (4 yeux)
+              </button>
+            )}
+            {period && canPrepare && period.status === 'prepared' && (
+              <button onClick={reopenPeriod} className="rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
+                <RotateCcw className="w-4 h-4" /> Rouvrir
               </button>
             )}
             {period && canLock && period.status === 'approved' && (

@@ -77,7 +77,7 @@ export function subscriptionStatusLabel(status: OrgSubscription['status']): stri
   const map: Record<OrgSubscription['status'], string> = {
     trialing: 'Essai en cours',
     active: 'Actif',
-    past_due: 'Paiement en retard',
+    past_due: 'En attente de paiement',
     cancelled: 'Résilié',
     expired: 'Expiré',
   };

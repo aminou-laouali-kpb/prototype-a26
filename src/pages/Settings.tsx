@@ -4,13 +4,15 @@ import { useSession, ROLE_LABELS } from '../lib/session';
 import { LeaveType, PayrollRule, OrgInvite, Role, PayrollTimeBasis, DEFAULT_ORG_SETTINGS, NotificationOutboxItem } from '../lib/types';
 import { COUNTRY_OPTIONS, getCountryPack } from '../lib/countryPacks';
 import { Modal, Field, inputClass, ErrorBanner, Spinner, EmptyState, useAsyncAction, SimulationNotice } from '../components/ui';
+import { canAccessPage, canWriteSettings } from '../lib/access';
 import { Building, CalendarDays, Calculator, Plus, Ticket, Copy, Ban, RefreshCw, TimerReset, CheckCircle2, MessageCircle } from 'lucide-react';
 
 export function SettingsPage() {
   const { activeOrg, activeRole } = useSession();
   const [tab, setTab] = useState<'org' | 'time' | 'leaves' | 'payroll' | 'access' | 'notifications'>('payroll');
   const isAdmin = activeRole === 'admin_rh';
-  const canManage = isAdmin || activeRole === 'preparateur' || activeRole === 'cabinet';
+  const canManage = canAccessPage('parametres', activeRole);
+  const readOnly = !canWriteSettings(activeRole);
 
   useEffect(() => {
     if (!isAdmin && (tab === 'org' || tab === 'leaves' || tab === 'access')) setTab('payroll');
@@ -45,9 +47,9 @@ export function SettingsPage() {
       </div>
 
       {tab === 'org' && <OrgTab />}
-      {tab === 'time' && <TimeSettingsTab />}
+      {tab === 'time' && <TimeSettingsTab readOnly={readOnly} />}
       {tab === 'leaves' && <LeaveTypesTab />}
-      {tab === 'payroll' && <RulesTab />}
+      {tab === 'payroll' && <RulesTab readOnly={readOnly} />}
       {tab === 'access' && <AccessTab />}
       {tab === 'notifications' && <NotificationsTab />}
     </div>
@@ -170,7 +172,7 @@ function OrgTab() {
   );
 }
 
-function TimeSettingsTab() {
+function TimeSettingsTab({ readOnly }: { readOnly: boolean }) {
   const { activeOrg, orgSettings, refreshOrgSettings, session } = useSession();
   const [interval, setInterval] = useState(DEFAULT_ORG_SETTINGS.reminder_interval_minutes);
   const [grace, setGrace] = useState(DEFAULT_ORG_SETTINGS.grace_minutes);
@@ -226,6 +228,7 @@ function TimeSettingsTab() {
       </p>
       <ErrorBanner message={error} />
       <form onSubmit={save} className="space-y-5">
+        <fieldset disabled={readOnly} className="space-y-5">
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Rappel de présence toutes les (minutes)" hint="Ex. 25">
             <input type="number" min={1} max={240} className={inputClass} value={interval}
@@ -243,6 +246,10 @@ function TimeSettingsTab() {
             <option value="active">Temps confirmé actif</option>
           </select>
         </Field>
+        </fieldset>
+        {readOnly ? (
+          <p className="text-xs text-slate-500">Consultation seule pour le cabinet : l’administrateur RH ou le préparateur modifie ces réglages.</p>
+        ) : (
         <div className="flex items-center gap-3">
           <button type="submit" disabled={busy}
             className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 disabled:opacity-50 transition">
@@ -254,6 +261,7 @@ function TimeSettingsTab() {
             </span>
           )}
         </div>
+        )}
       </form>
     </div>
   );
@@ -382,7 +390,7 @@ function LeaveTypeModal({ leaveType, onClose, onSaved }: {
   );
 }
 
-function RulesTab() {
+function RulesTab({ readOnly }: { readOnly: boolean }) {
   const { activeOrg } = useSession();
   const [editingRule, setEditingRule] = useState<PayrollRule | null>(null);
   const [rules, setRules] = useState<PayrollRule[]>([]);
@@ -448,7 +456,9 @@ function RulesTab() {
                             <td className="px-3 py-2 text-right font-medium text-slate-900">{Number(r.value)}{r.category === 'impot' || r.code.includes('_tx') ? ' %' : ''}</td>
                             <td className="px-3 py-2 text-xs text-slate-400 max-w-xs truncate">{r.source}</td>
                             <td className="px-3 py-2 text-right">
-                              <button onClick={() => setEditingRule(r)} className="text-sm text-teal-700 hover:underline">Modifier</button>
+                              {!readOnly && (
+                                <button onClick={() => setEditingRule(r)} className="text-sm text-teal-700 hover:underline">Modifier</button>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -763,7 +773,7 @@ function NotificationsTab() {
         payload: { org: activeOrg.name },
         status: 'pending',
       });
-      if (insErr) setError(err.message);
+      if (insErr) setError(insErr.message);
     }
     setPhone('');
     await load();
@@ -771,10 +781,12 @@ function NotificationsTab() {
   };
 
   const markSent = async (id: string) => {
-    await supabase.from('notification_outbox').update({
+    setError(null);
+    const { error: err } = await supabase.from('notification_outbox').update({
       status: 'sent',
       sent_at: new Date().toISOString(),
     }).eq('id', id);
+    if (err) setError(err.message);
     await load();
   };
 

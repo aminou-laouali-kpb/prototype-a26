@@ -30,7 +30,7 @@ Les nouvelles organisations et les espaces démo sont créés en pack **Niger**.
 - Niger : CNSS 5,25 % / 9,75 % / 4,90 % / 1,75 % (décret 2023-449), ANPE 1 % (décret 03/11/2023), plafond 500 000 F, SMIG 42 000 F (décret 2025-607), IUTS CGI art. 150 / LF 2026 (1–35 %), FAFPA TAP 3 % nationaux. AMO/RAMU = 0 (pas de prélèvement paie privée confirmé).
 - Côte d’Ivoire : CNPS CLEISS 2025 6,3 / 7,7 / 5 / 0,75 / 2 %, plafonds 3 375 000 F (retraite) et 70 000 F (PF/AT), CMU 500 F forfait, FDFP 1,2 % + 0,4 %, ITS CGI art. 119 bis sur le brut, SMIG 75 000 F.
 
-Appliquer les migrations `011` puis `012` sur Railway/Postgres avant d’utiliser ces écrans.
+Appliquer les migrations `011`, `012`, `013` (primes) puis `014` (correctifs d’audit) sur Railway/Postgres avant d’utiliser ces écrans.
 
 La migration `013_annual_employee_bonuses` ajoute le menu **Primes** : attribution (RH / manager / cabinet), validation RH, rattachement à un cycle ouvert, inclusion au brut à la pré-paie, passage en « versée » au verrouillage. Les variables mensuelles (`payroll_variables.bonuses`) restent inchangées.
 

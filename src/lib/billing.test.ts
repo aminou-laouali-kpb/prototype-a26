@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PLAN_CATALOG, listPriceAtCap, quoteAnnualXof, quoteMonthlyXof } from './billing';
+import { PLAN_CATALOG, listPriceAtCap, quoteAnnualXof, quoteMonthlyXof, subscriptionStatusLabel } from './billing';
 
 const pme = PLAN_CATALOG.find((p) => p.id === 'pme')!;
 const groupe = PLAN_CATALOG.find((p) => p.id === 'groupe')!;
@@ -45,5 +45,10 @@ describe('subscription quotes', () => {
     expect(listPriceAtCap(pme)).toBeGreaterThan(45000);
     expect(listPriceAtCap(groupe)).toBeGreaterThan(120000);
     expect(listPriceAtCap(cabinet)).toBeGreaterThan(180000);
+  });
+
+  it('labels a requested paid plan as waiting for payment, not already active', () => {
+    expect(subscriptionStatusLabel('past_due')).toBe('En attente de paiement');
+    expect(subscriptionStatusLabel('active')).toBe('Actif');
   });
 });

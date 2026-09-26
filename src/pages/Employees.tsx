@@ -5,6 +5,7 @@ import {
   Employee, Department, Contract, formatXof, statusLabel, STATUS_COLORS,
 } from '../lib/types';
 import { parseEmployeeCsv, employeeImportTemplateCsv } from '../lib/employeeImport';
+import { canEditEmployees, canSeeContractPay } from '../lib/access';
 import { Modal, Field, inputClass, ErrorBanner, Spinner, EmptyState, useAsyncAction } from '../components/ui';
 import { Users, Plus, Search, Pencil, Download, Upload } from 'lucide-react';
 
@@ -19,7 +20,8 @@ export function EmployeesPage() {
   const [importError, setImportError] = useState<string | null>(null);
   const [importBusy, setImportBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const canEdit = activeRole === 'admin_rh';
+  const canEdit = canEditEmployees(activeRole);
+  const canSeePay = canSeeContractPay(activeRole);
 
   const load = useCallback(async () => {
     if (!activeOrg) return;
@@ -27,13 +29,15 @@ export function EmployeesPage() {
     const [emp, dep, ctr] = await Promise.all([
       supabase.from('employees').select('*').eq('org_id', activeOrg.id).order('last_name'),
       supabase.from('departments').select('*').eq('org_id', activeOrg.id).order('name'),
-      supabase.from('contracts').select('*').eq('org_id', activeOrg.id).eq('is_current', true),
+      canSeePay
+        ? supabase.from('contracts').select('*').eq('org_id', activeOrg.id).eq('is_current', true)
+        : Promise.resolve({ data: [] as Contract[], error: null }),
     ]);
     setEmployees((emp.data ?? []) as Employee[]);
     setDepartments((dep.data ?? []) as Department[]);
     setContracts((ctr.data ?? []) as Contract[]);
     setLoading(false);
-  }, [activeOrg]);
+  }, [activeOrg, canSeePay]);
 
   useEffect(() => {
     if (activeOrg) load();
@@ -49,20 +53,16 @@ export function EmployeesPage() {
   });
 
   const exportCsv = () => {
-    const header = ['Matricule', 'Nom', 'Prénoms', 'Poste', 'Service', 'Contrat', 'Salaire de base', 'Statut'];
+    const header = canSeePay
+      ? ['Matricule', 'Nom', 'Prénoms', 'Poste', 'Service', 'Contrat', 'Salaire de base', 'Statut']
+      : ['Matricule', 'Nom', 'Prénoms', 'Poste', 'Service', 'Statut'];
     const rows = filtered.map((emp) => {
       const c = contracts.find((x) => x.employee_id === emp.id);
       const d = departments.find((x) => x.id === emp.department_id);
-      return [
-        emp.employee_number,
-        emp.last_name,
-        emp.first_name,
-        emp.job_title ?? '',
-        d?.name ?? '',
-        c?.contract_type ?? 'Aucun contrat',
-        c ? String(c.base_salary) : '',
-        String(emp.status),
-      ];
+      const base = [emp.employee_number, emp.last_name, emp.first_name, emp.job_title ?? '', d?.name ?? ''];
+      return canSeePay
+        ? [...base, c?.contract_type ?? 'Aucun contrat', c ? String(c.base_salary) : '', String(emp.status)]
+        : [...base, String(emp.status)];
     });
     const csv = [header, ...rows]
       .map((r) => r.map((v) => `"${v.split('"').join('""')}"`).join(';'))
@@ -96,6 +96,7 @@ export function EmployeesPage() {
         setImportError(errors.join(' '));
         return;
       }
+      const contractFailures: string[] = [];
       for (const row of rows) {
         const { data: existing } = await supabase
           .from('employees')
@@ -140,16 +141,19 @@ export function EmployeesPage() {
           empId = emp.id;
         }
         if (empId && row.base_salary != null && row.contract_type) {
-          await supabase.from('contracts').update({ is_current: false }).eq('employee_id', empId).eq('is_current', true);
-          await supabase.from('contracts').insert({
-            org_id: activeOrg.id,
-            employee_id: empId,
-            contract_type: row.contract_type,
-            start_date: row.hire_date || new Date().toISOString().slice(0, 10),
-            base_salary: row.base_salary,
-            monthly_hours: 173.33,
-            is_current: true,
-          });
+          const { error: closeErr } = await supabase.from('contracts').update({ is_current: false }).eq('employee_id', empId).eq('is_current', true);
+          const { error: ctrErr } = closeErr
+            ? { error: closeErr }
+            : await supabase.from('contracts').insert({
+              org_id: activeOrg.id,
+              employee_id: empId,
+              contract_type: row.contract_type,
+              start_date: row.hire_date || new Date().toISOString().slice(0, 10),
+              base_salary: row.base_salary,
+              monthly_hours: 173.33,
+              is_current: true,
+            });
+          if (ctrErr) contractFailures.push(`${row.employee_number} (${ctrErr.message})`);
         }
       }
       await supabase.from('audit_log').insert({
@@ -157,10 +161,16 @@ export function EmployeesPage() {
         actor: session?.user.id ?? null,
         action: 'import_employees',
         entity: 'employees',
-        details: { count: rows.length, warnings: errors },
+        details: { count: rows.length, warnings: errors, contrats_en_echec: contractFailures },
       });
       await load();
-      if (errors.length) setImportError(`Import partiel : ${rows.length} lignes OK. ${errors.slice(0, 3).join(' ')}`);
+      const problems = [
+        ...errors.slice(0, 3),
+        ...(contractFailures.length
+          ? [`Contrat non enregistré pour ${contractFailures.slice(0, 3).join(', ')} : la paie échouera tant qu’il manque.`]
+          : []),
+      ];
+      if (problems.length) setImportError(`Import partiel : ${rows.length} lignes traitées. ${problems.join(' ')}`);
     } catch (e) {
       setImportError(e instanceof Error ? e.message : 'Import impossible.');
     } finally {
@@ -244,7 +254,7 @@ export function EmployeesPage() {
                   <th className="px-4 py-3 font-semibold">Salarié</th>
                   <th className="px-4 py-3 font-semibold hidden md:table-cell">Poste</th>
                   <th className="px-4 py-3 font-semibold hidden lg:table-cell">Service</th>
-                  <th className="px-4 py-3 font-semibold hidden lg:table-cell">Salaire de base</th>
+                  {canSeePay && <th className="px-4 py-3 font-semibold hidden lg:table-cell">Salaire de base</th>}
                   <th className="px-4 py-3 font-semibold">Statut</th>
                   {canEdit && <th className="px-4 py-3"><span className="sr-only">Actions</span></th>}
                 </tr>
@@ -262,9 +272,11 @@ export function EmployeesPage() {
                       </td>
                       <td className="px-4 py-3 text-slate-600 hidden md:table-cell">{emp.job_title ?? '—'}</td>
                       <td className="px-4 py-3 text-slate-600 hidden lg:table-cell">{dept?.name ?? '—'}</td>
-                      <td className="px-4 py-3 font-medium text-slate-900 hidden lg:table-cell">
-                        {c ? formatXof(c.base_salary) : '—'}
-                      </td>
+                      {canSeePay && (
+                        <td className="px-4 py-3 font-medium text-slate-900 hidden lg:table-cell">
+                          {c ? formatXof(c.base_salary) : '—'}
+                        </td>
+                      )}
                       <td className="px-4 py-3">
                         <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ring-1 ${STATUS_COLORS[emp.status]}`}>
                           {statusLabel(emp.status)}
