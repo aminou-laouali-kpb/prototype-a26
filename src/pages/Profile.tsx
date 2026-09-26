@@ -150,7 +150,7 @@ export function ProfilePage() {
 
               <form onSubmit={saveContact} className="mt-5 grid sm:grid-cols-2 gap-4">
                 <Field label="Téléphone">
-                  <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+225 …" readOnly={!canEditContact} />
+                  <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+227 …" readOnly={!canEditContact} />
                 </Field>
                 <Field label="Adresse (optionnel)">
                   <input className={inputClass} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Quartier, ville" readOnly={!canEditContact} />

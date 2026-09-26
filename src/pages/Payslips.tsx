@@ -7,6 +7,7 @@ import {
 } from '../lib/types';
 import { Modal, ErrorBanner, Spinner, EmptyState, SimulationNotice } from '../components/ui';
 import { openPrintDocument, payslipHtml } from '../lib/documents';
+import { getCountryPack } from '../lib/countryPacks';
 import { Fingerprint, FileText, Download } from 'lucide-react';
 
 export function PayslipsPage() {
@@ -192,7 +193,7 @@ function PayslipModal({ data, org, employee, onClose }: {
           </div>
           {org?.ncc && (
             <div className="flex justify-between mt-1">
-              <span className="text-slate-500">NCC</span>
+              <span className="text-slate-500">{getCountryPack(org.country_code).taxIdLabel}</span>
               <span className="font-medium text-slate-900">{org.ncc}</span>
             </div>
           )}

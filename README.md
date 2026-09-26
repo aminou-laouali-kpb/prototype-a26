@@ -30,11 +30,11 @@ Les nouvelles organisations et les espaces démo sont créés en pack **Niger**.
 - Niger : CNSS 5,25 % / 9,75 % / 4,90 % / 1,75 % (décret 2023-449), ANPE 1 % (décret 03/11/2023), plafond 500 000 F, SMIG 42 000 F (décret 2025-607), IUTS CGI art. 150 / LF 2026 (1–35 %), FAFPA TAP 3 % nationaux. AMO/RAMU = 0 (pas de prélèvement paie privée confirmé).
 - Côte d’Ivoire : CNPS CLEISS 2025 6,3 / 7,7 / 5 / 0,75 / 2 %, plafonds 3 375 000 F (retraite) et 70 000 F (PF/AT), CMU 500 F forfait, FDFP 1,2 % + 0,4 %, ITS CGI art. 119 bis sur le brut, SMIG 75 000 F.
 
-Appliquer les migrations `011`, `012`, `013` (primes) puis `014` (correctifs d’audit) sur Railway/Postgres avant d’utiliser ces écrans.
+Appliquer les migrations `011`, `012`, `013` (primes), `014` (correctifs d’audit), `015` puis `016` (jeu de démo Niger) sur Railway/Postgres avant d’utiliser ces écrans.
 
 La migration `013_annual_employee_bonuses` ajoute le menu **Primes** : attribution (RH / manager / cabinet), validation RH, rattachement à un cycle ouvert, inclusion au brut à la pré-paie, passage en « versée » au verrouillage. Les variables mensuelles (`payroll_variables.bonuses`) restent inchangées.
 
-La migration `013_annual_employee_bonuses` ajoute le menu **Primes** : attribution (RH / manager / cabinet), validation RH, rattachement à un cycle ouvert, inclusion au brut à la pré-paie, passage en « versée » au verrouillage. Les variables mensuelles (`payroll_variables.bonuses`) restent inchangées.
+La migration `016_niger_demo_dataset` rend le jeu de démonstration tournable : salariés nigériens (+227, Airtel / Moov / Zamani), 3 projets par espace, cycle de paie sur le **mois précédent** entièrement pointé (brut = salaire de base, une seule retenue d’absence explicable), feuilles de temps plafonnées à 8 h / jour. La remise à zéro conserve le rattachement des comptes manager / salarié à leur fiche (par matricule).
 
 ## Préparer la base Supabase
 
@@ -45,11 +45,11 @@ Ne jamais mettre une clé `service_role` dans `.env` côté frontend. Seule la c
 ## Jeu de démonstration
 
 1. Créer un compte administrateur depuis l’écran de connexion.
-2. Dans l’écran d’organisation, choisir **Démonstration → PME**.
-3. Depuis **Paramètres → Accès**, créer deux invitations : `manager` et `employee`.
+2. Dans l’écran d’organisation, choisir **Démonstration → PME** (Distribution Sahel SARL, Niamey — 12 salariés, pack Niger CNSS / IUTS).
+3. Depuis **Paramètres → Accès et invitations**, créer les invitations `manager`, `employee` et `approveur_paie` (ou lancer `node scripts/prepare-video-demo.mjs`, qui crée les quatre comptes fictifs et rattache le salarié à PME-004 et le manager à PME-002).
 4. Créer les comptes de test correspondants dans des sessions navigateur séparées, puis utiliser les codes d’invitation.
 5. Pour le compte salarié, rattacher la fiche à l’aide du matricule fourni par le jeu de démonstration.
-6. Remettre l’espace à zéro depuis **Paramètres** entre deux prises si nécessaire.
+6. Remettre l’espace à zéro depuis **Paramètres → Accès et invitations → Réinitialiser les données de démonstration** entre deux prises si nécessaire (les rattachements de comptes sont conservés).
 
 Les comptes de démonstration doivent utiliser des adresses dédiées à la recette, jamais les adresses personnelles d’un prospect.
 

@@ -517,7 +517,7 @@ function RuleModal({ rule, onClose, onSaved }: { rule: PayrollRule; onClose: () 
   );
 }
 
-const INVITE_PREFIX = 'TEMPOS-';
+const INVITE_PREFIX = 'A26-';
 
 function randomCode(): string {
   const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';

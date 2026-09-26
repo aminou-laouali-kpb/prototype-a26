@@ -11,12 +11,12 @@ Format recommandé : paysage 16:9, 4 à 5 minutes, données fictives, voix off f
 - [ ] Migrations appliquées sur le projet Supabase de démonstration.
 - [ ] `.env` local pointe vers ce projet et ne contient aucune clé secrète.
 - [ ] Compte `admin_rh` créé.
-- [ ] Espace **PME** créé depuis l’onglet Démonstration.
-- [ ] Au moins 3 salariés, 3 projets et 1 période de paie sont visibles.
+- [ ] Espace **PME** créé depuis l’onglet Démonstration (Distribution Sahel SARL, pack Niger).
+- [ ] 12 salariés, 3 projets et le cycle de paie du **mois précédent** sont visibles.
 - [ ] Comptes `manager` et `employee` créés sur des adresses de recette dédiées.
 - [ ] Les invitations ont été utilisées et la fiche salarié de démonstration est rattachée.
 - [ ] Une demande de congé, des heures de projet et des variables de paie sont disponibles.
-- [ ] Une période de paie est calculée, approuvée et verrouillée.
+- [ ] Le cycle du mois précédent a été calculé une fois en répétition : brut = salaire de base pour tous, sauf une journée sans solde (magasinier payé en espèces).
 - [ ] Un bulletin est visible et téléchargeable.
 - [ ] Une prise de secours a été faite après remise à zéro de l’espace démo.
 
@@ -29,7 +29,7 @@ Ne pas mettre les mots de passe dans ce fichier ou dans la vidéo.
 | A | `admin_rh` | Création, configuration, paie et audit |
 | B | `manager` | Validation des feuilles et congés |
 | C | `employee` | Pointage, chronomètre, demande de congé, bulletins personnels |
-| D | `approveur_paie` | Approbation avec un acteur distinct du préparateur |
+| D | `approveur_paie` | Validation « 4 yeux » par un acteur distinct du préparateur |
 
 Utiliser des profils navigateur distincts pour éviter les sessions croisées. Plusieurs fenêtres privées d'un même navigateur peuvent partager la même session.
 
@@ -51,7 +51,7 @@ Compte A → **Démonstration → PME**.
 
 Compte A → **Tableau de bord**, puis **Salariés**.
 
-À montrer : effectif, masse salariale simulée, contrats, projets et filtres de rôle.
+À montrer : effectif (12), masse salariale nette du dernier cycle, répartition par service, fiches avec matricule, contrat et paiement Mobile Money (Airtel, Moov, Zamani).
 
 ### 4. Temps et projets — 1:20 à 2:00
 
@@ -73,21 +73,21 @@ Compte C → soumettre ses heures. Compte B → **Feuilles de temps** → contr�
 
 ### 7. Pré-paie — 3:05 à 3:55
 
-Compte A → **Pré-paie** → sélectionner la période → saisir une variable → calculer.
+Compte A → **Pré-paie** → cycle du mois précédent → saisir une variable → **Lancer le calcul**.
 
-À montrer : brut, cotisations, ITS, net à payer, charges employeur et détail explicable du bulletin.
+À montrer : brut, CNSS salarié, IUTS, net à payer, charges employeur (CNSS, ANPE, FAFPA), détail explicable du bulletin et la ligne « Absence non payée (1 j) » du magasinier.
 
 ### 8. Contrôle à quatre yeux — 3:55 à 4:20
 
-Compte A prépare la période. Compte D, approbateur distinct, valide, puis verrouille. Le rôle `manager` seul ne permet pas d'approuver la paie.
+Compte A calcule le cycle. Compte D, approbateur distinct, clique **Valider (4 yeux)**. Compte A **verrouille** ensuite (le verrouillage est réservé à l’administrateur RH). Le rôle `manager` seul ne permet pas d'approuver la paie.
 
-À montrer : le préparateur ne peut pas approuver sa propre paie et une période verrouillée n’est plus modifiable.
+À montrer : le préparateur ne peut pas valider sa propre paie et une période verrouillée n’est plus modifiable.
 
 ### 9. Bulletin et audit — 4:20 à 4:45
 
 Compte C → **Mes bulletins**. Compte A → **Journal d’audit**.
 
-À montrer : accès limité aux bulletins personnels, téléchargement et journal des actions sensibles.
+À montrer : accès limité aux bulletins personnels, téléchargement, et dans le journal les colonnes **Qui / Action / Détails** (calcul par l’admin, validation par l’approbateur).
 
 ### 10. Conclusion — 4:45 à 5:00
 
@@ -107,4 +107,10 @@ Appel à l’action : proposer une démonstration personnalisée avec les règle
 
 ## Ordre de recette avant tournage
 
-Suivre les sections 1 à 8 de `DOCUMENT-TEST.md`, puis refaire le parcours enregistré ci-dessus sans modifier la base. En cas d’échec, utiliser la remise à zéro du jeu de démonstration depuis les Paramètres et rejouer la recette.
+Suivre les sections 1 à 8 de `DOCUMENT-TEST.md`, puis refaire le parcours enregistré ci-dessus sans modifier la base. En cas d’échec, utiliser **Paramètres → Accès et invitations → Réinitialiser les données de démonstration** (les comptes restent rattachés à leur fiche) et rejouer la recette.
+
+## Points d’attention au tournage
+
+- Une fenêtre salarié inactive est déconnectée au bout d’environ 30 minutes : relancer la session avant chaque prise.
+- Filmer un jour ouvré : le compteur « Présents aujourd’hui » reste à 0 le week-end.
+- Les captures de `videos/prototype-a26/capture/assets/` datent d’avant les packs pays (Côte d’Ivoire, sans Primes / Paiements / Abonnement) : les refaire, puis mettre à jour `SCRIPT.md` et `STORYBOARD.md` (nom de l’organisation, montants, IUTS au lieu d’ITS).

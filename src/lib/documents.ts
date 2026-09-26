@@ -2,6 +2,7 @@ import {
   Org, Employee, PayrollLine, PayrollDetail, PayrollPeriod,
   formatXof, monthLabel, formatDate,
 } from './types';
+import { getCountryPack, payrollColumnLabels } from './countryPacks';
 
 function esc(v: string | number | null | undefined): string {
   return String(v ?? '')
@@ -55,7 +56,7 @@ function orgHead(org: Org | null, right: string): string {
   return `<div class="head">
     <div>
       <div class="brand">${esc(org?.legal_name || org?.name || 'Organisation')}</div>
-      ${org?.ncc ? `<div class="muted">NCC ${esc(org.ncc)}</div>` : ''}
+      ${org?.ncc ? `<div class="muted">${esc(getCountryPack(org.country_code).taxIdLabel)} ${esc(org.ncc)}</div>` : ''}
     </div>
     <div style="text-align:right">${right}</div>
   </div>`;
@@ -141,6 +142,7 @@ export interface AnnualRow {
 }
 
 export function annualRecapHtml(org: Org | null, year: number, rows: AnnualRow[]): string {
+  const cols = payrollColumnLabels(getCountryPack(org?.country_code));
   const t = rows.reduce((a, r) => ({
     gross: a.gross + r.gross, cnps: a.cnps + r.cnps, cmu: a.cmu + r.cmu,
     its: a.its + r.its, net: a.net + r.net, employer: a.employer + r.employer,
@@ -160,8 +162,8 @@ export function annualRecapHtml(org: Org | null, year: number, rows: AnnualRow[]
 
   return orgHead(org, `<h1>Récapitulatif annuel des salaires</h1><div class="badge">Année ${esc(year)} — simulation</div>`)
     + `<table><thead><tr>
-        <th>Salarié</th><th class="num">Brut</th><th class="num">CNPS sal.</th><th class="num">CMU sal.</th>
-        <th class="num">ITS</th><th class="num">Net</th><th class="num">Charges empl.</th>
+        <th>Salarié</th><th class="num">Brut</th><th class="num">${esc(cols.socialEmployee)}</th><th class="num">${esc(cols.healthEmployee)}</th>
+        <th class="num">${esc(cols.tax)}</th><th class="num">Net</th><th class="num">Charges empl.</th>
       </tr></thead>
       <tbody>${body}</tbody>
       <tfoot><tr class="total">

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useSession } from '../lib/session';
 import { AuditLogEntry } from '../lib/types';
 import { printAuditExport } from '../lib/exports';
+import { auditActionLabel, auditEntityLabel, formatAuditDetails } from '../lib/audit';
 import { EmptyState } from '../components/ui';
 import { ScrollText, Download } from 'lucide-react';
 
@@ -28,21 +29,6 @@ export function AuditPage() {
 
   if (!activeOrg) return null;
 
-  const actionLabels: Record<string, string> = {
-    create_org: 'Création de l’organisation',
-    create_employee: 'Création salarié',
-    update_employee: 'Modification salarié',
-    correct_clock_entry: 'Correction de pointage',
-    approve_leave: 'Congé approuvé',
-    reject_leave: 'Congé refusé',
-    compute_payroll: 'Calcul de paie',
-    approve_payroll: 'Validation de paie',
-    lock_payroll: 'Verrouillage de cycle',
-    create_payroll_period: 'Création de cycle',
-    approve_timesheet: 'Feuille de temps approuvée',
-    reject_timesheet: 'Feuille de temps rejetée',
-    update_org: 'Modification organisation',
-  };
 
   return (
     <div className="space-y-6">
@@ -58,9 +44,9 @@ export function AuditPage() {
             onClick={() => printAuditExport(activeOrg, entries.map((e) => ({
               created_at: new Date(e.created_at).toLocaleString('fr-FR'),
               actor_email: e.actor_email,
-              action: actionLabels[e.action] ?? e.action,
-              entity: e.entity,
-              details: e.details,
+              action: auditActionLabel(e.action),
+              entity: auditEntityLabel(e.entity),
+              details: formatAuditDetails(e.details),
             })))}
             className="rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 inline-flex items-center gap-2"
           >
@@ -84,6 +70,7 @@ export function AuditPage() {
               <thead>
                 <tr className="text-left text-xs uppercase tracking-wide text-slate-500 bg-slate-50 border-b border-slate-200">
                   <th className="px-4 py-3 font-semibold">Quand</th>
+                  <th className="px-4 py-3 font-semibold">Qui</th>
                   <th className="px-4 py-3 font-semibold">Action</th>
                   <th className="px-4 py-3 font-semibold">Objet</th>
                   <th className="px-4 py-3 font-semibold hidden md:table-cell">Détails</th>
@@ -95,12 +82,13 @@ export function AuditPage() {
                     <td className="px-4 py-3 text-slate-500 whitespace-nowrap text-xs">
                       {new Date(e.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
                     </td>
+                    <td className="px-4 py-3 text-slate-700 text-xs">{e.actor_email ?? 'Système'}</td>
                     <td className="px-4 py-3">
-                      <span className="font-medium text-slate-900">{actionLabels[e.action] ?? e.action}</span>
+                      <span className="font-medium text-slate-900">{auditActionLabel(e.action)}</span>
                     </td>
-                    <td className="px-4 py-3 text-slate-500 text-xs">{e.entity}</td>
+                    <td className="px-4 py-3 text-slate-500 text-xs">{auditEntityLabel(e.entity)}</td>
                     <td className="px-4 py-3 text-slate-500 text-xs hidden md:table-cell">
-                      {e.details ? JSON.stringify(e.details).slice(0, 120) : '—'}
+                      {formatAuditDetails(e.details)}
                     </td>
                   </tr>
                 ))}

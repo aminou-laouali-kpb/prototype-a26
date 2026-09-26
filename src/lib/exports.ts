@@ -305,7 +305,7 @@ export function printAuditExport(
     <td>${esc(e.actor_email || '—')}</td>
     <td>${esc(e.action)}</td>
     <td>${esc(e.entity)}</td>
-    <td class="muted" style="font-size:11px">${esc(JSON.stringify(e.details ?? {}))}</td>
+    <td class="muted" style="font-size:11px">${esc(typeof e.details === 'string' ? e.details : JSON.stringify(e.details ?? {}))}</td>
   </tr>`).join('');
   const body = `
     <div class="head">
