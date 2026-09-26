@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useSession } from '../lib/session';
 import {
@@ -203,6 +204,9 @@ export function PayrollPage() {
           <h1 className="text-2xl font-bold text-slate-900">Pré-paie</h1>
           <p className="text-sm text-slate-500 mt-1">
             Pack {pack.name} ({colLabels.socialEmployee}, {colLabels.tax}) — cycles mensuels, calcul explicable et validation à quatre yeux.
+            {' '}Les primes annuelles s’attribuent dans{' '}
+            <Link to="/primes" className="font-medium text-teal-700 hover:underline">Primes</Link>
+            {' '}puis s’ajoutent au brut du cycle choisi.
           </p>
         </div>
         <div className="flex gap-2">
@@ -549,6 +553,7 @@ function VariablesModal({ period, orgId, onClose, onSaved }: {
           </div>
           <p className="text-xs text-slate-400">
             Les absences non payées issues des congés validés (type « sans solde ») s’ajoutent automatiquement au calcul.
+            Les primes annuelles (menu Primes) s’ajoutent au brut du cycle ; elles ne remplacent pas ce champ.
           </p>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">Annuler</button>

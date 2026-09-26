@@ -18,4 +18,11 @@ describe('canAccessPage', () => {
     expect(canAccessPage('abonnement', 'cabinet')).toBe(true);
     expect(canAccessPage('abonnement', 'employee')).toBe(false);
   });
+
+  it('opens primes for RH, manager and the employee', () => {
+    expect(canAccessPage('primes', 'admin_rh')).toBe(true);
+    expect(canAccessPage('primes', 'manager')).toBe(true);
+    expect(canAccessPage('primes', 'employee')).toBe(true);
+    expect(canAccessPage('primes', null)).toBe(false);
+  });
 });
