@@ -156,7 +156,11 @@ export function PaymentsPage() {
       else if (statuses.some((s) => s === 'failed') && statuses.some((s) => s === 'paid')) batchStatus = 'partial';
       else if (statuses.every((s) => s === 'failed')) batchStatus = 'failed';
       else if (statuses.some((s) => s === 'paid')) batchStatus = 'partial';
-      await supabase.from('payment_batches').update({ status: batchStatus, updated_at: new Date().toISOString() }).eq('id', activeBatch);
+      const { error: batchErr } = await supabase
+        .from('payment_batches')
+        .update({ status: batchStatus, updated_at: new Date().toISOString() })
+        .eq('id', activeBatch);
+      if (batchErr) setError(`Ligne mise à jour, mais statut du lot inchangé : ${batchErr.message}`);
       await loadBatches();
       await loadLines(activeBatch);
     }

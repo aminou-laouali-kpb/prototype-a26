@@ -41,7 +41,8 @@ export function EmployeeHome() {
         .eq('org_id', orgId).eq('employee_id', employeeId)
         .order('start_date', { ascending: false }).limit(5),
       supabase.from('payroll_lines').select('*')
-        .eq('org_id', orgId).eq('employee_id', employeeId).limit(3),
+        .eq('org_id', orgId).eq('employee_id', employeeId)
+        .order('created_at', { ascending: false }).limit(3),
       supabase.from('employee_bonuses').select('*')
         .eq('org_id', orgId).eq('employee_id', employeeId)
         .order('created_at', { ascending: false }).limit(5),

@@ -7,6 +7,7 @@ import {
   formatXof, monthLabel, statusLabel, STATUS_COLORS, formatDate,
 } from '../lib/types';
 import { EmptyState, SimulationNotice, Spinner, ErrorBanner } from '../components/ui';
+import { canAccessPage } from '../lib/access';
 import {
   Users, CalendarClock, Wallet, Clock, ChevronDown, ChevronRight, PlayCircle,
   ArrowRight,
@@ -33,6 +34,8 @@ export function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [guideOpen, setGuideOpen] = useState(true);
   const orgId = activeOrg?.id;
+  const canSeePayroll = canAccessPage('paie', activeRole);
+  const guideSteps = canSeePayroll ? DEMO_STEPS : DEMO_STEPS.slice(0, 3);
 
   const load = useCallback(async () => {
     if (!orgId) {
@@ -69,7 +72,7 @@ export function Dashboard() {
     setTodayEntries((clockRes.data ?? []) as ClockEntry[]);
     const p = (periodRes.data ?? null) as PayrollPeriod | null;
     setPeriod(p);
-    if (p) {
+    if (p && canSeePayroll) {
       const { data: lineData, error: lineError } = await supabase
         .from('payroll_lines')
         .select('*, employee:employees!employee_id(*)')
@@ -84,7 +87,7 @@ export function Dashboard() {
       setLines([]);
     }
     setLoading(false);
-  }, [orgId]);
+  }, [orgId, canSeePayroll]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -129,17 +132,19 @@ export function Dashboard() {
           icon={<Clock className="w-5 h-5 text-sky-600" />}
         />
         <StatCard label="Congés à valider" value={String(pendingLeaves.length)} sub="demandes en attente de décision" icon={<CalendarClock className="w-5 h-5 text-amber-600" />} />
-        <StatCard
-          label="Masse salariale nette"
-          value={formatXof(netTotal)}
-          sub={period ? monthLabel(period.period_year, period.period_month) : 'Aucun cycle calculé'}
-          icon={<Wallet className="w-5 h-5 text-slate-700" />}
-        />
+        {canSeePayroll && (
+          <StatCard
+            label="Masse salariale nette"
+            value={formatXof(netTotal)}
+            sub={period ? monthLabel(period.period_year, period.period_month) : 'Aucun cycle calculé'}
+            icon={<Wallet className="w-5 h-5 text-slate-700" />}
+          />
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          {period && lines.length > 0 && (
+          {canSeePayroll && period && lines.length > 0 && (
             <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
@@ -166,7 +171,7 @@ export function Dashboard() {
             </div>
           )}
 
-          {!period && (
+          {canSeePayroll && !period && (
             <div className="rounded-2xl bg-white ring-1 ring-slate-200">
               <EmptyState
                 icon={<Wallet className="w-6 h-6" />}
@@ -236,7 +241,7 @@ export function Dashboard() {
               </button>
               {guideOpen && (
                 <ol className="mt-4 space-y-3">
-                  {DEMO_STEPS.map((s) => (
+                  {guideSteps.map((s) => (
                     <li key={s.title} className="flex gap-3">
                       <span className="mt-0.5 text-teal-300 shrink-0">{s.icon}</span>
                       <span>
