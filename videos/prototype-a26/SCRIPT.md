@@ -1,8 +1,8 @@
 # SCRIPT — prototype-a26
 
-**Voice:** Celine (Higgsfield, preset `57ccb351-84d7-54ba-afd4-26b566ca6023`) — jeune, francophone, accent parisien, professionnelle
-**Modèle:** `seed_audio` — fichiers `assets/voice/01.wav` … `11.wav` (non versionnés)
-**Écriture phonétique envoyée au modèle** (sinon mal prononcé) : « A vingt-six », « pré-paye », « l'Oueste », « cé-èf-a », « i, u, té, esse »
+**Voice:** Celine via le moteur ElevenLabs de Higgsfield (`text2speech_v2`, variant `elevenlabs`, preset `57ccb351-84d7-54ba-afd4-26b566ca6023`) — prononciation française choisie à l'écoute par le client
+**Fichiers:** `assets/voice/01.mp3` … `11.mp3` (pauses raccourcies ; répliques 2, 7 et 8 accélérées de 10 à 15 % ; plans 7 et 8 allongés de 0,9 s et 3,7 s)
+**Sigles:** écrire « C.N.S.S. » et « I.U.T.S. » dans le texte envoyé au moteur
 **Voice direction:** Francophone mesuré, B2B, sans hype. Articuler les chiffres. Prononcer C.F.A., C.N.S.S. et I.U.T.S. lettre par lettre. Pauses courtes entre les cues.
 
 ---
