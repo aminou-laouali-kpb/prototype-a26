@@ -1,2 +1,6 @@
 [functions.send-payslips]
 verify_jwt = true
+
+[functions.send-whatsapp]
+# Appelé par un planificateur, pas par un utilisateur : l'accès est protégé par le secret partagé x-worker-secret.
+verify_jwt = false
