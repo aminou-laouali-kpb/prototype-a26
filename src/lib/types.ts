@@ -283,6 +283,123 @@ export interface EmployeeBonus {
   employee?: Employee;
 }
 
+export type PerformanceCycleStatus = 'open' | 'review' | 'closed';
+export type PerformanceCycleKind = 'month' | 'quarter' | 'semester' | 'year';
+export type ObjectiveStatus = 'draft' | 'active' | 'self_reported' | 'validated';
+export type ObjectiveDirection = 'higher' | 'lower';
+export type PerformanceLevel = 'non_evalue' | 'a_suivre' | 'conforme' | 'bon' | 'excellent';
+export type RecognitionBadge = 'salarie_du_mois' | 'assiduite_parfaite' | 'objectifs_depasses' | 'esprit_equipe';
+export type PerkKind = 'bonus_leave' | 'training_budget';
+export type PerkStatus = 'proposed' | 'approved' | 'consumed' | 'cancelled';
+
+export interface PerformanceSettings {
+  org_id: string;
+  weight_objectives: number;
+  expected_start_time: string;
+  late_grace_minutes: number;
+  submission_grace_days: number;
+  daily_hours: number;
+  work_days: number[];
+  holidays: string[];
+  timezone: string;
+  weight_punctuality: number;
+  weight_attendance: number;
+  weight_project_hours: number;
+  weight_submission: number;
+  weight_corrections: number;
+  conform_threshold: number;
+  good_threshold: number;
+  excellent_threshold: number;
+}
+
+export interface PerformanceCycle {
+  id: string;
+  org_id: string;
+  label: string;
+  kind: PerformanceCycleKind;
+  start_date: string;
+  end_date: string;
+  status: PerformanceCycleStatus;
+  closed_at: string | null;
+  created_at: string;
+}
+
+export interface EmployeeObjective {
+  id: string;
+  org_id: string;
+  cycle_id: string;
+  employee_id: string;
+  title: string;
+  indicator: string;
+  unit: string | null;
+  direction: ObjectiveDirection;
+  target: number;
+  weight_pct: number;
+  achieved: number | null;
+  status: ObjectiveStatus;
+  employee_note: string | null;
+  manager_note: string | null;
+  reported_at: string | null;
+  validated_at: string | null;
+  created_at: string;
+}
+
+export interface PerformanceScore {
+  id: string;
+  org_id: string;
+  cycle_id: string;
+  employee_id: string;
+  department_id: string | null;
+  score_objectives: number | null;
+  score_kpi: number | null;
+  score_final: number | null;
+  objectives_evaluated: number;
+  objectives_total: number;
+  department_rank: number | null;
+  department_size: number | null;
+  level: PerformanceLevel;
+  computed_at: string;
+}
+
+export interface PerformanceScoreLine {
+  id: string;
+  score_id: string;
+  source: 'objective' | 'kpi';
+  label: string;
+  detail: string | null;
+  value: number | null;
+  weight_pct: number;
+  points: number;
+  evaluated: boolean;
+  position: number;
+}
+
+export interface EmployeeRecognition {
+  id: string;
+  org_id: string;
+  cycle_id: string;
+  employee_id: string;
+  badge: RecognitionBadge;
+  origin: 'manager' | 'automatique';
+  status: 'proposed' | 'confirmed';
+  note: string | null;
+  created_at: string;
+}
+
+export interface EmployeePerk {
+  id: string;
+  org_id: string;
+  cycle_id: string;
+  employee_id: string;
+  score_id: string | null;
+  kind: PerkKind;
+  amount: number;
+  consumed_amount: number;
+  status: PerkStatus;
+  reason: string | null;
+  created_at: string;
+}
+
 export interface OrgInvite {
   id: string;
   org_id: string;

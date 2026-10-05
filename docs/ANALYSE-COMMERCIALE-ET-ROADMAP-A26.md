@@ -358,6 +358,8 @@ Le prospect compare A26 à Excel et à un cabinet. Ici, A26 fait une chose que l
 
 ## 5. Module « Performance et récompenses »
 
+> **Statut (05/10/2026).** Les lots A à D sont livrés dans la migration `018_performance_rewards`, avec l'écran `/performance`. Restent à brancher : le worker WhatsApp du lot H1 (le message `recognition_awarded` est déjà placé dans `notification_outbox`) et le calendrier de jours fériés par pays (saisi à la main dans les réglages en attendant).
+
 ### L'argument
 
 > **A26 ne fait pas que payer vos salariés : il vous dit qui mérite plus, avec des preuves, et transforme ça en prime en deux clics.**

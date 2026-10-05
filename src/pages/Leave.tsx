@@ -21,9 +21,17 @@ interface LeaveBalance {
   employeeId: string;
   employeeName: string | null;
   type: LeaveType;
+  /** Droit annuel du type ; pour « BON », somme des jours bonus de performance validés. */
+  allowance: number;
   taken: number;
   pending: number;
   remaining: number;
+}
+
+interface BonusLeaveCredit {
+  employee_id: string;
+  amount: number;
+  cycle: { end_date: string } | { end_date: string }[] | null;
 }
 
 function parseIsoDate(value: string): Date | null {
@@ -157,6 +165,7 @@ export function LeavePage() {
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [requests, setRequests] = useState<LeaveRequest[]>([]);
+  const [bonusCredits, setBonusCredits] = useState<BonusLeaveCredit[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<'mine' | 'team'>('mine');
   const [creating, setCreating] = useState(false);
@@ -169,13 +178,17 @@ export function LeavePage() {
   const load = useCallback(async () => {
     if (!activeOrgId) return;
     setLoading(true);
-    const [typeRes, empRes, reqRes] = await Promise.all([
+    const [typeRes, empRes, reqRes, perkRes] = await Promise.all([
       supabase.from('leave_types').select('*').eq('org_id', activeOrgId).order('name'),
       supabase.from('employees').select('*').eq('org_id', activeOrgId).order('last_name'),
       supabase.from('leave_requests').select('*, leave_type:leave_types!leave_type_id(*), employee:employees!employee_id(*)')
         .eq('org_id', activeOrgId)
         .order('created_at', { ascending: false }),
+      // Jours bonus du module Performance : absent tant que la migration 018 n’est pas appliquée.
+      supabase.from('employee_perks').select('employee_id, amount, cycle:performance_cycles!cycle_id(end_date)')
+        .eq('org_id', activeOrgId).eq('kind', 'bonus_leave').in('status', ['approved', 'consumed']),
     ]);
+    setBonusCredits(perkRes.error ? [] : (perkRes.data ?? []) as unknown as BonusLeaveCredit[]);
     setLeaveTypes((typeRes.data ?? []) as LeaveType[]);
     setEmployees((empRes.data ?? []) as Employee[]);
     setRequests((reqRes.data ?? []) as LeaveRequest[]);
@@ -236,9 +249,17 @@ export function LeavePage() {
       ? employees.map((employee) => employee.id)
       : myEmpId ? [myEmpId] : [];
 
+    const bonusFor = (employeeId: string) => bonusCredits
+      .filter((credit) => {
+        const cycle = Array.isArray(credit.cycle) ? credit.cycle[0] : credit.cycle;
+        return credit.employee_id === employeeId && cycle && Number(cycle.end_date.slice(0, 4)) === balanceYear;
+      })
+      .reduce((sum, credit) => sum + Number(credit.amount), 0);
+
     return employeeIds.flatMap<LeaveBalance>((employeeId) => leaveTypes
-      .filter((type) => Number(type.annual_days) > 0)
-      .map((type) => {
+      .map((type) => ({ type, allowance: type.code === 'BON' ? bonusFor(employeeId) : Number(type.annual_days) }))
+      .filter(({ allowance }) => allowance > 0)
+      .map(({ type, allowance }) => {
         const current = usage.get(`${employeeId}:${type.id}`) ?? { approved: 0, pending: 0 };
         const taken = roundLeaveDays(current.approved);
         const pending = roundLeaveDays(current.pending);
@@ -247,15 +268,16 @@ export function LeavePage() {
           employeeId,
           employeeName: view === 'team' ? (employee ? `${employee.last_name} ${employee.first_name}` : '—') : null,
           type,
+          allowance,
           taken,
           pending,
-          remaining: roundLeaveDays(Math.max(0, Number(type.annual_days) - taken)),
+          remaining: roundLeaveDays(Math.max(0, allowance - taken)),
         };
       }));
-  }, [requests, balanceYear, employees, leaveTypes, view, isManager, myEmpId]);
+  }, [requests, balanceYear, employees, leaveTypes, bonusCredits, view, isManager, myEmpId]);
 
   const displayedBalances = balances.filter((balance) => (
-    balance.taken > 0 || balance.pending > 0 || balance.remaining < Number(balance.type.annual_days)
+    balance.taken > 0 || balance.pending > 0 || balance.remaining < balance.allowance || balance.type.code === 'BON'
   ));
 
   if (!activeOrg) return null;
@@ -309,12 +331,12 @@ export function LeavePage() {
               </div>
               <div className="mt-1 flex items-baseline gap-1">
                 <span className="text-2xl font-bold text-slate-900">{formatLeaveDays(b.remaining)}</span>
-                <span className="text-xs text-slate-400">/ {formatLeaveDays(Number(b.type.annual_days))} j restants</span>
+                <span className="text-xs text-slate-400">/ {formatLeaveDays(b.allowance)} j restants</span>
               </div>
               <div className="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden">
                 <div
                   className="h-full bg-teal-500 rounded-full transition-all"
-                  style={{ width: `${Math.min(100, (Number(b.type.annual_days) > 0 ? (b.taken / Number(b.type.annual_days)) * 100 : 0))}%` }}
+                  style={{ width: `${Math.min(100, (b.allowance > 0 ? (b.taken / b.allowance) * 100 : 0))}%` }}
                 />
               </div>
               <div className="mt-1 text-[11px] text-slate-400">{formatLeaveDays(b.taken)} jour(s) pris</div>

@@ -38,6 +38,22 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   create_payment_batch: 'Lot de paiement créé',
   email_payslips: 'Envoi des bulletins par e-mail',
   request_plan: 'Demande d’abonnement',
+  update_performance_settings: 'Réglages du module performance',
+  open_performance_cycle: 'Cycle de performance ouvert',
+  set_performance_cycle_status: 'Cycle de performance : changement d’étape',
+  reopen_performance_cycle: 'Cycle de performance rouvert',
+  set_objective: 'Objectif fixé',
+  delete_objective: 'Objectif retiré',
+  report_objective: 'Résultat déclaré par le salarié',
+  validate_objective: 'Objectif validé',
+  compute_performance: 'Calcul des scores de performance',
+  award_recognition: 'Badge attribué',
+  dismiss_recognition: 'Proposition de badge écartée',
+  propose_performance_bonus: 'Prime de performance proposée',
+  propose_perk: 'Avantage proposé',
+  decide_perk: 'Avantage : décision RH',
+  consume_perk: 'Avantage consommé',
+  seed_performance_demo: 'Chargement du jeu de démonstration performance',
 };
 
 const ENTITY_LABELS: Record<string, string> = {
@@ -56,6 +72,11 @@ const ENTITY_LABELS: Record<string, string> = {
   payroll_lines: 'Bulletins',
   employee_bonuses: 'Primes',
   payment_batches: 'Paiements',
+  performance_cycles: 'Cycles de performance',
+  performance_settings: 'Réglages performance',
+  employee_objectives: 'Objectifs',
+  employee_recognitions: 'Badges',
+  employee_perks: 'Avantages',
 };
 
 const DETAIL_LABELS: Record<string, string> = {
@@ -78,6 +99,21 @@ const DETAIL_LABELS: Record<string, string> = {
   total: 'total',
   sent: 'envoyés',
   failed: 'échecs',
+  employee: 'salarié',
+  badge: 'badge',
+  title: 'titre',
+  target: 'cible',
+  weight_pct: 'poids (%)',
+  scores: 'scores',
+  decision: 'décision',
+  from: 'de',
+  to: 'vers',
+  reported: 'déclaré',
+  validated: 'validé',
+  consumed: 'consommé',
+  total_consumed: 'total consommé',
+  achieved: 'atteint',
+  label: 'cycle',
 };
 
 const VALUE_LABELS: Record<string, string> = {

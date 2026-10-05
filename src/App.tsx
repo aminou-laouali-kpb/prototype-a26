@@ -22,6 +22,7 @@ const SettingsPage = lazy(() => import('./pages/Settings').then((m) => ({ defaul
 const BillingPage = lazy(() => import('./pages/Billing').then((m) => ({ default: m.BillingPage })));
 const AuditPage = lazy(() => import('./pages/Audit').then((m) => ({ default: m.AuditPage })));
 const BonusesPage = lazy(() => import('./pages/Bonuses').then((m) => ({ default: m.BonusesPage })));
+const PerformancePage = lazy(() => import('./pages/Performance').then((m) => ({ default: m.PerformancePage })));
 const ProfilePage = lazy(() => import('./pages/Profile').then((m) => ({ default: m.ProfilePage })));
 
 function Shell() {
@@ -51,6 +52,7 @@ function Shell() {
             <Route path="/feuilles" element={<RoleRoute roles={PAGE_ROLES.feuilles}><TimesheetsPage /></RoleRoute>} />
             <Route path="/paie" element={<RoleRoute roles={PAGE_ROLES.paie}><PayrollPage /></RoleRoute>} />
             <Route path="/primes" element={<RoleRoute roles={PAGE_ROLES.primes}><BonusesPage /></RoleRoute>} />
+            <Route path="/performance" element={<RoleRoute roles={PAGE_ROLES.performance}><PerformancePage /></RoleRoute>} />
             <Route path="/paiements" element={<RoleRoute roles={PAGE_ROLES.paiements}><PaymentsPage /></RoleRoute>} />
             <Route path="/bulletins" element={<RoleRoute roles={PAGE_ROLES.bulletins}><PayslipsPage /></RoleRoute>} />
             <Route path="/parametres" element={<RoleRoute roles={PAGE_ROLES.parametres}><SettingsPage /></RoleRoute>} />
