@@ -815,8 +815,9 @@ function NotificationsTab() {
           <MessageCircle className="w-4 h-4 text-teal-600" /> File WhatsApp
         </h2>
         <p className="text-sm text-slate-500 mb-4">
-          Les messages sont mis en file (notification_outbox). Branchez l&apos;API WhatsApp Business pour l&apos;envoi réel ;
-          en attendant, marquez « envoyé » après envoi manuel.
+          Les congés décidés, les cycles de paie et les badges mettent leurs messages en file automatiquement. Le worker
+          WhatsApp (fonction send-whatsapp) les envoie dès qu&apos;il est branché ; un message en échec affiche son motif.
+          « Marquer envoyé » reste réservé à un envoi fait à la main, hors application.
         </p>
         <ErrorBanner message={error} />
         <form onSubmit={enqueue} className="grid sm:grid-cols-3 gap-3 items-end">
@@ -856,11 +857,14 @@ function NotificationsTab() {
                 <tr key={i.id} className="border-t border-slate-100">
                   <td className="px-3 py-2">{i.recipient}</td>
                   <td className="px-3 py-2">{i.template_key}</td>
-                  <td className="px-3 py-2">{i.status}</td>
+                  <td className="px-3 py-2">
+                    {i.status}
+                    {i.error && <div className="text-xs text-rose-600 max-w-xs">{i.error}</div>}
+                  </td>
                   <td className="px-3 py-2 text-right">
                     {i.status === 'pending' && (
                       <button onClick={() => markSent(i.id)} className="text-xs font-semibold text-teal-700 hover:underline">
-                        Marquer envoyé
+                        Marquer envoyé (envoi manuel)
                       </button>
                     )}
                   </td>

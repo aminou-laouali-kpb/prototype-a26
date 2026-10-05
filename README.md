@@ -30,7 +30,7 @@ Les nouvelles organisations et les espaces démo sont créés en pack **Niger**.
 - Niger : CNSS 5,25 % / 9,75 % / 4,90 % / 1,75 % (décret 2023-449), ANPE 1 % (décret 03/11/2023), plafond 500 000 F, SMIG 42 000 F (décret 2025-607), IUTS CGI art. 150 / LF 2026 (1–35 %), FAFPA TAP 3 % nationaux. AMO/RAMU = 0 (pas de prélèvement paie privée confirmé).
 - Côte d’Ivoire : CNPS CLEISS 2025 6,3 / 7,7 / 5 / 0,75 / 2 %, plafonds 3 375 000 F (retraite) et 70 000 F (PF/AT), CMU 500 F forfait, FDFP 1,2 % + 0,4 %, ITS CGI art. 119 bis sur le brut, SMIG 75 000 F.
 
-Appliquer les migrations `011`, `012`, `013` (primes), `014` (correctifs d’audit), `015`, `016` (jeu de démo Niger), `017` (barèmes au 01/01/2026, congés payés et prorata au mois réel) `018` (performance et récompenses) puis `019` (câblage des notifications) sur Railway/Postgres avant d’utiliser ces écrans.
+Appliquer les migrations `011`, `012`, `013` (primes), `014` (correctifs d’audit), `015`, `016` (jeu de démo Niger), `017` (barèmes au 01/01/2026, congés payés et prorata au mois réel), `018` (performance et récompenses), `019` (câblage des notifications) puis `020` (appuis du worker WhatsApp) sur Railway/Postgres avant d’utiliser ces écrans.
 
 La migration `013_annual_employee_bonuses` ajoute le menu **Primes** : attribution (RH / manager / cabinet), validation RH, rattachement à un cycle ouvert, inclusion au brut à la pré-paie, passage en « versée » au verrouillage. Les variables mensuelles (`payroll_variables.bonuses`) restent inchangées.
 
@@ -59,7 +59,7 @@ La migration `019_notification_wiring` remplit `notification_outbox` toute seule
 | Cycle de paie verrouillé | `payslip_ready` | chaque salarié payé |
 | Badge confirmé (018) | `recognition_awarded` | le salarié |
 
-Un même événement ne produit qu'un message par destinataire. Un numéro absent ne crée rien ; un numéro invalide crée une ligne `failed` avec un message clair. **Rien n'est envoyé par la base** : le worker (fonction Edge et compte WhatsApp Business) reste à brancher. Il s'appuie sur `claim_pending_notifications(p_org, p_limit)` (réserve un lot sans doublon, 5 essais, réservation libérée après 10 minutes) et `finish_notification(p_id, p_ok, p_error, p_provider_id, p_retry)`, toutes deux réservées au rôle `service_role`.
+Un même événement ne produit qu'un message par destinataire. Un numéro absent ne crée rien ; un numéro invalide crée une ligne `failed` avec un message clair. **Rien n'est envoyé par la base** : c'est le rôle du worker, la fonction Edge `supabase/functions/send-whatsapp`, qui s'appuie sur `claim_pending_notifications(p_org, p_limit, p_channel)` (réserve un lot sans doublon, 5 essais, réservation libérée après 10 minutes), `finish_notification(...)` et `release_notification(...)` (migration `020`), réservées au rôle `service_role`. Mise en service (compte WhatsApp Business, modèles Meta, secrets, planification) : [Worker WhatsApp](./docs/WHATSAPP-WORKER.md).
 
 ## Préparer la base Supabase
 
@@ -86,6 +86,7 @@ npm run lint
 npm test
 npm run build
 deno check supabase/functions/send-payslips/index.ts
+deno check supabase/functions/send-whatsapp/index.ts
 npm audit --audit-level=high
 ```
 
