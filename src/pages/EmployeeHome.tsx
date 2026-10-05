@@ -9,6 +9,7 @@ import { grossSeconds, formatDuration } from '../lib/workSession';
 import { SessionControlCard } from '../components/SessionControlCard';
 import { ProjectTimerCard } from '../components/ProjectTimerCard';
 import { ClaimEmployeeCard } from '../components/ClaimEmployeeCard';
+import { PerformanceHomeCard } from '../components/performance/PerformanceHomeCard';
 import { EmptyState, Spinner } from '../components/ui';
 import { Award, CalendarCheck, Clock, Fingerprint, ArrowRight } from 'lucide-react';
 
@@ -174,6 +175,8 @@ export function EmployeeHome() {
               <p className="text-xs text-amber-600 mt-3">{pendingLeaves} demande(s) en attente de décision.</p>
             )}
           </div>
+
+          {orgId && <PerformanceHomeCard orgId={orgId} employeeId={myEmployee.id} />}
 
           <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
             <div className="flex items-center justify-between mb-3">

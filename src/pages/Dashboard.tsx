@@ -8,6 +8,8 @@ import {
 } from '../lib/types';
 import { EmptyState, SimulationNotice, Spinner, ErrorBanner } from '../components/ui';
 import { canAccessPage } from '../lib/access';
+import { canManagePerformance } from '../lib/performance';
+import { TeamWallCard } from '../components/performance/TeamWallCard';
 import {
   Users, CalendarClock, Wallet, Clock, ChevronDown, ChevronRight, PlayCircle,
   ArrowRight,
@@ -230,6 +232,8 @@ export function Dashboard() {
               </div>
             )}
           </div>
+
+          {orgId && canManagePerformance(activeRole) && <TeamWallCard orgId={orgId} />}
 
           {(activeRole === 'admin_rh' || activeRole === 'manager' || activeRole === 'preparateur' || activeRole === 'approveur_paie') && (
             <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5">

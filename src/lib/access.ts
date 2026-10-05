@@ -17,6 +17,7 @@ export const PAGE_ROLES = {
   paiements: ['admin_rh', 'preparateur', 'approveur_paie', 'auditeur', 'cabinet'],
   abonnement: ['admin_rh', 'cabinet'],
   primes: ['admin_rh', 'manager', 'preparateur', 'approveur_paie', 'auditeur', 'cabinet', 'employee'],
+  performance: ['admin_rh', 'manager', 'employee', 'auditeur', 'cabinet'],
 } as const satisfies Record<string, readonly Role[]>;
 
 export type GuardedPage = keyof typeof PAGE_ROLES;

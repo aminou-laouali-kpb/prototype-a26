@@ -190,6 +190,14 @@ Comme ça, il y a une preuve.
 
 ---
 
+### Et pour récompenser ceux qui portent l'équipe ? Le menu Performance
+
+Le responsable fixe quelques objectifs chiffrés pour la période. Le salarié dit où il en est, le responsable confirme. À côté, A26 lit ce qu'il sait déjà : les arrivées à l'heure, les jours pointés, les heures passées sur les projets, la feuille de temps rendue à temps.
+
+Le tout donne un score sur 100, que le salarié peut ouvrir ligne par ligne. Un objectif pas encore confirmé n'est pas compté comme un zéro : il est « non évalué ».
+
+Quand un score est excellent, le responsable propose une prime, un badge, des jours de congé en plus ou un budget formation. **Rien n'est versé tout seul** : la prime arrive en brouillon dans le menu Primes, l'administrateur RH la valide, et elle passe dans le bulletin du mois comme n'importe quelle prime. Un score faible ne coupe jamais le salaire : il ouvre une discussion avec le responsable.
+
 ## 6. Les quatre états d'un mois de paie
 
 C'est très simple : un mois de paie avance comme un dossier administratif.
