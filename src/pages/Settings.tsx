@@ -788,15 +788,10 @@ function NotificationsTab() {
       p_payload: { org: activeOrg.name, queued_by: session?.user.email ?? null },
     });
     if (err) {
-      const { error: insErr } = await supabase.from('notification_outbox').insert({
-        org_id: activeOrg.id,
-        channel: 'whatsapp',
-        template_key: template,
-        recipient: phone.trim(),
-        payload: { org: activeOrg.name },
-        status: 'pending',
-      });
-      if (insErr) setError(insErr.message);
+      // Pas de repli côté navigateur : une mise en file refusée (numéro invalide, droits) s'affiche telle quelle.
+      setError(err.message);
+      setBusy(false);
+      return;
     }
     setPhone('');
     await load();
@@ -829,6 +824,7 @@ function NotificationsTab() {
             <select className={inputClass} value={template} onChange={(e) => setTemplate(e.target.value)}>
               <option value="payslip_ready">Bulletin prêt</option>
               <option value="leave_approved">Congé approuvé</option>
+              <option value="leave_rejected">Congé refusé</option>
               <option value="clock_reminder">Rappel pointage</option>
               <option value="payroll_approval">Validation paie requise</option>
             </select>
