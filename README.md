@@ -66,6 +66,7 @@ npm audit --audit-level=high
 
 ## Supports de prospection
 
+- [Analyse commerciale et roadmap performance](./docs/ANALYSE-COMMERCIALE-ET-ROADMAP-A26.md)
 - [Préparation de la démo et recette](./DEMO-VIDEO.md)
 - [Plan de test détaillé](./DOCUMENT-TEST.md)
 
